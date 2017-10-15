@@ -1,0 +1,9 @@
+AVAILABLE OPTIMISATIONS:
+- SIMD computing
+- octree containment
+- hidden triangles avoiding for meshes
+- Sobel edges detection w/ antialiasing
+
+AVAILABLE OPTIONS:
+- Phong or flat shading for meshes
+- antialiasing

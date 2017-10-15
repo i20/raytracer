@@ -1,0 +1,400 @@
+#include "../headers/Scene.hpp"
+#include "../headers/Camera.hpp"
+#include "../headers/Texture.hpp"
+#include "../headers/Color.hpp"
+#include "../headers/Point.hpp"
+#include "../headers/Vector.hpp"
+#include "../headers/Matrix.hpp"
+
+// Lights we are going to use
+#include "../headers/AmbientLight.hpp"
+#include "../headers/PunctualLight.hpp"
+
+// Shapes we want to be able to draw
+#include "../headers/Sphere.hpp"
+#include "../headers/Plane.hpp"
+#include "../headers/Cylinder.hpp"
+#include "../headers/Mesh.hpp"
+
+#include "../headers/Term.hpp"
+#include "../headers/Loader.hpp"
+
+#include <vector>
+#include <cstdlib>
+#include <iostream>
+#include <sstream>
+#include <ctime>
+#include <stdint.h>
+#include <omp.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2_ttf/SDL_ttf.h>
+
+#define VIEWPORT_WIDTH 500
+#define VIEWPORT_HEIGHT 500
+
+#define STAT_WIDTH 100
+#define STAT_HEIGHT 200
+
+using namespace std;
+
+struct rendering_data_s {
+
+    double fps;
+};
+
+static double timer (const double t) {
+
+    return omp_get_wtime() - t;
+}
+
+static void display_stats (SDL_Renderer * renderer, TTF_Font * font, const struct rendering_data_s & data) {
+
+    static SDL_Rect stats_bg_r = {
+
+        /* x */ VIEWPORT_WIDTH - STAT_WIDTH,
+        /* y */ 0,
+        /* w */ STAT_WIDTH,
+        /* h */ STAT_HEIGHT
+    };
+
+    static SDL_Rect stats_r = {
+
+        /* x */ stats_bg_r.x + 10,
+        /* y */ stats_bg_r.y + 10
+    };
+
+    static SDL_Color stats_c = {
+
+        /* r */ 255,
+        /* g */ 0,
+        /* b */ 0,
+        /* a */ 255
+    };
+
+    // Set stats background (green rectangle)
+    SDL_RenderFillRect(renderer, &stats_bg_r);
+
+    stringstream ss;
+    ss << data.fps << " FPS";
+
+    SDL_Surface * stats_s = TTF_RenderText_Solid(font, ss.str().c_str(), stats_c);
+    SDL_Texture * stats_t = SDL_CreateTextureFromSurface(renderer, stats_s);
+
+    stats_r.w = stats_s->w;
+    stats_r.h = stats_s->h;
+
+    SDL_FreeSurface(stats_s);
+
+    SDL_RenderCopy(renderer, stats_t, nullptr, &stats_r);
+    SDL_DestroyTexture(stats_t);
+}
+
+int main (const int argc, const char ** argv) {
+
+    try {
+
+        // Require a command line argument
+        if (argc < 2)
+            throw string("Missing scene to load name as first argument");
+
+        // Do not use clock() to calculate execution time since it does not see parallelized gain
+        // http://stackoverflow.com/questions/10727849/no-performance-gain-after-using-openmp-on-a-program-optimize-for-sequential-runn?answertab=votes#tab-top
+
+        double t;
+
+        stringstream ss_scene_path;
+        ss_scene_path << "./scenes/" << argv[1] << ".json";
+
+        cout << Term::SC << "Loading scene \"" << argv[1] << "\" ..." << endl;
+        t = omp_get_wtime();
+        Loader loader(ss_scene_path.str().c_str());
+        cout << Term::RC << Term::CLR << "Scene loading took " << Term::FGC_GREEN << timer(t) << Term::R << " seconds" << endl;
+
+        SDL_Init(SDL_INIT_VIDEO);
+
+        SDL_Window * window = SDL_CreateWindow(
+
+            loader.scene->title.c_str(),
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            loader.camera->px_width,
+            loader.camera->px_height,
+            0
+        );
+
+        SDL_Surface * icon = SDL_LoadBMP("icon.bmp");
+        // http://www.gamedev.net/topic/463077-sdl---transparent-icons/
+        // SDL_SetColorKey(icon, SDL_SRCCOLORKEY, SDL_MapRGB(icon->format, 255, 0, 255));
+        SDL_SetWindowIcon(window, icon);
+
+        SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        SDL_Texture * texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, loader.camera->px_width, loader.camera->px_height);
+
+        // General settings for display_stats
+        // Draw with transparent green for stats background color
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 100);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+        SDL_Event event;
+
+        TTF_Init();
+        TTF_Font * font = TTF_OpenFont("Sathu.ttf", 12);
+
+        uint32_t pixels[loader.camera->px_width * loader.camera->px_height];
+
+        struct rendering_data_s data;
+
+        // Does the scene need to be re-rendered? Initialized to true for first rendering
+        bool render = true;
+        bool stats = false;
+
+        float translation_pas = 1;
+        float rotation_pas = 22.5;
+
+        while (true) {
+
+            if (render) {
+
+                // http://ascii-table.com/ansi-escape-sequences.php
+                // http://www.cplusplus.com/forum/unices/36461/s
+                // http://stackoverflow.com/questions/25879183/can-terminal-app-be-made-to-respect-ansi-escape-codes
+                // http://wiki.bash-hackers.org/scripting/terminalcodes
+
+                cout << Term::SC << "Processing rendering..." << endl;
+
+                t = omp_get_wtime();
+                loader.camera->render();
+                data.fps = timer(t);
+                cout << Term::RC << Term::CLR << "Scene rendering took " << Term::FGC_GREEN << data.fps << Term::R << " seconds" << endl;
+
+                uintmax_t w = 0;
+
+                // TODO openmp it
+                for (uintmax_t j = 1; j < loader.camera->px_height + 1; j++)
+                    for (uintmax_t i = 1; i < loader.camera->px_width + 1; i++)
+                        pixels[w++] = loader.camera->image.get_texel(i, j).get_rgba();
+
+                // sizeof(uint32_t) = 4
+                SDL_UpdateTexture(texture, nullptr, pixels, loader.camera->px_width << 2);
+                SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+
+                if (stats)
+                    display_stats(renderer, font, data);
+
+                SDL_RenderPresent(renderer);
+
+                render = false;
+            }
+
+            SDL_WaitEvent(&event);
+
+            // #REF https://wiki.libsdl.org/SDL_Keycode
+            if (event.type == SDL_KEYDOWN) {
+
+                // Rotation controls
+                if (event.key.keysym.sym == SDLK_LEFT) {
+
+                    cout << "Left arrow key was pressed" << endl;
+                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::Y, -rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_RIGHT) {
+
+                    cout << "Right arrow key was pressed" << endl;
+                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::Y, rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_UP) {
+
+                    cout << "Up arrow key was pressed" << endl;
+                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::X, -rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_DOWN) {
+
+                    cout << "Down arrow key was pressed" << endl;
+                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::X, rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    render = true;
+                }
+
+                // Display or not rendering info
+                else if (event.key.keysym.sym == SDLK_i) {
+
+                    stats = !stats;
+
+                    // Need to recopy current image since SDL_RenderPresent invalid previous buffer
+                    SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+
+                    if (stats)
+                        display_stats(renderer, font, data);
+
+                    SDL_RenderPresent(renderer);
+                }
+
+                // Translation controls
+                else if (event.key.keysym.sym == SDLK_q) {
+
+                    cout << "Q key was pressed" << endl;
+                    Matrix tx = Matrix::TRANSLATION(Vector(-translation_pas, 0, 0));
+                    loader.camera->set_eye( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->set_look_at( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->look_at)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_d) {
+
+                    cout << "D key was pressed" << endl;
+                    Matrix tx = Matrix::TRANSLATION(Vector(translation_pas, 0, 0));
+                    loader.camera->set_eye( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->set_look_at( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->look_at)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_z) {
+
+                    cout << "Z key was pressed" << endl;
+                    Matrix ty = Matrix::TRANSLATION(Vector(0, translation_pas, 0));
+                    loader.camera->set_eye( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->set_look_at( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->look_at)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_s) {
+
+                    cout << "S key was pressed" << endl;
+                    Matrix ty = Matrix::TRANSLATION(Vector(0, -translation_pas, 0));
+                    loader.camera->set_eye( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->set_look_at( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->look_at)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_t) {
+
+                    cout << "T key was pressed" << endl;
+                    Matrix tz = Matrix::TRANSLATION(Vector(0, 0, -translation_pas));
+                    loader.camera->set_eye( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->set_look_at( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->look_at)) );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_g) {
+
+                    cout << "G key was pressed" << endl;
+                    Matrix tz = Matrix::TRANSLATION(Vector(0, 0, translation_pas));
+                    loader.camera->set_eye( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->set_look_at( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->look_at)) );
+                    render = true;
+                }
+
+                // Pas controls
+
+                else if (event.key.keysym.sym == SDLK_u) {
+
+                    cout << "U key was pressed" << endl;
+                    translation_pas += .1;
+                }
+
+                else if (event.key.keysym.sym == SDLK_j) {
+
+                    cout << "J key was pressed" << endl;
+                    translation_pas -= .1;
+                }
+
+                else if (event.key.keysym.sym == SDLK_i) {
+
+                    cout << "I key was pressed" << endl;
+                    rotation_pas += 1;
+                }
+
+                else if (event.key.keysym.sym == SDLK_k) {
+
+                    cout << "K key was pressed" << endl;
+                    rotation_pas -= 1;
+                }
+
+                // Eye controls
+
+                else if (event.key.keysym.sym == SDLK_f) {
+
+                    cout << "F key was pressed" << endl;
+                    loader.camera->set_focale( loader.camera->focale + 1 );
+                    render = true;
+                }
+
+                else if (event.key.keysym.sym == SDLK_v) {
+
+                    cout << "V key was pressed" << endl;
+                    loader.camera->set_focale( loader.camera->focale - 1 );
+                    render = true;
+                }
+
+                // Prints the scene currently displayed to a file
+                else if (event.key.keysym.sym == SDLK_p) {
+
+                    cout << "P key was pressed" << endl;
+
+                    stringstream ss;
+                    ss << "./screenshots/" << time(nullptr) << ".ppm";
+
+                    cout << Term::SC << "Processing printing..." << endl;
+
+                    t = omp_get_wtime();
+                    loader.camera->print(ss.str().c_str());
+                    cout << Term::RC << Term::CLR << "Scene printing took " << Term::FGC_GREEN << timer(t) << Term::R << " seconds" << endl;
+                }
+
+                // TODO
+                // Reload scene from file
+                else if (event.key.keysym.sym == SDLK_r) {
+
+                    cout << "R key was pressed" << endl;
+
+                    stringstream ss;
+                    ss << "./screenshots/" << time(nullptr) << ".ppm";
+
+                    cout << Term::SC << "Loading scene file..." << endl;
+
+                    t = omp_get_wtime();
+                    loader.camera->print(ss.str().c_str());
+                    cout << Term::RC << Term::CLR << "Scene loading took " << Term::FGC_GREEN << timer(t) << Term::R << " seconds" << endl;
+                }
+
+                else if (event.key.keysym.sym == SDLK_ESCAPE) {
+
+                    cout << "Escape key was pressed" << endl;
+                    break;
+                }
+            }
+
+            else if (event.type == SDL_QUIT) {
+
+                cout << "Window was closed" << endl;
+                break;
+            }
+        }
+
+        TTF_CloseFont(font);
+        TTF_Quit();
+
+        SDL_DestroyTexture(texture);
+        SDL_DestroyRenderer(renderer);
+        SDL_FreeSurface(icon);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+
+        cout << "Exit normally, goodbye" << endl;
+
+        return EXIT_SUCCESS;
+    }
+
+    catch (const string & e) {
+
+        cerr << "Exception : " << e << endl;
+
+        return EXIT_FAILURE;
+    }
+}

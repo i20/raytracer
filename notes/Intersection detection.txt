@@ -1,0 +1,30 @@
+#ALGO 1
+
+EPSILON < t:
+    x heuristic hard coded epsilon, inelegant, potentially problematic when looking very near the surface due to scale changes
+    x incorrect since when looking at the hidden side of a shape, the ray reaching for light will obviously intersect with its parent object at its start point and this intersection cannot be ignored!
+
+same object -> ray.direction * inter.normal <= 0:
+    x not too bad but unsufficient wih a concave shape where the light ray can intersect twice with its parent object: at start point and at any other point
+
+=> SOLUTION:
+    - use previous trick with scalar product to determine if ray is passing through the object but not only once but for each intersections with the object!
+    - the condition becomes same object -> if scalar <= 0 at any intersection point then consider it
+
+        if same object
+            // Cannot be done inside the for since we don't know if this intersection will be detected or not although we do need to know what happens there
+            if ray goes through at start point // scalar with original normal not the corrected one <= 0
+                return true
+
+            for each intersection of ray with object
+                if intersection not at start point // use epsilon to determine that
+                    return true // when facing at least an intersection not at start point, it obvious that the light is hidden
+
+    - cannot do a thing like:
+
+        if same object
+            for each intersection of ray with object
+                if ray goes through // scalar with intersection normal <= 0
+                        return true
+
+    because at start point, scalar with intersection normal will always be <= 0 since intersection normal has been corrected

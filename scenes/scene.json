@@ -1,0 +1,418 @@
+{
+    "colors": { // optionnal, map id => color, can be empty
+
+        "black": { "r": 0, "g": 0, "b": 0 },
+        "white": { "r": 255, "g": 255, "b": 255 },
+
+        "red": { "r": 255, "g": 0, "b": 0 },
+        "green": { "r": 0, "g": 255, "b": 0 },
+        "blue": { "r": 0, "g": 0, "b": 255 },
+
+        "orange": { "r": 255, "g": 128, "b": 0 }
+    },
+
+    "positions": { // optionnal, map id => point, can be empty
+
+        "origin": { "x": 0, "y": 0, "z": 0 }
+    },
+
+    "vectors": { // optionnal, map id => vector, can be empty
+
+        "x": { "x": 1, "y": 0, "z": 0 },
+        "y": { "x": 0, "y": 1, "z": 0 },
+        "z": { "x": 0, "y": 0, "z": 1 }
+    },
+
+    "textures": { // optionnal, map id => texture, can be empty
+
+        "images": {
+            "grass": "./textures/grass.ppm",
+            "mosaic": "./textures/mosaic.ppm",
+            "165": "./textures/165.ppm"
+        },
+
+        "normals": { // optionnal, map id => normal map, can be empty
+            "radio": "./textures/normals/radio-normals.p6.ppm",
+            "165": "./textures/165_norm.ppm"
+        }
+    },
+
+    "scene": {
+
+        "title": "Ma scene JSON",
+
+        "objects": { // optionnal, map id => object, can be empty
+
+            "axis-x": {
+
+                "type": "cylinder",
+                "color": "red",
+                "position": "origin",
+                "glassy": false,
+                "texture": null,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 10,
+
+                "radius": 0.025,
+
+                "z-dir": "x",
+                "y-dir": "y",
+
+                "height": 1.5
+            },
+
+            "axis-y": {
+
+                "type": "cylinder",
+                "color": "green",
+                "position": "origin",
+                "glassy": false,
+                "texture": null,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 10,
+
+                "radius": 0.025,
+
+                "z-dir": "y",
+                "y-dir": "z",
+
+                "height": 1.5
+            },
+
+            "axis-z": {
+
+                "type": "cylinder",
+                "color": "blue",
+                "position": "origin",
+                "glassy": false,
+                "texture": null,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 10,
+
+                "radius": 0.025,
+
+                "z-dir": "z",
+                "y-dir": "x",
+
+                "height": 1.5
+            },
+
+            // "plane-x": {
+
+            //     "type": "plane",
+            //     "color": "black",
+            //     "position": "origin",
+            //     "glassy": true,
+            //     "texture": "mosaic",
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 100,
+
+            //     "z-dir": "x",
+            //     "y-dir": "y",
+
+            //     "height": 2,
+            //     "width": 2
+            // }
+
+            // "plane-xz": {
+
+            //     "type": "plane", // *, "mesh" | "sphere" | "plane" | ...
+            //     "color": null, // *, <color name> | {"r": uint8, "g": uint8, "b": uint8} | null
+            //     "position": "origin", // *, <position name> | { "x": float, "y": float, "z": float }
+            //     "glassy": false, // *, boolean
+            //     "textures": { // ~
+            //         "image": { // ~
+            //             "ref": "mosaic", // *, <texture name>
+            //             "filtering": "bilinear", // *, "bilinear" | "trilinear" | "anisotropic" | null
+            //             "mapping": null // * in meshes, <.tex file>
+            //         },
+            //         "normals": { // ~
+            //             "ref": "165", // <texture name>
+            //             "filtering": "bilinear", // "bilinear" | "trilinear" | "anisotropic" | null
+            //             "mapping": null // .tex file, required for meshes
+            //         }
+            //     },
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 100,
+
+            //     "z-dir": "y",
+            //     "y-dir": "z",
+
+            //     "height": 50,
+            //     "width": 50
+            // }
+
+            // "cylinder-x": {
+
+            //     "type": "cylinder",
+            //     "color": "none",
+            //     "position": "origin",
+            //     "glassy": true,
+            //     "texture": "mosaic",
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 100,
+
+            //     "radius": 0.5,
+
+            //     "z-dir": "y",
+            //     "y-dir": "z",
+
+            //     "height": 5
+            // }
+
+            // "sphere": {
+
+            //     "type": "sphere", // "mesh" | "sphere" | "plane" | ...
+            //     "position": "origin", // <position name> | { "x": float, "y": float, "z": float }
+            //     "color": "none", // <color name> | {"r": uint8, "g": uint8, "b": uint8}
+            //     "glassy": false, // boolean
+            //     "reflection": 0, // float 0 <= x <= 1
+            //     "radius": 1, // float
+            //     "texture": "165", // <texture name> | null
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+            //     "n": 1.33, // float
+            //     "glossyness": 100,
+            //     "z-dir": "z", // <vector name> | { "x": float, "y": float, "z": float }
+            //     "y-dir": "y" // <vector name> | { "x": float, "y": float, "z": float }
+            // }
+
+            // "plane-y": {
+
+            //     "type": "plane",
+            //     "color": "blue",
+            //     "position": "origin",
+            //     "glassy": false,
+            //     "texture": null,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 0, "g": 0, "b": 0 }
+            //     },
+
+            //     "reflection": 0,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "z-dir": "y",
+            //     "y-dir": "z",
+
+            //     "height": 2,
+            //     "width": 2
+            // }
+
+            // "plane-z": {
+
+            //     "type": "plane",
+            //     "color": "green",
+            //     "position": "origin",
+            //     "glassy": false,
+            //     "texture": null,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 0, "g": 0, "b": 0 }
+            //     },
+
+            //     "reflection": 0,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "z-dir": "z",
+            //     "y-dir": "x",
+
+            //     "height": 2,
+            //     "width": 2
+            // }
+
+            // "bunny": {
+
+            //     "type": "mesh",
+            //     "position": "origin",
+            //     "shading": "phong",
+            //     "color": "orange",
+            //     "glassy": false,
+            //     "texture": null,
+            //     "normal_map": "radio",
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 1.33,
+            //     "glossyness": 100,
+
+            //     "file": "./meshes/bunny.off",
+
+            //     "z-dir": { "x": 0, "y": 1, "z": 1.4 },
+            //     "y-dir": "z",
+
+            //     "use-octree": true // boolean
+            // }
+
+            // "tetrahedron": {
+
+            //     "type": "mesh",
+            //     "position": "origin",
+            //     "shading": "flat",
+            //     "color": "none",
+            //     "glassy": false,
+            //     "texture": "mosaic",
+            //     "texture_map_file": "./textures/tetrahedron.tex",
+            //     // "normal_map": "radio",
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 1.33,
+            //     "glossyness": 100,
+
+            //     "file": "./meshes/tetrahedron.off",
+
+            //     "z-dir": "z",
+            //     "y-dir": "y",
+
+            //     "use-octree": false // boolean
+            // }
+
+            "sphere-mesh": {
+
+                "type": "mesh",
+                "position": "origin",
+                "shading": "phong",
+                "color": null,
+                "glassy": false,
+
+                "textures": { // ~
+                    "image": { // ~
+                        "ref": "mosaic", // *, <texture name>
+                        "filtering": "bilinear", // *, "bilinear" | "trilinear" | "anisotropic" | null
+                        "mapping": "./textures/sphere.tex" // * in meshes, <.tex file>
+                    },
+                    "normals": { // ~
+                        "ref": "165", // <texture name>
+                        "filtering": "bilinear", // "bilinear" | "trilinear" | "anisotropic" | null
+                        "mapping": "./textures/sphere.tex" // .tex file, required for meshes
+                    }
+                },
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 1.33,
+                "glossyness": 100,
+
+                "file": "./meshes/sphere.off",
+
+                "z-dir": "z",
+                "y-dir": "y",
+
+                "use-octree": true // boolean
+            }
+        },
+
+        "lights": { // optionnal, map id => light, can be empty
+
+            "ambient": {
+
+                "type": "ambient", // punctual | spot | ambient
+                "intensity": { "r": 0.2, "g": 0.2, "b": 0.2 }
+            },
+
+            "light-1": {
+
+                "type": "punctual", // punctual | spot | ...
+                "intensity": { "r": 0.5, "g": 0.5, "b": 0.5 },
+                "position": { "x": 5, "y": 2, "z": 0 }, // <position name> | { "x": float, "y": float, "z": float }
+                "attenuation": {
+                    "constant": 1, // float
+                    "linear": 0, // float
+                    "quadratic": 0.01 // float
+                }
+            }
+        },
+
+        "background-color": "black" // <color name> | {"r": uint8, "g": uint8, "b": uint8}
+    },
+
+    "camera": {
+
+        "eye": { "x": 5, "y": 5, "z": 5 }, // <position name> | { "x": float, "y": float, "z": float }
+        "look-at": "origin", // <position name> | { "x": float, "y": float, "z": float }
+        "up-dir": "y", // <vector name> | { "x": float, "y": float, "z": float }
+        "focale": 3, // float
+        "fov": 45, // float
+        "projection-type": "perspective", // "perspective" | "orthographic"
+        "trace-depth": 2, // uint
+        "aa-depth": 0, // uint
+        "aa-threshold": 50, // uint8,
+        "viewport": {
+            "width": 500, // uintmax
+            "height": 500 // uintmax
+        }
+    }
+}

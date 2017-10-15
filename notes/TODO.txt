@@ -1,0 +1,31 @@
+V #TODO 1 : enforce same-objects intersection test by testing it in an epsilon sphere
+#TODO 2 :
+#TODO 3 : handle refracted ray when coming out from refracting object, what is outside n?
+#TODO 4 Use memcopy/memset instead of doing a for to copy arrays
+#TODO 5 Use ponderate average to take into consideration triangle's area when interpolating
+#TODO 6 Add support for texture mapping on meshes
+#TODO 7 Invert matrix should return a new matrix instead of modifying the calling instance
+#TODO 8 pasx and pasy seems to be equal, merge it
+
+- implement cylinder is_closed
+- solve view switch when rotation around x
+- solve cam descent when rotation around y
+- why a part of the octree logic does reside in Object::compute_intersection? Isn't it a mesh thing?
+
+v black dots on shapes
+    - due to shadow ray intersection with it starting point
+    - has been handled in Camera::does_intersect
+
+some triangles are flat shaded on shadow edge : image 1456688795
+    - called terminator problem in http://geekshavefeelings.com/x/wp-content/uploads/2010/03/Its-Really-Not-a-Rendering-Bug-You-see....pdf
+    - it is not a bug
+    - this is due to the way shadow rays are traced
+    - shadow rays start from the intersection point which is on flat triangles
+    - then ray cannot reach the light since curvature is not interpolated, only normals
+    ? is there a way to interpolate curvature based on triangle normals to correct this
+    refs:
+        https://people.mpi-inf.mpg.de/~rzayer/pappe/PG04.pdf
+        http://www.ijesit.com/Volume%202/Issue%203/IJESIT201303_48.pdf
+        http://www.math.zju.edu.cn/yxn/papers/normalshading.pdf
+        http://ljk.imag.fr/membres/Stefanie.Hahmann/PUBLICATIONS/HB03.pdf
+        ./pdf/201112-Curvature Estimation for Meshes Based on Vertex-Normal Triangles.pdf
