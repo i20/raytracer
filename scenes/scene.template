@@ -1,0 +1,147 @@
+*color_definition* :
+{ "r": <uint8>, "g": <uint8>, "b": <uint8> }
+
+*position_definition* :
+{ "x": <float>, "y": <float>, "z": <float> }
+
+*vector_definition* :
+{ "x": <float>, "y": <float>, "z": <float> }
+
+*coeff_definition* :
+{ "r": <float [0,1]>, "g": <float [0,1]>, "b": <float [0,1]> }
+
+*color_entry* :
+"<color name>": *color_definition*
+
+*position_entry* :
+"<position name>": *position_definition*
+
+*vector_entry* :
+"<vector name>": *vector_definition*
+
+*texture_entry* :
+"<texture name>": "<texture file path>"
+
+*color* :
+"<color name>" | *color_definition* | null
+
+*position* :
+"<position name>" | *position_definition*
+
+*vector* :
+"<vector name>" | *vector_definition*
+
+*texture_binding* :
+{
+    "ref": "<texture name>",
+    "filtering": "bilinear" | "trilinear" | "anisotropic" | null
+    [[ "mapping": "<mapping file path>" ]] # Required for meshes
+}
+
+*object_entry* :
+"<object name>": {
+
+    "type": "mesh" | "sphere" | "plane" | "cylinder",
+    "color": *color*,
+    "position": *position*,
+    "glassy": <boolean>,
+
+    [[ "shading": "phong" | "flat" ]] # Required for meshes
+    [[ "file": "<off file path>" ]] # Required for meshes
+    [[ "use-octree": <boolean> ]] # Required for meshes
+
+    [[ "textures": {
+        [[ "image": *texture_binding* ]]
+        [[ "normals": *texture_binding* ]]
+    } ]]
+
+    "coeff": {
+        "ambient": *coeff_definition*,
+        "diffuse": *coeff_definition*,
+        "specular": *coeff_definition*
+    },
+
+    "reflection": <float [0,1]>,
+    "n": <ufloat>,
+    "glossyness": <ufloat>,
+
+    "z-dir": *vector*,
+    "y-dir": *vector*,
+
+    [[ "radius": <ufloat> ]] # Required for cylinders and spheres
+    [[ "width": <ufloat> ]] # Required for planes
+    [[ "height": <ufloat> ]] # Required for planes and cylinders
+}
+
+*light_entry* :
+"<light name>": {
+
+    "type": "punctual" | "spot" | "ambient",
+    "intensity": { "r": <float [0,1]>, "g": <float [0,1]>, "b": <float [0,1]> }
+
+    [[ "position": *position* ]] # Required for punctual and spot lights
+
+    [[ "attenuation": {
+        "constant": <float [0,1]>,
+        "linear": <float [0,1]>,
+        "quadratic": <float [0,1]>
+    } ]] # Required for punctual lights
+}
+
+*scene_definition* :
+{
+    [[ "colors": {
+        [[ *color_entry* [[, *color_entry* ]] ]]
+    } ]]
+
+    [[ "positions": {
+        [[ *position_entry* [[, *position_entry* ]] ]]
+    } ]]
+
+    [[ "vectors": {
+        [[ *vector_entry* [[, *vector_entry* ]] ]]
+    } ]]
+
+    [[ "textures": {
+
+        [[ "images": {
+            [[ *texture_entry* [[, *texture_entry* ]] ]]
+        } ]]
+
+        [[ "normals": {
+            [[ *texture_entry* [[, *texture_entry* ]] ]]
+        } ]]
+    } ]]
+
+    "scene": {
+
+        "title": "<scene title>",
+
+        "background-color": *color*
+
+        [[ "objects": {
+            [[ *object_entry* [[, *object_entry* ]] ]]
+        } ]]
+
+        [[ "lights": {
+            [[ *light_entry* [[, *light_entry* ]] ]]
+        } ]]
+    },
+
+    "camera": {
+
+        "eye": *position*,
+        "look-at": *position*,
+        "up-dir": *vector*,
+        "focale": <ufloat>,
+        "fov": <ufloat>,
+        "projection-type": "perspective" | "orthographic",
+        "trace-depth": <uint>,
+        "aa-depth": <uint>,
+        "aa-threshold": <uint8>,
+        "viewport": {
+            "width": <uint>,
+            "height": <uint>
+        }
+    }
+}
