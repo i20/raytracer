@@ -1,0 +1,38 @@
+Objects properties:
+    - color
+    - position
+    - base matrix and inverted matrix
+    - is_closed
+    - is_glassy
+    - octree
+
+    Phong global illumination model = ambiant + diffuse + specular
+
+    - float a[3] : ambiant light response for each RGB channel
+
+        coefficient interval [0;+inf[
+        0 => ambiant light ignored
+        1 => nominal ambiant light
+        > 1 => amplified ambient light (hardly useful)
+
+        This coefficient is only used against an ambiant light (AmbiantLight) that is a particular case of light as it eventually serves to simulate ambiant diffusion. Should not be considered the exact equal of others lights types that use diffuse and specular components of global illumination model and are closer to real world lights.
+
+    - float d[3] : diffuse light response for each RGB channel
+        coefficient interval [0;+inf[
+        0 => no diffuse component to enlightment (hardly useful on all channels at the same time)
+        1 => standard diffuse component
+        > 1 => amplified diffuse component (hardly useful on all channels at the same time)
+
+        Used by all types of lights except ambiant (AmbiantLight) which uses the previous a[3] coefficient.
+
+    - float s[3] : specular light response for each RGB channel
+        coefficient interval [0;+inf[
+        0 => no specular component to enlightment (dull, mat objects if used on all channels at the same time)
+        1 => standard specular component (metal, glass, polished wood)
+        > 1 => amplified specular component (hardly useful on all channels at the same time)
+
+        Used by all types of lights except ambiant (AmbiantLight) which uses the previous a[3] coefficient. Allow us to make glossy effect on objects. Used in conjonction with the g (glossyness) coefficient.
+
+    - float r;   /* reflection [0;1] part of enlightment due to reflection, part due to refraction will be 1-r */
+    - float n;   /* refraction */
+    - float g;   /* brillance (shininess, glossiness) */
