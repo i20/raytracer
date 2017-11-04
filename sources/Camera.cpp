@@ -154,9 +154,16 @@ void Camera::sobel_aa () {
 
     // Sobel gradient must be computed on original image
     Texture<Color> base_img(this->image);
+    // Save the edge detection image for debugging
+    Texture<Color> edge_img(this->image.width - 2, this->image.height - 2);
 
-    float x_start = this->proj_width / 2,
-          y_start = this->proj_height / 2;
+    // Same as for rendering phase, x and y must be expressed in camera base
+    float x_start = this->proj_width / 2;
+    float y_start = this->proj_height / 2;
+
+    uint8_t aa_base = sqrt(this->aa_depth);
+
+    // NOTE: sobel filter works only on images wider than 3x3
 
     #pragma omp parallel for collapse(2) schedule(dynamic)
     for (uintmax_t j = 1; j < this->image.height - 1; j++) {
@@ -166,54 +173,89 @@ void Camera::sobel_aa () {
             Color p2 = base_img.get_texel(i-1, j);
             Color p3 = base_img.get_texel(i-1, j+1);
             Color p4 = base_img.get_texel(i, j-1);
-            Color p5 = base_img.get_texel(i, j); /* aa'ed pixel */
+            // Color p5 = base_img.get_texel(i, j); /* aa'ed pixel */
             Color p6 = base_img.get_texel(i, j+1);
             Color p7 = base_img.get_texel(i+1, j-1);
             Color p8 = base_img.get_texel(i+1, j);
             Color p9 = base_img.get_texel(i+1, j+1);
 
-            for (uintmax_t k = 0; k < this->aa_depth; k++) {
+            // We compute one gradient per channel r,g,b
+            // http://www.hackification.com/2008/08/31/experiments-in-ray-tracing-part-8-anti-aliasing/
+            // http://www.dsp.utoronto.ca/~kostas/Publications2008/pub/23.pdf
 
-                // We compute one gradient for each channel r,g,b and detect an edge
-                // if one of them is greater than the threshold
-                // http://www.hackification.com/2008/08/31/experiments-in-ray-tracing-part-8-anti-aliasing/
-                // http://www.dsp.utoronto.ca/~kostas/Publications2008/pub/23.pdf
+            // RGB Sobel gradient norm
+            for (uint8_t ii = 0; ii < 3; ii++) {
 
-                // RGB Sobel grandient norm
-                bool edge = false;
-                for (uint8_t ii = 0; ii < 3; ii++) {
+                float gxi = p1[ii] - p3[ii] + 2 * (p4[ii] - p6[ii]) + p7[ii] - p9[ii];
+                float gyi = p1[ii] - p7[ii] + 2 * (p2[ii] - p8[ii]) + p3[ii] - p9[ii];
 
-                    float gxi = p1.c[ii] - p3.c[ii] + 2 * (p4.c[ii] - p6.c[ii]) + p7.c[ii] - p9.c[ii];
-                    float gyi = p1.c[ii] - p7.c[ii] + 2 * (p2.c[ii] - p8.c[ii]) + p3.c[ii] - p9.c[ii];
+                // One channel gradient norm is greater than the threshold, edge detected => aa required for the pixel
+                if ( sqrt(gxi * gxi + gyi * gyi) > this->aa_threshold ) {
 
-                    // One gradient is greater thant threshold aa required
-                    if ( sqrt(gxi * gxi + gyi * gyi) > this->aa_threshold) {
+                    // Mark pixel as edge in edge image
+                    edge_img.set_texel(i, j, Color::WHITE);
 
-                        edge = true;
-                        break;
+                    // Then choose an anti aliasing technic
+                    // https://en.wikipedia.org/wiki/Supersampling
+
+                    uint16_t c[3] = {0, 0, 0};
+                    Color aa_color;
+
+                    /*
+                    // Random sampling
+                    for (uintmax_t k = 0; k < this->aa_depth; k++) {
+
+                        // Random coords in pixel ij
+                        float xr = x_start - this->pasx * (i + Camera::random());
+                        float yr = y_start - this->pasy * (j + Camera::random());
+
+                        Vector dir = this->base * Vector(xr, yr, this->focale);
+                        Ray ray(this->eye, dir, false, 0);
+                        Color newc = this->radiate(ray);
+
+                        for (uint8_t ii = 0; ii < 3; ii++)
+                            c[ii] += newc[ii];
                     }
-                }
+                    /**/
 
-                if (!edge)
+                    /**/
+                    // Grid 2x2 or 4x4
+                    for (uintmax_t kj = 0; kj < aa_base; kj++) {
+                        for (uintmax_t ki = 0; ki < aa_base; ki++) {
+
+                            // // Fixed grid
+                            // float xr = x_start - this->pasx * (i + (ki + .5) / (float)aa_base);
+                            // float yr = y_start - this->pasy * (j + (kj + .5) / (float)aa_base);
+
+                            // Jittered grid
+                            float xr = x_start - this->pasx * (i + (ki + Camera::random()) / (float)aa_base);
+                            float yr = y_start - this->pasy * (j + (kj + Camera::random()) / (float)aa_base);
+
+                            Vector dir = this->base * Vector(xr, yr, this->focale);
+                            Ray ray(this->eye, dir, false, 0);
+                            Color newc = this->radiate(ray);
+
+                            for (uint8_t ii = 0; ii < 3; ii++)
+                                c[ii] += newc[ii];
+                        }
+                    }
+                    /**/
+
+                    for (uint8_t ii = 0; ii < 3; ii++) {
+                        c[ii] /= this->aa_depth;
+                        aa_color[ii] = c[ii] > 255 ? 255 : c[ii];
+                    }
+
+                    this->image.set_texel(i, j, aa_color);
+
+                    // Pixel has been anti aliased, no need to continue checking its other channel gradients, go to next pixel
                     break;
-
-                // Random coords in pixel ij
-                float xr = x_start - this->pasx * i - this->pasx * Camera::random();
-                float yr = y_start - this->pasy * j - this->pasy * Camera::random();
-
-                Vector dir = this->base * Vector(xr, yr, this->focale);
-                Ray ray(this->eye, dir, false, 0);
-                Color newc = this->radiate(ray);
-
-                // Mean old and new color
-                for (uint8_t ii = 0; ii < 3; ii++)
-                    // This is how we compute a mean recursively
-                    p5.c[ii] = ((k + 1) * p5.c[ii] + newc.c[ii]) / (float)(k + 2);
+                }
             }
-
-            this->image.set_texel(i, j, p5);
         }
     }
+
+    edge_img.print("./screenshots/edge.ppm");
 }
 
 // #TODO a general solution which makes us free of multiple tricky cases is to consider only the second
