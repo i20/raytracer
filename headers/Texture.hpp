@@ -306,7 +306,7 @@ bool Texture<T>::print (const char * file_name) const {
     outf << this->width << " " << this->height << endl;
     outf << 255 << endl;
 
-    for (const auto & texel : this->map)
+    for (auto texel : this->map)
         for (uint8_t i = 0; i < 3; i++)
             outf.put(texel[i]);
 
