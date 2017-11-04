@@ -1,0 +1,258 @@
+{
+    "colors": { // optionnal, map id => color, can be empty
+
+        "black": { "r": 0, "g": 0, "b": 0 },
+        "white": { "r": 255, "g": 255, "b": 255 },
+
+        "red": { "r": 255, "g": 0, "b": 0 },
+        "green": { "r": 0, "g": 255, "b": 0 },
+        "blue": { "r": 0, "g": 0, "b": 255 },
+
+        "orange": { "r": 255, "g": 128, "b": 0 }
+    },
+
+    "positions": { // optionnal, map id => point, can be empty
+
+        "origin": { "x": 0, "y": 0, "z": 0 }
+    },
+
+    "vectors": { // optionnal, map id => vector, can be empty
+
+        "x": { "x": 1, "y": 0, "z": 0 },
+        "y": { "x": 0, "y": 1, "z": 0 },
+        "z": { "x": 0, "y": 0, "z": 1 }
+    },
+
+    "textures": { // optionnal, map id => texture, can be empty
+
+        "images": {
+            "mosaic": "./textures/mosaic.ppm"
+        }
+    },
+
+    "scene": {
+
+        "title": "Anti aliasing",
+
+        "objects": { // optionnal, map id => object, can be empty
+
+            // "axis-x": {
+
+            //     "type": "cylinder",
+            //     "color": "red",
+            //     "position": "origin",
+            //     "glassy": false,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "radius": 0.025,
+
+            //     "z-dir": "x",
+            //     "y-dir": "y",
+
+            //     "height": 1.5
+            // },
+
+            // "axis-y": {
+
+            //     "type": "cylinder",
+            //     "color": "green",
+            //     "position": "origin",
+            //     "glassy": false,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "radius": 0.025,
+
+            //     "z-dir": "y",
+            //     "y-dir": "z",
+
+            //     "height": 1.5
+            // },
+
+            // "axis-z": {
+
+            //     "type": "cylinder",
+            //     "color": "blue",
+            //     "position": "origin",
+            //     "glassy": false,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "radius": 0.025,
+
+            //     "z-dir": "z",
+            //     "y-dir": "x",
+
+            //     "height": 1.5
+            // },
+
+            // "plane-x": {
+
+            //     "type": "plane",
+            //     "color": "red",
+            //     "position": "origin",
+            //     "glassy": false,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "z-dir": "x",
+            //     "y-dir": "y",
+
+            //     "height": 2,
+            //     "width": 2
+            // },
+
+            // "plane-y": {
+
+            //     "type": "plane",
+            //     "color": "green",
+            //     "position": "origin",
+            //     "glassy": false,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "z-dir": "y",
+            //     "y-dir": "z",
+
+            //     "height": 2,
+            //     "width": 2
+            // },
+
+            // "plane-z": {
+
+            //     "type": "plane",
+            //     "color": "blue",
+            //     "position": "origin",
+            //     "glassy": false,
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "z-dir": "z",
+            //     "y-dir": "x",
+
+            //     "height": 2,
+            //     "width": 2
+            // },
+
+            // "plane-texture": {
+
+            //     "type": "plane",
+            //     "color": "black",
+            //     "position": "origin",
+            //     "glassy": false,
+
+            //     "textures": {
+            //         "image": {
+            //             "ref": "mosaic",
+            //             "filtering": null // *, "bilinear" | "trilinear" | "anisotropic" | null
+            //         }
+            //     },
+
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
+
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
+
+            //     "z-dir": "z",
+            //     "y-dir": "y",
+
+            //     "height": 2,
+            //     "width": 2
+            // }
+        },
+
+        "lights": { // optionnal, map id => light, can be empty
+
+            "ambient": {
+
+                "type": "ambient", // punctual | spot | ambient
+                "intensity": { "r": 0.2, "g": 0.2, "b": 0.2 }
+            },
+
+            "light-1": {
+
+                "type": "punctual", // punctual | spot | ...
+                "intensity": { "r": 0.5, "g": 0.5, "b": 0.5 },
+                "position": { "x": 5, "y": 5, "z": 5 }, // <position name> | { "x": float, "y": float, "z": float }
+                "attenuation": {
+                    "constant": 1, // float
+                    "linear": 0, // float
+                    "quadratic": 0.01 // float
+                }
+            }
+        },
+
+        "background-color": "black" // <color name> | {"r": uint8, "g": uint8, "b": uint8}
+    },
+
+    "camera": {
+
+        "eye": { "x": 0, "y": 0, "z": 5 }, // <position name> | { "x": float, "y": float, "z": float }
+        "look-at": "origin", // <position name> | { "x": float, "y": float, "z": float }
+        "up-dir": "y", // <vector name> | { "x": float, "y": float, "z": float }
+        "focale": 3, // float
+        "fov": 45, // float
+        "projection-type": "perspective", // "perspective" | "orthographic"
+        "trace-depth": 2, // uint
+        "aa-depth": 16, // uint
+        "aa-threshold": 50, // uint8,
+        "viewport": {
+            "width": 500, // uintmax
+            "height": 500 // uintmax
+        }
+    }
+}
