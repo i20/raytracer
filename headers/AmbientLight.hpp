@@ -4,7 +4,6 @@
 #include "../headers/Light.hpp"
 #include "../headers/Color.hpp"
 #include "../headers/Intersection.hpp"
-#include "../headers/Ray.hpp"
 #include "../headers/Scene.hpp"
 
 using namespace std;
@@ -18,7 +17,7 @@ class AmbientLight : public Light {
 
         AmbientLight & operator= (const AmbientLight & light);
 
-        virtual Color compute_luminosity (const Intersection & inter, const Ray & ray, const Scene & scene) const override;
+        virtual Color compute_luminosity (const Intersection & inter, const Scene & scene) const override;
 };
 
 #endif

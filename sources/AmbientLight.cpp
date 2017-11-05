@@ -20,7 +20,7 @@ AmbientLight & AmbientLight::operator=(const AmbientLight & light) {
     return *this;
 }
 
-Color AmbientLight::compute_luminosity(const Intersection & inter, const Ray & ray, const Scene & scene) const {
+Color AmbientLight::compute_luminosity(const Intersection & inter, const Scene & scene) const {
 
     uint8_t c[3];
 

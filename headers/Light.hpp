@@ -3,7 +3,6 @@
 
 #include "../headers/Color.hpp"
 #include "../headers/Intersection.hpp"
-#include "../headers/Ray.hpp"
 
 // Circular reference
 class Scene;
@@ -21,7 +20,7 @@ class Light {
 
         Light & operator= (const Light & light);
 
-        virtual Color compute_luminosity (const Intersection & inter, const Ray & ray, const Scene & scene) const = 0;
+        virtual Color compute_luminosity (const Intersection & inter, const Scene & scene) const = 0;
 
         // Photon mapping required methods
         // virtual void emit_photons () const = 0;

@@ -8,6 +8,7 @@
 #include "../headers/Intersection.hpp"
 #include "../headers/Point.hpp"
 #include "../headers/Object.hpp"
+#include "../headers/Ray.hpp"
 
 #include "../headers/Vector.hpp"
 #include "../headers/PunctualLight.hpp"
@@ -38,11 +39,11 @@ PunctualLight & PunctualLight::operator=(const PunctualLight & light) {
     return *this;
 }
 
-Color PunctualLight::compute_luminosity (const Intersection & inter, const Ray & ray, const Scene & scene) const {
+Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene & scene) const {
 
     Vector dir(inter.point, this->position);
     // #TODO how do we know if shadow ray is inside or outside the object (ray can pass through the object)?
-    Ray shadow_ray(inter.point, dir, ray.in, ray.level);
+    Ray shadow_ray(inter.point, dir, inter.ray->in, inter.ray->level);
 
     bool does_light = true;
 
@@ -67,6 +68,8 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Ray &
 
     if (!does_light) return Color::BLACK;
 
+    // Diffuse component
+
     // N = inter.normal
     // L = (inter.point, light.position).normalized
     float d = 0; /* norm pl */
@@ -81,6 +84,8 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Ray &
     }
     d = sqrt(d);
     scalar_d /= d; // Normalize L after (pl wasn't normalized)
+
+    // Specular component
 
     // V = (inter.point, ray.origin).normalized = -ray.direction
     // R = rayr.direction = inter.normal * 2 * scalar_d - L

@@ -64,9 +64,9 @@ Color Camera::radiate (const Ray & ray) const {
 
     Color clr = Color::BLACK;
 
-    // Compute diffuse AND specular reflection
+    // Compute ambient, diffuse and specular reflection (Phong's 3 components)
     // If light reflection computation counts as level + 1 then the next ray.level + 1 test becomes mandatory
-    // Light reflection calculation is only for direct enlighment, refracted must be simulated via photon mapping
+    // This calculation is only for direct enlighment, refracted must be simulated via photon mapping
 
     for (const auto & light_entry : this->scene.lights)
 
@@ -74,10 +74,10 @@ Color Camera::radiate (const Ray & ray) const {
         // // #TODO how do we know if shadow ray is inside or outside the object (ray can pass through the object)?
         // Ray shadow_ray(ninter.point, dir, ray.in, ray.level);
 
-        clr = clr + light_entry.second->compute_luminosity(ninter, ray, this->scene);
+        clr = clr + light_entry.second->compute_luminosity(ninter, this->scene);
 
     if (ray.level + 1 == this->tracing_depth)
-        return /*ca + */clr;
+        return clr;
 
     // From this point all rays are level + 1
     Color cr, ct;
@@ -197,6 +197,7 @@ void Camera::sobel_aa () {
 
                     // Then choose an anti aliasing technic
                     // https://en.wikipedia.org/wiki/Supersampling
+                    // https://computergraphics.stackexchange.com/questions/2130/anti-aliasing-filtering-in-ray-tracing
 
                     uint16_t c[3] = {0, 0, 0};
                     Color aa_color;
@@ -432,39 +433,6 @@ void Camera::set_aa_threshold(const uintmax_t aa_threshold) {
     this->aa_threshold = aa_threshold;
 }
 
-// RENDER
-
-// __global__
-// void cuda_render_perspective (float x_start, float y_start) {
-
-//     Vector rayd = this->base * Vector(
-//         x_start + this->pasx * blockIdx.x,
-//         y_start + this->pasy * blockIdx.y,
-//         this->focale
-//     );
-
-//     // Hit center of each pixel
-//     // Ray must be expressed in the scene's base to compute correct intersections
-//     Ray ray(this->eye, rayd, false, 0);
-
-//     this->image.set_texel(blockIdx.x, blockIdx.y, this->radiate(ray));
-// }
-
-// __global__
-// void cuda_render_orthographic (float x_start, float y_start) {
-
-//     Point rayo = this->base * Point(
-//         x_start + this->pasx * blockIdx.x,
-//         y_start + this->pasy * blockIdx.y,
-//         0
-//     );
-
-//     Vector rayd = this->base * Vector(0, 0, 1);
-//     Ray ray(rayo, rayd, false, 0);
-
-//     this->image.set_texel(blockIdx.x, blockIdx.y, this->radiate(ray));
-// }
-
 void Camera::render () {
 
     srand(time(nullptr));
@@ -473,11 +441,8 @@ void Camera::render () {
     // x, y are expressed in the camera base since the projection screen is attached to it z go into screen
 
     // Notice that pasx (and y) is also divided by 2 since the ray is sent through the middle of the pixel
-    float x_start = (this->proj_width + this->pasx) / 2,
-          y_start = (this->proj_height + this->pasy) / 2;
-
-    // For initial rendering use a maximum of blocks since pixels are completely independant
-    // dim3 blocks(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+    float x_start = (this->proj_width + this->pasx) / 2;
+    float y_start = (this->proj_height + this->pasy) / 2;
 
     if (this->projection == Camera::PROJECTION_PERSPECTIVE) {
 

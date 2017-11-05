@@ -5,7 +5,6 @@
 #include "../headers/Color.hpp"
 #include "../headers/Intersection.hpp"
 #include "../headers/Point.hpp"
-#include "../headers/Ray.hpp"
 #include "../headers/Scene.hpp"
 
 using namespace std;
@@ -22,7 +21,7 @@ class PunctualLight : public Light {
 
         PunctualLight & operator=(const PunctualLight & light);
 
-        virtual Color compute_luminosity(const Intersection & inter, const Ray & ray, const Scene & scene) const override;
+        virtual Color compute_luminosity(const Intersection & inter, const Scene & scene) const override;
         // virtual void emit_photons () const override;
 
     private:

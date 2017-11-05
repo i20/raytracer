@@ -17,7 +17,7 @@ class Intersection {
     public:
         Point point;
         Vector normal;
-        Color color;
+        Color color; // Color at the intersection point may be different from object.color since texture can be applied
         float t;
         const Object * object;
         const Ray * ray;
