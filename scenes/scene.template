@@ -63,7 +63,7 @@
 
     "reflection": <float [0,1]>,
     "n": <ufloat>,
-    "glossyness": <ufloat>,
+    "glossyness": <ufloat ]0[>, # 0 has no meaning, if no specular reflection wanted then set specular coeff to (0, 0, 0)
 
     "z-dir": *vector*,
     "y-dir": *vector*,
