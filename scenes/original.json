@@ -9,7 +9,8 @@
         "blue": { "r": 0, "g": 0, "b": 255 },
 
         "orange": { "r": 255, "g": 128, "b": 0 },
-        "pink": { "r": 255, "g": 105, "b": 180 }
+        "hotpink": { "r": 255, "g": 105, "b": 180 },
+        "darkmagenta": { "r": 139, "g": 0, "b": 139 }
     },
 
     "positions": {
@@ -38,77 +39,77 @@
 
         "objects": {
 
-            "axis-x": {
+            // "axis-x": {
 
-                "type": "cylinder",
-                "color": "red",
-                "position": "origin",
-                "glassy": false,
+            //     "type": "cylinder",
+            //     "color": "red",
+            //     "position": "origin",
+            //     "glassy": false,
 
-                "coeff": {
-                    "ambient": { "r": 1, "g": 1, "b": 1 },
-                    "diffuse": { "r": 1, "g": 1, "b": 1 },
-                    "specular": { "r": 1, "g": 1, "b": 1 }
-                },
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
 
-                "reflection": 1,
-                "n": 0,
-                "glossyness": 0,
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
 
-                "z-dir": "x",
-                "y-dir": "y",
+            //     "z-dir": "x",
+            //     "y-dir": "y",
 
-                "radius": 0.025,
-                "height": 1.5
-            },
+            //     "radius": 0.025,
+            //     "height": 1.5
+            // },
 
-            "axis-y": {
+            // "axis-y": {
 
-                "type": "cylinder",
-                "color": "green",
-                "position": "origin",
-                "glassy": false,
+            //     "type": "cylinder",
+            //     "color": "green",
+            //     "position": "origin",
+            //     "glassy": false,
 
-                "coeff": {
-                    "ambient": { "r": 1, "g": 1, "b": 1 },
-                    "diffuse": { "r": 1, "g": 1, "b": 1 },
-                    "specular": { "r": 1, "g": 1, "b": 1 }
-                },
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
 
-                "reflection": 1,
-                "n": 0,
-                "glossyness": 0,
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
 
-                "z-dir": "y",
-                "y-dir": "z",
+            //     "z-dir": "y",
+            //     "y-dir": "z",
 
-                "radius": 0.025,
-                "height": 1.5
-            },
+            //     "radius": 0.025,
+            //     "height": 1.5
+            // },
 
-            "axis-z": {
+            // "axis-z": {
 
-                "type": "cylinder",
-                "color": "blue",
-                "position": "origin",
-                "glassy": false,
+            //     "type": "cylinder",
+            //     "color": "blue",
+            //     "position": "origin",
+            //     "glassy": false,
 
-                "coeff": {
-                    "ambient": { "r": 1, "g": 1, "b": 1 },
-                    "diffuse": { "r": 1, "g": 1, "b": 1 },
-                    "specular": { "r": 1, "g": 1, "b": 1 }
-                },
+            //     "coeff": {
+            //         "ambient": { "r": 1, "g": 1, "b": 1 },
+            //         "diffuse": { "r": 1, "g": 1, "b": 1 },
+            //         "specular": { "r": 1, "g": 1, "b": 1 }
+            //     },
 
-                "reflection": 1,
-                "n": 0,
-                "glossyness": 0,
+            //     "reflection": 1,
+            //     "n": 0,
+            //     "glossyness": 0,
 
-                "z-dir": "z",
-                "y-dir": "x",
+            //     "z-dir": "z",
+            //     "y-dir": "x",
 
-                "radius": 0.025,
-                "height": 1.5
-            },
+            //     "radius": 0.025,
+            //     "height": 1.5
+            // },
 
             "plane-x": {
 
@@ -192,7 +193,7 @@
             "cylinder-x": {
 
                 "type": "cylinder",
-                "color": "pink",
+                "color": "hotpink",
                 "position": "origin",
                 "glassy": false,
 
@@ -209,15 +210,15 @@
                 "z-dir": "x",
                 "y-dir": "y",
 
-                "radius": 0.25,
-                "height": 1.5
+                "radius": 0.3,
+                "height": 1.25
             },
 
             "sphere": {
 
                 "type": "sphere",
                 "color": "orange",
-                "position": { "x": 0, "y": 0, "z": 0.5 },
+                "position": { "x": 0, "y": 0, "z": 0.25 },
                 "glassy": true,
 
                 "coeff": {
@@ -233,7 +234,76 @@
                 "z-dir": "z",
                 "y-dir": "y",
 
-                "radius": 0.5
+                "radius": 0.75
+            },
+
+            "moon-1": {
+
+                "type": "sphere",
+                "color": "darkmagenta",
+                "position": { "x": 1.25, "y": 0, "z": 0 },
+                "glassy": false,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 0,
+
+                "z-dir": "z",
+                "y-dir": "y",
+
+                "radius": 0.15
+            },
+
+            "moon-2": {
+
+                "type": "sphere",
+                "color": "darkmagenta",
+                "position": { "x": 0, "y": 1.25, "z": 0 },
+                "glassy": false,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 0,
+
+                "z-dir": "z",
+                "y-dir": "y",
+
+                "radius": 0.15
+            },
+
+            "moon-3": {
+
+                "type": "sphere",
+                "color": "darkmagenta",
+                "position": { "x": 0, "y": 0, "z": 1.25 },
+                "glassy": false,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 0,
+
+                "z-dir": "z",
+                "y-dir": "y",
+
+                "radius": 0.15
             }
         },
 
@@ -261,7 +331,7 @@
 
     "camera": {
 
-        "eye": { "x": 2, "y": 2, "z": 2 },
+        "eye": { "x": 3, "y": 3, "z": 3 },
         "look-at": "origin",
         "up-dir": "y",
         "focale": 3,
