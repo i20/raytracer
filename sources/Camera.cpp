@@ -223,13 +223,13 @@ void Camera::sobel_aa () {
                     for (uintmax_t kj = 0; kj < aa_base; kj++) {
                         for (uintmax_t ki = 0; ki < aa_base; ki++) {
 
-                            // // Fixed grid
-                            // float xr = x_start - this->pasx * (i + (ki + .5) / (float)aa_base);
-                            // float yr = y_start - this->pasy * (j + (kj + .5) / (float)aa_base);
+                            // Fixed grid
+                            float xr = x_start - this->pasx * (i + (ki + .5) / (float)aa_base);
+                            float yr = y_start - this->pasy * (j + (kj + .5) / (float)aa_base);
 
-                            // Jittered grid
-                            float xr = x_start - this->pasx * (i + (ki + Camera::random()) / (float)aa_base);
-                            float yr = y_start - this->pasy * (j + (kj + Camera::random()) / (float)aa_base);
+                            // // Jittered grid
+                            // float xr = x_start - this->pasx * (i + (ki + Camera::random()) / (float)aa_base);
+                            // float yr = y_start - this->pasy * (j + (kj + Camera::random()) / (float)aa_base);
 
                             Vector dir = this->base * Vector(xr, yr, this->focale);
                             Ray ray(this->eye, dir, false, 0);

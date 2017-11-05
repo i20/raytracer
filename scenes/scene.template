@@ -137,7 +137,7 @@
         "fov": <deg>,
         "projection-type": "perspective" | "orthographic",
         "trace-depth": <uint>,
-        "aa-depth": <uint>,
+        "aa-depth": <uint>, # Best combination result/performance seems to be x4 with fixed grid
         "aa-threshold": <uint8>,
         "viewport": {
             "width": <uint>,
