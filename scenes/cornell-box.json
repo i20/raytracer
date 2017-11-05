@@ -6,7 +6,10 @@
 
         "red": { "r": 255, "g": 0, "b": 0 },
         "green": { "r": 0, "g": 255, "b": 0 },
-        "blue": { "r": 0, "g": 0, "b": 255 }
+        "blue": { "r": 0, "g": 0, "b": 255 },
+
+        "orange": { "r": 255, "g": 128, "b": 0 },
+        "pink": { "r": 255, "g": 105, "b": 180 }
     },
 
     "positions": {
@@ -33,6 +36,7 @@
     "scene": {
 
         "title": "Cornell box",
+        "background-color": "black",
 
         "objects": {
 
@@ -44,7 +48,6 @@
                 "color": "red",
                 "position": "origin",
                 "glassy": false,
-                "texture": null,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -54,13 +57,12 @@
 
                 "reflection": 1,
                 "n": 0,
-                "glossyness": 10,
-
-                "radius": 0.025,
+                "glossyness": 0,
 
                 "z-dir": "x",
                 "y-dir": "y",
 
+                "radius": 0.025,
                 "height": 1.5
             },
 
@@ -70,7 +72,6 @@
                 "color": "green",
                 "position": "origin",
                 "glassy": false,
-                "texture": null,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -80,13 +81,12 @@
 
                 "reflection": 1,
                 "n": 0,
-                "glossyness": 10,
-
-                "radius": 0.025,
+                "glossyness": 0,
 
                 "z-dir": "y",
                 "y-dir": "z",
 
+                "radius": 0.025,
                 "height": 1.5
             },
 
@@ -96,7 +96,6 @@
                 "color": "blue",
                 "position": "origin",
                 "glassy": false,
-                "texture": null,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -106,13 +105,12 @@
 
                 "reflection": 1,
                 "n": 0,
-                "glossyness": 10,
-
-                "radius": 0.025,
+                "glossyness": 0,
 
                 "z-dir": "z",
                 "y-dir": "x",
 
+                "radius": 0.025,
                 "height": 1.5
             },
 
@@ -138,8 +136,8 @@
                 "z-dir": "-y",
                 "y-dir": "x",
 
-                "height": 10,
-                "width": 10
+                "width": 10,
+                "height": 10
             },
 
             "wall-back": {
@@ -162,8 +160,8 @@
                 "z-dir": "z",
                 "y-dir": "x",
 
-                "height": 10,
-                "width": 10
+                "width": 10,
+                "height": 10
             },
 
             "wall-bottom": {
@@ -186,8 +184,8 @@
                 "z-dir": "y",
                 "y-dir": "x",
 
-                "height": 10,
-                "width": 10
+                "width": 10,
+                "height": 10
             },
 
             "wall-left": {
@@ -210,8 +208,8 @@
                 "z-dir": "x",
                 "y-dir": "y",
 
-                "height": 10,
-                "width": 10
+                "width": 10,
+                "height": 10
             },
 
             "wall-right": {
@@ -234,8 +232,8 @@
                 "z-dir": "-x",
                 "y-dir": "y",
 
-                "height": 10,
-                "width": 10
+                "width": 10,
+                "height": 10
             },
 
             // Spheres
@@ -246,17 +244,21 @@
                 "position": { "x": 3, "y": 1, "z": 3 },
                 "color": "black",
                 "glassy": true,
-                "reflection": 1,
-                "radius": 1,
+
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
                     "diffuse": { "r": 1, "g": 1, "b": 1 },
                     "specular": { "r": 1, "g": 1, "b": 1 }
                 },
-                "n": 0, // float
+
+                "reflection": 1,
+                "n": 0,
                 "glossyness": 0,
+
                 "z-dir": "z",
-                "y-dir": "y"
+                "y-dir": "y",
+
+                "radius": 1
             }
         },
 
@@ -264,7 +266,7 @@
 
             "ambient": {
 
-                "type": "ambient", // punctual | spot | ambient
+                "type": "ambient",
                 "intensity": { "r": 0.2, "g": 0.2, "b": 0.2 }
             },
 
@@ -274,14 +276,12 @@
                 "intensity": { "r": 0.5, "g": 0.5, "b": 0.5 },
                 "position": { "x": 5, "y": 9, "z": 5 },
                 "attenuation": {
-                    "constant": 1, // float
-                    "linear": 0, // float
-                    "quadratic": 0.01 // float
+                    "constant": 1,
+                    "linear": 0,
+                    "quadratic": 0.01
                 }
             }
-        },
-
-        "background-color": "black"
+        }
     },
 
     "camera": {

@@ -134,7 +134,7 @@
         "look-at": *position*,
         "up-dir": *vector*,
         "focale": <ufloat>,
-        "fov": <ufloat>,
+        "fov": <deg>,
         "projection-type": "perspective" | "orthographic",
         "trace-depth": <uint>,
         "aa-depth": <uint>,
