@@ -1,4 +1,5 @@
 .DS_Store
 Cuda
 objects/*
+screenshots/*
 raytracer
