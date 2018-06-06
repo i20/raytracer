@@ -1,6 +1,8 @@
 #ifndef _CAMERA_HPP
 #define _CAMERA_HPP
 
+#include <cstdint>
+
 #include "../headers/Color.hpp"
 #include "../headers/Ray.hpp"
 #include "../headers/Intersection.hpp"
@@ -9,8 +11,6 @@
 #include "../headers/Scene.hpp"
 #include "../headers/Matrix.hpp"
 #include "../headers/Texture.hpp"
-
-#include <stdint.h>
 
 using namespace std;
 

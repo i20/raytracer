@@ -1,7 +1,7 @@
+#include <sstream>
+
 #include "../headers/Octree.hpp"
 #include "../headers/Mesh.hpp"
-
-#include <sstream>
 
 using namespace std;
 

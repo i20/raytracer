@@ -1,6 +1,9 @@
 #ifndef _OBJECT_HPP
 #define _OBJECT_HPP
 
+#include <vector>
+#include <string>
+
 #include "../headers/Ray.hpp"
 #include "../headers/Vector.hpp"
 #include "../headers/Point.hpp"
@@ -15,9 +18,6 @@
 //#include "../headers/Intersection.hpp"
 // Circular reference
 class Intersection;
-
-#include <vector>
-#include <string>
 
 using namespace std;
 

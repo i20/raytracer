@@ -1,5 +1,5 @@
 #include <cmath>
-#include <stdint.h>
+#include <cstdint>
 
 #include <iostream>
 

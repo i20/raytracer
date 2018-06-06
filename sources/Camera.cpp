@@ -1,5 +1,6 @@
 #include <cmath>
 #include <ctime>
+#include <cstdint>
 
 #include "../headers/Color.hpp"
 #include "../headers/Ray.hpp"
@@ -13,8 +14,6 @@
 #include "../headers/PunctualLight.hpp"
 
 #include "../headers/Camera.hpp"
-
-#include <stdint.h>
 
 using namespace std;
 

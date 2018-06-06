@@ -1,19 +1,20 @@
 #ifndef _MESH_HPP
 #define _MESH_HPP
 
+#include <cstdint>
+#include <cmath>
+
+#include <vector>
+#include <array>
+#include <unordered_map>
+#include <string>
+
 #include "../headers/Object.hpp"
 #include "../headers/Ray.hpp"
 #include "../headers/Vector.hpp"
 #include "../headers/Point.hpp"
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
-
-#include <stdint.h>
-#include <vector>
-#include <array>
-#include <unordered_map>
-#include <string>
-#include <cmath>
 
 using namespace std;
 

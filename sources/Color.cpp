@@ -1,7 +1,7 @@
-#include <sstream>
+#include <cstdint>
 
+#include <sstream>
 #include <string>
-#include <stdint.h>
 
 #include "../headers/Color.hpp"
 

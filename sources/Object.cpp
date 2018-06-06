@@ -1,3 +1,11 @@
+#include <cstdint>
+#include <cmath>
+#include <cfloat> // FLT_EPSILON
+#include <cstring>
+
+#include <string>
+#include <sstream>
+
 #include "../headers/Object.hpp"
 
 #include "../headers/Triangle.hpp"
@@ -10,14 +18,6 @@
 #include "../headers/Texture.hpp"
 #include "../headers/Intersection.hpp"
 #include "../headers/TTPair.hpp"
-
-#include <string>
-
-#include <stdint.h>
-#include <cmath>
-#include <cfloat> // FLT_EPSILON
-#include <sstream>
-#include <cstring>
 
 using namespace std;
 

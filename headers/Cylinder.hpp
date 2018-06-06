@@ -1,6 +1,11 @@
 #ifndef _CYLINDER_HPP
 #define _CYLINDER_HPP
 
+#include <cmath>
+
+#include <vector>
+#include <string>
+
 #include "../headers/Object.hpp"
 #include "../headers/Ray.hpp"
 #include "../headers/Vector.hpp"
@@ -9,10 +14,6 @@
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
 #include "../headers/Octree.hpp"
-
-#include <cmath>
-#include <vector>
-#include <string>
 
 using namespace std;
 

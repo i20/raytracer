@@ -1,10 +1,11 @@
+#include <cstdint>
+
 #include <unordered_map>
 #include <sstream>
 #include <string>
-#include <stdint.h>
 #include <fstream>
 
-#include "../libraries/libjson-7.6.1/libjson.h"
+#include <libjson.h>
 
 #include "../headers/Color.hpp"
 #include "../headers/Point.hpp"

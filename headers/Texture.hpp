@@ -1,10 +1,11 @@
 #ifndef _TEXTURE_HPP
 #define _TEXTURE_HPP
 
-#include <stdint.h>
+#include <cstdint>
+#include <cmath>
+
 #include <vector>
 #include <fstream>
-#include <cmath>
 
 using namespace std;
 

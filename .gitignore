@@ -2,4 +2,11 @@
 Cuda
 objects/*
 screenshots/*
+
+sources/gpu-raytracer.cu
+libraries/libjson-7.6.1/libjson.a
+libraries/libjson-7.6.1/Objects_static/*
+
 raytracer
+gpu-info
+gpu-raytracer

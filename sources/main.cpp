@@ -1,3 +1,15 @@
+#include <cstdlib>
+#include <ctime>
+#include <cstdint>
+
+#include <vector>
+#include <iostream>
+#include <sstream>
+
+#include <omp.h>
+#include <SDL2/SDL.h>
+#include <SDL2_ttf/SDL_ttf.h>
+
 #include "../headers/Scene.hpp"
 #include "../headers/Camera.hpp"
 #include "../headers/Texture.hpp"
@@ -18,17 +30,6 @@
 
 #include "../headers/Term.hpp"
 #include "../headers/Loader.hpp"
-
-#include <vector>
-#include <cstdlib>
-#include <iostream>
-#include <sstream>
-#include <ctime>
-#include <stdint.h>
-#include <omp.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2_ttf/SDL_ttf.h>
 
 #define VIEWPORT_WIDTH 500
 #define VIEWPORT_HEIGHT 500
@@ -141,7 +142,7 @@ int main (const int argc, const char ** argv) {
         TTF_Init();
         TTF_Font * font = TTF_OpenFont("Sathu.ttf", 12);
 
-        uint32_t pixels[loader.camera->px_width * loader.camera->px_height];
+        uint32_t * pixels = new uint32_t[loader.camera->px_width * loader.camera->px_height];
 
         struct rendering_data_s data;
 
@@ -385,6 +386,8 @@ int main (const int argc, const char ** argv) {
         SDL_FreeSurface(icon);
         SDL_DestroyWindow(window);
         SDL_Quit();
+
+        delete [] pixels;
 
         cout << "Exit normally, goodbye" << endl;
 

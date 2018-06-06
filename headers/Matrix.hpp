@@ -1,11 +1,11 @@
 #ifndef _MATRIX_HPP
 #define _MATRIX_HPP
 
+#include <string>
+
 #include "../headers/Vector.hpp"
 #include "../headers/Point.hpp"
 #include "../headers/Ray.hpp"
-
-#include <string>
 
 using namespace std;
 

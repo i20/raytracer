@@ -1,14 +1,15 @@
 #ifndef _OCTREE_HPP
 #define _OCTREE_HPP
 
+#include <cstdint>
+
+#include <string>
+#include <vector>
+
 #include "../headers/Point.hpp"
 #include "../headers/Vector.hpp"
 #include "../headers/Triangle.hpp"
 #include "../headers/Ray.hpp"
-
-#include <string>
-#include <vector>
-#include <stdint.h>
 
 // Whether to use packed children or a NULL spanned array
 // If false, absent children will be valued to NULL in this->children

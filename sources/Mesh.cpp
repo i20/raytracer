@@ -1,11 +1,11 @@
-#include "../headers/Mesh.hpp"
-#include "../headers/Triangle.hpp"
-#include "../headers/Octree.hpp"
-
 #include <sstream>
 #include <fstream>
 #include <unordered_map>
 #include <iostream>
+
+#include "../headers/Mesh.hpp"
+#include "../headers/Triangle.hpp"
+#include "../headers/Octree.hpp"
 
 using namespace std;
 

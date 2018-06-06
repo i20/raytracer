@@ -1,6 +1,6 @@
-#include "../headers/Term.hpp"
-
 #include <string>
+
+#include "../headers/Term.hpp"
 
 using namespace std;
 

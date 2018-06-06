@@ -1,12 +1,11 @@
 #include <cmath>
-#include <stdint.h>
-#include <sstream>
+#include <cstdint>
 #include <cstring>
 
+#include <sstream>
 #include <string>
 
 #include "../headers/Point.hpp"
-
 #include "../headers/Vector.hpp"
 
 using namespace std;

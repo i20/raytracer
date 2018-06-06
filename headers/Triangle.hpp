@@ -1,10 +1,11 @@
 #ifndef _TRIANGLE_HPP
 #define _TRIANGLE_HPP
 
-#include "../headers/Vector.hpp"
+#include <cstdint>
 
-#include <stdint.h>
 #include <string>
+
+#include "../headers/Vector.hpp"
 
 using namespace std;
 

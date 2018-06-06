@@ -3,6 +3,9 @@
 
 #include <cmath>
 
+#include <vector>
+#include <string>
+
 #include "../headers/Object.hpp"
 #include "../headers/Ray.hpp"
 #include "../headers/Vector.hpp"
@@ -11,10 +14,6 @@
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
 #include "../headers/Octree.hpp"
-
-#include <vector>
-#include <string>
-#include <cmath>
 
 using namespace std;
 

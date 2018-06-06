@@ -1,9 +1,9 @@
-#include "../headers/Triangle.hpp"
-#include "../headers/Mesh.hpp"
-
 #include <string>
 #include <sstream>
 #include <iostream>
+
+#include "../headers/Triangle.hpp"
+#include "../headers/Mesh.hpp"
 
 using namespace std;
 

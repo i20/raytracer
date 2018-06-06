@@ -61,7 +61,7 @@
  *  this would be a client application communicating with a server if the server
  *  returns things like last modified date and other things that you don't use.
  */
-//#define JSON_PREPARSE
+#define JSON_PREPARSE
 
 
 /*
@@ -94,7 +94,7 @@
  *  JSON_BINARY is used to support binary, which is base64 encoded and decoded by libjson,
  *  if this option is not turned off, no base64 support is included
  */
-#define JSON_BINARY
+//#define JSON_BINARY
 
 
 /*
@@ -102,7 +102,7 @@
  *  and decoding.  This may be useful if you want to obfuscate your json, or send binary data over
  *  a network
  */
-#define JSON_EXPOSE_BASE64
+//#define JSON_EXPOSE_BASE64
 
 
 /*
@@ -253,14 +253,14 @@
 /*
  *  JSON_VALIDATE turns on validation features of libjson.
  */
-#define JSON_VALIDATE
+//#define JSON_VALIDATE
 
 
 /*
  *  JSON_CASE_INSENSITIVE_FUNCTIONS turns on functions for finding child nodes in a case-
  *  insensititve way
  */
-#define JSON_CASE_INSENSITIVE_FUNCTIONS
+//#define JSON_CASE_INSENSITIVE_FUNCTIONS
 
 
 /*
@@ -276,21 +276,21 @@
  *  was no bool, and even then it's just a typedef, you may want to use something else.  If this
  *  is not defined, it will revert to int
  */
-//#define JSON_BOOL_TYPE char
+#define JSON_BOOL_TYPE bool
 
 
 /*
  *  JSON_INT_TYPE lets you change the int type for as_int.  If you ommit this option, the default
  *  long will be used
  */
-//#define JSON_INT_TYPE long
+#define JSON_INT_TYPE int
 
 
 /*
  *  JSON_NUMBER_TYPE lets you change the number type for as_float as well as the internal storage for the
  *	number.  If you omit this option, the default double will be used for most cases and float for JSON_LESS_MEMORY
  */
-//#define JSON_NUMBER_TYPE double
+#define JSON_NUMBER_TYPE float
 
 
 /*
@@ -321,7 +321,7 @@
  *  compatibility between major releases.  It is highly recommended that you move your functions
  *  over to the new equivalents
  */
-#define JSON_DEPRECATED_FUNCTIONS
+//#define JSON_DEPRECATED_FUNCTIONS
 
 
 /*

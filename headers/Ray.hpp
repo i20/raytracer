@@ -1,8 +1,9 @@
 #ifndef _RAY_HPP
 #define _RAY_HPP
 
+#include <cstdint>
+
 #include <string>
-#include <stdint.h>
 
 #include "../headers/Point.hpp"
 #include "../headers/Vector.hpp"

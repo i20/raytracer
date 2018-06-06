@@ -1,5 +1,12 @@
-#include "../headers/Cylinder.hpp"
+#include <cstdint>
+#include <cmath>
 
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iostream>
+
+#include "../headers/Cylinder.hpp"
 #include "../headers/Object.hpp"
 #include "../headers/Ray.hpp"
 #include "../headers/Vector.hpp"
@@ -8,15 +15,6 @@
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
 #include "../headers/Octree.hpp"
-
-#include <string>
-
-#include <vector>
-#include <stdint.h>
-#include <cmath>
-#include <sstream>
-
-#include <iostream>
 
 using namespace std;
 

@@ -1,8 +1,9 @@
 #ifndef _COLOR_HPP
 #define _COLOR_HPP
 
+#include <cstdint>
+
 #include <string>
-#include <stdint.h>
 
 using namespace std;
 

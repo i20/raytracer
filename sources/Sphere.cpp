@@ -1,3 +1,10 @@
+#include <cstdint>
+#include <cmath>
+
+#include <vector>
+#include <string>
+#include <sstream>
+
 #include "../headers/Sphere.hpp"
 
 #include "../headers/Object.hpp"
@@ -8,13 +15,6 @@
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
 #include "../headers/Octree.hpp"
-
-#include <vector>
-#include <string>
-
-#include <stdint.h>
-#include <cmath>
-#include <sstream>
 
 using namespace std;
 

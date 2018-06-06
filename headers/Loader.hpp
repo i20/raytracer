@@ -1,11 +1,12 @@
 #ifndef _LOADER_HPP
 #define _LOADER_HPP
 
+#include <cstdint>
+
 #include <unordered_map>
 #include <string>
-#include <stdint.h>
 
-#include "../libraries/libjson-7.6.1/libjson.h"
+#include <libjson.h>
 
 #include "../headers/Color.hpp"
 #include "../headers/Point.hpp"

@@ -1,18 +1,16 @@
 #include <cmath>
-#include <stdint.h>
-#include <sstream>
+#include <cstdint>
 #include <cstring>
 
-
+#include <sstream>
 #include <string>
+#include <iostream>
 
 #include "../headers/Vector.hpp"
 #include "../headers/Point.hpp"
 #include "../headers/Ray.hpp"
 
 #include "../headers/Matrix.hpp"
-
-#include <iostream>
 
 using namespace std;
 
