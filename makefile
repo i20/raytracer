@@ -50,7 +50,9 @@ CC := /usr/local/bin/g++-6
 # That way building with clang or nvcc should work the same way
 
 # Cuda does not support C++14 officially
-FLAGS := -Wall -pedantic -O3 -std=c++14 -fopenmp\
+# https://gcc.gnu.org/onlinedocs/gcc-8.1.0/gcc/Optimize-Options.html#Optimize-Options
+# -fuse-linker-plugin : prefer to "-fwhole-program" but not supported by my gcc version
+FLAGS := -Wall -pedantic -O3 -flto -fwhole-program -std=c++14 -fopenmp\
 -F"$(LDIR)"\
 -I"$(LJSONDIR)"
 

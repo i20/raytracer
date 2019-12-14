@@ -18,6 +18,7 @@ class AmbientLight : public Light {
         AmbientLight & operator= (const AmbientLight & light);
 
         virtual Color compute_luminosity (const Intersection & inter, const Scene & scene) const override;
+        virtual void emit_photons () const override;
 };
 
 #endif

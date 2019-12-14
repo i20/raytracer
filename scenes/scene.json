@@ -117,21 +117,59 @@
                 "height": 1.5
             },
 
-            // "plane-xz": {
+            "plane-xz": {
 
-            //     "type": "plane",
-            //     "color": null,
+                "type": "plane",
+                "color": null,
+                "position": "origin",
+                "glassy": false,
+
+                "textures": {
+                    "image": {
+                        "ref": "mosaic",
+                        "filtering": "bilinear"
+                    }
+                    // "normals": {
+                    //     "ref": "165",
+                    //     "filtering": "bilinear"
+                    // }
+                },
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 0,
+
+                "z-dir": "y",
+                "y-dir": "z",
+
+                "height": 50,
+                "width": 50
+            }
+
+            // "sphere-mesh": {
+
+            //     "type": "mesh",
             //     "position": "origin",
+            //     "shading": "phong",
+            //     "color": null,
             //     "glassy": false,
-            //
+
             //     "textures": {
             //         "image": {
             //             "ref": "mosaic",
-            //             "filtering": "bilinear"
+            //             "filtering": "bilinear",
+            //             "mapping": "./textures/sphere.tex"
             //         },
             //         "normals": {
             //             "ref": "165",
-            //             "filtering": "bilinear"
+            //             "filtering": "bilinear",
+            //             "mapping": "./textures/sphere.tex"
             //         }
             //     },
 
@@ -142,54 +180,16 @@
             //     },
 
             //     "reflection": 1,
-            //     "n": 0,
-            //     "glossyness": 0,
+            //     "n": 1.33,
+            //     "glossyness": 100,
 
-            //     "z-dir": "y",
-            //     "y-dir": "z",
+            //     "file": "./meshes/sphere.off",
 
-            //     "height": 50,
-            //     "width": 50
+            //     "z-dir": "z",
+            //     "y-dir": "y",
+
+            //     "use-octree": true
             // }
-
-            "sphere-mesh": {
-
-                "type": "mesh",
-                "position": "origin",
-                "shading": "phong",
-                "color": null,
-                "glassy": false,
-
-                "textures": {
-                    "image": {
-                        "ref": "mosaic",
-                        "filtering": "bilinear",
-                        "mapping": "./textures/sphere.tex"
-                    },
-                    "normals": {
-                        "ref": "165",
-                        "filtering": "bilinear",
-                        "mapping": "./textures/sphere.tex"
-                    }
-                },
-
-                "coeff": {
-                    "ambient": { "r": 1, "g": 1, "b": 1 },
-                    "diffuse": { "r": 1, "g": 1, "b": 1 },
-                    "specular": { "r": 1, "g": 1, "b": 1 }
-                },
-
-                "reflection": 1,
-                "n": 1.33,
-                "glossyness": 100,
-
-                "file": "./meshes/sphere.off",
-
-                "z-dir": "z",
-                "y-dir": "y",
-
-                "use-octree": true
-            }
         },
 
         "lights": {

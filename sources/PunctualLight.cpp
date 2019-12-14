@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 
 #include <iostream>
 
@@ -110,17 +111,74 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
     return Color(c[0], c[1], c[2]);
 }
 
-// void emit_photons () const {
+void PunctualLight::emit_photons () const {
 
-//     uintmax_t n_photons = <the powerfuller the light, the higher the number>;
+    uintmax_t n_photons = <the powerfuller the light, the higher the number>;
 
-//     for (uintmax_t i = 0; i < n_photons; i++) {
+    for (uintmax_t i = 0; i < n_photons; i++) {
 
-//         int8_t x, y, z;
-//         x = 2 * rand() / (float)RAND_MAX - 1; // -1 <= x <= 1
-//         y = 2 * rand() / (float)RAND_MAX - 1; // -1 <= y <= 1
-//         z = 2 * rand() / (float)RAND_MAX - 1; // -1 <= z <= 1
+        // Choose a random direction across a ball (punctual light)
+        // The while condition allow to have a uniform distribution across a ball instead of a cube
+        // Otherwise, after direction normalization we would have more chances to have directions toward the cube's corners
+        float x, y, z;
+        do {
+            x = 2 * rand() / (float)RAND_MAX - 1; // -1 <= x <= 1
+            y = 2 * rand() / (float)RAND_MAX - 1; // -1 <= y <= 1
+            z = 2 * rand() / (float)RAND_MAX - 1; // -1 <= z <= 1
+        } while ( x * x + y * y + z * z > 1 );
 
-//         float photon_power = this->trace_photon(this->position, Vector(x, y, z)) / n_photons;
-//     }
-// }
+        float photon_power = this->trace_photon(Photon(this->position, Vector(x, y, z))) / n_photons;
+    }
+}
+
+Color PunctualLight::trace_photon (const Photon & photon) const {
+
+    Intersection ninter;
+
+    if ( !camera->compute_nearest_intersection(ninter, ray) )
+        return this->scene.bg_color;
+
+    // Photon has just hit a surface, we must decide its fate amongst "reflected" / "refracted" / "absorbed" depending on surface properties
+
+    if (ninter.object->is_glassy)
+
+        3 * rand() / (float)RAND_MAX
+
+    // Compute ambient, diffuse and specular reflection (Phong's 3 components)
+    // If light reflection computation counts as level + 1 then the next ray.level + 1 test becomes mandatory
+    // This calculation is only for direct enlighment, refracted must be simulated via photon mapping
+
+    for (const auto & light_entry : this->scene.lights)
+
+        // Vector dir(ninter.point, ((PunctualLight*)(light_entry.second))->position);
+        // // #TODO how do we know if shadow ray is inside or outside the object (ray can pass through the object)?
+        // Ray shadow_ray(ninter.point, dir, ray.in, ray.level);
+
+        clr = clr + light_entry.second->compute_luminosity(ninter, this->scene);
+
+    if (ray.level + 1 == this->tracing_depth)
+        return clr;
+
+    // From this point all rays are level + 1
+    Color cr, ct;
+    Ray rt, rr;
+
+    // #TODO optimize r and t color calculation in one loop
+    if ( ninter.object->compute_r_ray(rr, ninter) )
+        cr = this->radiate(rr) * ninter.object->r;
+
+    if ( ninter.object->compute_t_ray(rt, ninter) )
+        ct = this->radiate(rt) * (1 - ninter.object->r);
+
+    // TODO use operator+ from Color with variadic parameters to optimize
+    uint8_t c[3];
+    for (uint8_t i = 0; i < 3; i++) {
+
+        // 0 <= sum <= 1020 (255 * 4)
+        // 0 <= uint16_t <= 65 535
+        uint16_t sum = /*ca.c[i] +*/ clr.c[i] + cr.c[i] + ct.c[i];
+        c[i] = 255 < sum ? 255 : sum;
+    }
+
+    return Color(c[0], c[1], c[2]);
+}

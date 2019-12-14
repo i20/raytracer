@@ -13,6 +13,7 @@ class Light {
 
     public:
 
+        // 0 <= i < +inf
         float i[3];
 
         Light (const float ir, const float ig, const float ib);
@@ -21,9 +22,7 @@ class Light {
         Light & operator= (const Light & light);
 
         virtual Color compute_luminosity (const Intersection & inter, const Scene & scene) const = 0;
-
-        // Photon mapping required methods
-        // virtual void emit_photons () const = 0;
+        virtual void emit_photons () const = 0;
 
     protected:
 

@@ -29,3 +29,7 @@ Color AmbientLight::compute_luminosity(const Intersection & inter, const Scene &
 
     return Color(c[0], c[1], c[2]);
 }
+
+void AmbientLight::emit_photons () const {
+    // Do nothing
+}

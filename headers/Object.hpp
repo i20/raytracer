@@ -43,7 +43,8 @@ class Object {
         float s[3];   /* specularite [0;inf] */
         float r;   /* reflection [0;1] part of enlightment due to reflection, part due to refraction will be 1-r */
         float n;   /* refraction */
-        float g;   /* brillance (shininess, glossiness), 0 < g */
+
+        float g;   /* brillance (smoothness, shininess, glossiness), 0 < g */
 
         Object(
             const Color & color,

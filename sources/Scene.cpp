@@ -95,3 +95,23 @@ Light & Scene::get_light(const char * id) {
 
     return *(it->second);
 }
+
+// --------------------------------------------------------------------------------------
+
+void Scene::scatter_photons () {
+
+    for (const auto & light_entry : this->lights) {
+
+        // NB_PHOTONS must be the same over all the lights to allow homogene photon mapping
+        // Brighter lights already have an intensity factor that makes their photons brighter
+        for (uint16_t i = 0; i < Scene::NB_PHOTONS; i++) {
+
+            {power, position, direction} = light_entry.second->emit_photons();
+            power /= Scene::NB_PHOTONS;
+            this->photon_map.insert({power, position, direction});
+        }
+    }
+
+    // Use KD-tree for fast nearest neighbour search (within a sphere)
+    this->photon_map.balance();
+}

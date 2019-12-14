@@ -22,7 +22,7 @@ class PunctualLight : public Light {
         PunctualLight & operator=(const PunctualLight & light);
 
         virtual Color compute_luminosity(const Intersection & inter, const Scene & scene) const override;
-        // virtual void emit_photons () const override;
+        virtual void emit_photons () const override;
 
     private:
 
