@@ -1,4 +1,6 @@
 .DS_Store
+@eaDir
+
 Cuda
 objects/*
 screenshots/*
