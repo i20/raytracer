@@ -151,7 +151,7 @@ int main (const int argc, const char ** argv) {
         bool stats = false;
 
         float translation_pas = 1;
-        float rotation_pas = 22.5;
+        float rotation_pas = 10;
 
         while (true) {
 
@@ -195,30 +195,26 @@ int main (const int argc, const char ** argv) {
 
                 // Rotation controls
                 if (event.key.keysym.sym == SDLK_LEFT) {
-
                     cout << "Left arrow key was pressed" << endl;
-                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::Y, -rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->rotate(Vector::Y, rotation_pas);
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_RIGHT) {
-
                     cout << "Right arrow key was pressed" << endl;
-                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::Y, rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->rotate(Vector::Y, -rotation_pas);
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_UP) {
-
                     cout << "Up arrow key was pressed" << endl;
-                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::X, -rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->rotate(Vector::X, -rotation_pas);
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_DOWN) {
-
                     cout << "Down arrow key was pressed" << endl;
-                    loader.camera->set_eye( loader.camera->zeta * (Matrix::ROTATION(Vector::X, rotation_pas) * (loader.camera->zinv * loader.camera->eye)) );
+                    loader.camera->rotate(Vector::X, rotation_pas);
                     render = true;
                 }
 
@@ -238,56 +234,26 @@ int main (const int argc, const char ** argv) {
 
                 // Translation controls
                 else if (event.key.keysym.sym == SDLK_q) {
-
                     cout << "Q key was pressed" << endl;
-                    Matrix tx = Matrix::TRANSLATION(Vector(-translation_pas, 0, 0));
-                    loader.camera->set_eye( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->eye)) );
-                    loader.camera->set_look_at( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->look_at)) );
+                    loader.camera->translate(Vector::X * translation_pas);
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_d) {
-
                     cout << "D key was pressed" << endl;
-                    Matrix tx = Matrix::TRANSLATION(Vector(translation_pas, 0, 0));
-                    loader.camera->set_eye( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->eye)) );
-                    loader.camera->set_look_at( loader.camera->zeta * (tx * (loader.camera->zinv * loader.camera->look_at)) );
+                    loader.camera->translate(Vector::X * -translation_pas);
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_z) {
-
                     cout << "Z key was pressed" << endl;
-                    Matrix ty = Matrix::TRANSLATION(Vector(0, translation_pas, 0));
-                    loader.camera->set_eye( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->eye)) );
-                    loader.camera->set_look_at( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->look_at)) );
+                    loader.camera->translate(Vector::Z * translation_pas);
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_s) {
-
                     cout << "S key was pressed" << endl;
-                    Matrix ty = Matrix::TRANSLATION(Vector(0, -translation_pas, 0));
-                    loader.camera->set_eye( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->eye)) );
-                    loader.camera->set_look_at( loader.camera->zeta * (ty * (loader.camera->zinv * loader.camera->look_at)) );
-                    render = true;
-                }
-
-                else if (event.key.keysym.sym == SDLK_t) {
-
-                    cout << "T key was pressed" << endl;
-                    Matrix tz = Matrix::TRANSLATION(Vector(0, 0, -translation_pas));
-                    loader.camera->set_eye( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->eye)) );
-                    loader.camera->set_look_at( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->look_at)) );
-                    render = true;
-                }
-
-                else if (event.key.keysym.sym == SDLK_g) {
-
-                    cout << "G key was pressed" << endl;
-                    Matrix tz = Matrix::TRANSLATION(Vector(0, 0, translation_pas));
-                    loader.camera->set_eye( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->eye)) );
-                    loader.camera->set_look_at( loader.camera->zeta * (tz * (loader.camera->zinv * loader.camera->look_at)) );
+                    loader.camera->translate(Vector::Z * -translation_pas);
                     render = true;
                 }
 
@@ -302,7 +268,11 @@ int main (const int argc, const char ** argv) {
                 else if (event.key.keysym.sym == SDLK_j) {
 
                     cout << "J key was pressed" << endl;
-                    translation_pas -= .1;
+
+                    if (.2 < translation_pas)
+                        translation_pas -= .1;
+                    else
+                        translation_pas /= 2; // Avoid negative values
                 }
 
                 else if (event.key.keysym.sym == SDLK_i) {
@@ -314,7 +284,11 @@ int main (const int argc, const char ** argv) {
                 else if (event.key.keysym.sym == SDLK_k) {
 
                     cout << "K key was pressed" << endl;
-                    rotation_pas -= 1;
+
+                    if (2 < rotation_pas)
+                        rotation_pas -= 1;
+                    else
+                        rotation_pas /= 2; // Avoid negative values
                 }
 
                 // Eye controls
@@ -348,31 +322,33 @@ int main (const int argc, const char ** argv) {
                     cout << Term::RC << Term::CLR << "Scene printing took " << Term::FGC_GREEN << timer(t) << Term::R << " seconds" << endl;
                 }
 
-                // TODO
-                // Reload scene from file
-                else if (event.key.keysym.sym == SDLK_r) {
+                // // TODO
+                // // Reload scene from file
+                // else if (event.key.keysym.sym == SDLK_r) {
 
-                    cout << "R key was pressed" << endl;
+                //     cout << "R key was pressed" << endl;
 
-                    stringstream ss;
-                    ss << "./screenshots/" << time(nullptr) << ".ppm";
+                //     SDL_SetWindowTitle
+                //     SDL_SetWindowSize
+                //     SDL_SetWindowData
 
-                    cout << Term::SC << "Loading scene file..." << endl;
+                //     stringstream ss;
+                //     ss << "./screenshots/" << time(nullptr) << ".ppm";
 
-                    t = omp_get_wtime();
-                    loader.camera->print(ss.str().c_str());
-                    cout << Term::RC << Term::CLR << "Scene loading took " << Term::FGC_GREEN << timer(t) << Term::R << " seconds" << endl;
-                }
+                //     cout << Term::SC << "Reloading scene file..." << endl;
+
+                //     t = omp_get_wtime();
+                //     loader.camera->print(ss.str().c_str());
+                //     cout << Term::RC << Term::CLR << "Scene loading took " << Term::FGC_GREEN << timer(t) << Term::R << " seconds" << endl;
+                // }
 
                 else if (event.key.keysym.sym == SDLK_ESCAPE) {
-
                     cout << "Escape key was pressed" << endl;
                     break;
                 }
             }
 
             else if (event.type == SDL_QUIT) {
-
                 cout << "Window was closed" << endl;
                 break;
             }

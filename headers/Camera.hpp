@@ -37,8 +37,7 @@ class Camera {
 
         // COMPUTED
 
-        // zeta is the camera-static base in the screen used to move in the scene
-        Matrix base, zeta, zinv;
+        Matrix base, inv;
 
         float proj_width, proj_height;
         float pasx, pasy;
@@ -73,10 +72,6 @@ class Camera {
 
         // SETTERS
 
-        void set_eye(const Point & eye);
-        void set_look_at(const Point & look_at);
-        void set_up(const Vector & up);
-
         void set_focale(const float focale);
         void set_fov(const float fov);
 
@@ -87,6 +82,9 @@ class Camera {
         void set_aa_threshold(const uintmax_t aa_threshold);
 
         void watch(const Scene & scene);
+
+        void rotate (const Vector & axis, const float pas);
+        void translate (const Vector & translation);
 
         // RENDER
 

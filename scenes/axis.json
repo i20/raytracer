@@ -1,0 +1,130 @@
+{
+    "colors": {
+
+        "black": { "r": 0, "g": 0, "b": 0 },
+        "white": { "r": 255, "g": 255, "b": 255 },
+
+        "red": { "r": 255, "g": 0, "b": 0 },
+        "green": { "r": 0, "g": 255, "b": 0 },
+        "blue": { "r": 0, "g": 0, "b": 255 }
+    },
+
+    "positions": {
+
+        "origin": { "x": 0, "y": 0, "z": 0 }
+    },
+
+    "vectors": {
+
+        "x": { "x": 1, "y": 0, "z": 0 },
+        "y": { "x": 0, "y": 1, "z": 0 },
+        "z": { "x": 0, "y": 0, "z": 1 }
+    },
+
+    "scene": {
+
+        "title": "Axes XYZ",
+        "background-color": "black",
+
+        "objects": {
+
+            "axis-x": {
+
+                "type": "cylinder",
+                "color": "red",
+                "position": "origin",
+                "glassy": false,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 0,
+
+                "z-dir": "x",
+                "y-dir": "y",
+
+                "radius": 0.025,
+                "height": 1.5
+            },
+
+            "axis-y": {
+
+                "type": "cylinder",
+                "color": "green",
+                "position": "origin",
+                "glassy": false,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 0,
+
+                "z-dir": "y",
+                "y-dir": "z",
+
+                "radius": 0.025,
+                "height": 1.5
+            },
+
+            "axis-z": {
+
+                "type": "cylinder",
+                "color": "blue",
+                "position": "origin",
+                "glassy": false,
+
+                "coeff": {
+                    "ambient": { "r": 1, "g": 1, "b": 1 },
+                    "diffuse": { "r": 1, "g": 1, "b": 1 },
+                    "specular": { "r": 1, "g": 1, "b": 1 }
+                },
+
+                "reflection": 1,
+                "n": 0,
+                "glossyness": 0,
+
+                "z-dir": "z",
+                "y-dir": "x",
+
+                "radius": 0.025,
+                "height": 1.5
+            }
+        },
+
+        "lights": {
+
+            "ambient": {
+
+                "type": "ambient",
+                "intensity": { "r": 0.5, "g": 0.5, "b": 0.5 }
+            }
+        }
+    },
+
+    "camera": {
+
+        "eye": { "x": 5, "y": 5, "z": 5 },
+        "look-at": "origin",
+        "up-dir": "y",
+        "focale": 3,
+        "fov": 45,
+        "projection-type": "perspective",
+        "trace-depth": 2,
+        "aa-depth": 0,
+        "aa-threshold": 50,
+        "viewport": {
+            "width": 500,
+            "height": 500
+        }
+    }
+}

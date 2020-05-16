@@ -7,8 +7,10 @@ V #TODO 1 : enforce same-objects intersection test by testing it in an epsilon s
 #TODO 7 Invert matrix should return a new matrix instead of modifying the calling instance
 #TODO 8 pasx and pasy seems to be equal, merge it
 
+- implement reload key "r"
+
 - implement cylinder is_closed
-- solve view switch when rotation around x
+v solve view switch when rotation around x
 - solve cam descent when rotation around y
 - why a part of the octree logic does reside in Object::compute_intersection? Isn't it a mesh thing?
 

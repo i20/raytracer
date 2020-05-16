@@ -23,22 +23,27 @@ void Camera::compute_bases () {
 
     // camera base vectors
     Vector zc = Vector(this->eye, this->look_at).normalize();
-    Vector xc = (up ^ zc).normalize();
+    Vector xc = (this->up ^ zc).normalize();
     Vector yc = zc ^ xc;
 
     this->base = Matrix::TRANSFER(this->eye, xc, yc, zc);
+    this->inv = this->base.invert();
+}
 
-    // zeta base vectors
-    float xz[3], zz[3];
-    for (uint8_t i = 0; i < 3; i++) {
+void Camera::rotate (const Vector & axis, const float pas) {
 
-        xz[i] = -xc.v[i];
-        zz[i] = -zc.v[i];
-    }
+    Matrix rotation = Matrix::ROTATION(axis, pas);
+    this->look_at = this->base * (rotation * (this->inv * this->look_at));
+    // Do not forget to update up otherwise rotation around x (with y up) will end in a sign switch (visual reversing)
+    this->up = this->base * (rotation * (this->inv * this->up));
+    this->compute_bases();
+}
 
-    this->zeta = Matrix::TRANSFER(this->look_at, Vector(xz[0], xz[1], xz[2]), yc, Vector(zz[0], zz[1], zz[2]));
+void Camera::translate (const Vector & translation) {
 
-    this->zinv = this->zeta.invert();
+    this->eye = this->eye + (this->base * translation);
+    this->look_at = this->look_at + (this->base * translation);
+    this->compute_bases();
 }
 
 void Camera::compute_projection_size () {
@@ -329,8 +334,7 @@ Camera::Camera(const Camera & camera) :
     scene(camera.scene),
 
     base(camera.base),
-    zeta(camera.zeta),
-    zinv(camera.zinv),
+    inv(camera.inv),
 
     proj_width(camera.proj_width),
     proj_height(camera.proj_height),
@@ -361,8 +365,7 @@ Camera & Camera::operator=(const Camera & camera) {
     this->scene = camera.scene;
 
     this->base = camera.base;
-    this->zeta = camera.zeta;
-    this->zinv = camera.zinv;
+    this->inv = camera.inv;
 
     this->proj_width = camera.proj_width;
     this->proj_height = camera.proj_height;
@@ -376,24 +379,6 @@ Camera & Camera::operator=(const Camera & camera) {
 }
 
 // SETTERS
-
-void Camera::set_eye(const Point & eye) {
-
-    this->eye = eye;
-    this->compute_bases();
-}
-
-void Camera::set_look_at(const Point & look_at) {
-
-    this->look_at = look_at;
-    this->compute_bases();
-}
-
-void Camera::set_up(const Vector & up) {
-
-    this->up = up;
-    this->compute_bases();
-}
 
 void Camera::set_focale(const float focale) {
 
