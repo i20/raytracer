@@ -101,8 +101,12 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
 
     scalar_s = 0 < scalar_s ? powf(scalar_s, inter.object->g) : 0;
 
-    // Be careful when d is small
-    float attenuation = 1 / (this->c + this->l * d + this->q * d * d);
+    // att c : 1 - c
+    // att l : 1 - ld
+    // att q : 1 - qdd
+
+    // attenuation factor should be 0 <= x <= 1
+    float attenuation = (1 - c) * (1 - min((float)1, l*d)) * (1 - min((float)1, q*d*d));
 
     uint8_t c[3];
     for (uint8_t i = 0; i < 3; i++)
