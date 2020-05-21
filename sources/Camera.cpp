@@ -21,7 +21,6 @@ static const float degrad = M_PI / 180;
 
 void Camera::compute_bases () {
 
-    // camera base vectors
     Vector zc = Vector(this->eye, this->look_at).normalize();
     Vector xc = (this->up ^ zc).normalize();
     Vector yc = zc ^ xc;
@@ -32,10 +31,26 @@ void Camera::compute_bases () {
 
 void Camera::rotate (const Vector & axis, const float pas) {
 
+    //@ Is there a reason I cannot juste write
+    //@ this->look_at = (this->base * Matrix::ROTATION(axis, pas)) * this->look_at;
+    //@ or even
+    //@ this->look_at = Matrix::ROTATION(this->base * axis, pas) * this->look_at;
+    //@ or maybe something is wrong with my Matrix * Matrix
+
     Matrix rotation = Matrix::ROTATION(axis, pas);
     this->look_at = this->base * (rotation * (this->inv * this->look_at));
     // Do not forget to update up otherwise rotation around x (with y up) will end in a sign switch (visual reversing)
     this->up = this->base * (rotation * (this->inv * this->up));
+    this->compute_bases();
+}
+
+void Camera::rotateScene (const Vector & axis, const float pas) {
+
+    Matrix rotation = Matrix::ROTATION(axis, pas);
+    this->eye = rotation * this->eye;
+    this->look_at = rotation * this->look_at;
+    // Do not forget to update up otherwise rotation around x (with y up) will end in a sign switch (visual reversing)
+    this->up = rotation * this->up;
     this->compute_bases();
 }
 
@@ -46,12 +61,21 @@ void Camera::translate (const Vector & translation) {
     this->compute_bases();
 }
 
+void Camera::reset () {
+
+    //@ Reset to true initialisation params
+    this->eye = Point(0, 0, 5);
+    this->look_at = Point::O;
+    this->up = Vector::Y;
+    this->compute_bases();
+}
+
 void Camera::compute_projection_size () {
 
     this->proj_width = 2 * this->focale * tan(this->fov / 2 * degrad);
     this->proj_height = this->proj_width * this->px_height / this->px_width;
 
-    //#TODO 8
+    //@ pasx and pasy seems to be equal, merge it
     this->pasx = this->proj_width / this->px_width;
     this->pasy = this->proj_height / this->px_height;
 }
@@ -206,24 +230,23 @@ void Camera::sobel_aa () {
                     uint16_t c[3] = {0, 0, 0};
                     Color aa_color;
 
-                    /*
-                    // Random sampling
-                    for (uintmax_t k = 0; k < this->aa_depth; k++) {
+                    //
 
-                        // Random coords in pixel ij
-                        float xr = x_start - this->pasx * (i + Camera::random());
-                        float yr = y_start - this->pasy * (j + Camera::random());
+                    // // Random sampling
+                    // for (uintmax_t k = 0; k < this->aa_depth; k++) {
 
-                        Vector dir = this->base * Vector(xr, yr, this->focale);
-                        Ray ray(this->eye, dir, false, 0);
-                        Color newc = this->radiate(ray);
+                    //     // Random coords in pixel ij
+                    //     float xr = x_start - this->pasx * (i + Camera::random());
+                    //     float yr = y_start - this->pasy * (j + Camera::random());
 
-                        for (uint8_t ii = 0; ii < 3; ii++)
-                            c[ii] += newc[ii];
-                    }
-                    /**/
+                    //     Vector dir = this->base * Vector(xr, yr, this->focale);
+                    //     Ray ray(this->eye, dir, false, 0);
+                    //     Color newc = this->radiate(ray);
 
-                    /**/
+                    //     for (uint8_t ii = 0; ii < 3; ii++)
+                    //         c[ii] += newc[ii];
+                    // }
+
                     // Grid 2x2 or 4x4
                     for (uintmax_t kj = 0; kj < aa_base; kj++) {
                         for (uintmax_t ki = 0; ki < aa_base; ki++) {
@@ -244,7 +267,8 @@ void Camera::sobel_aa () {
                                 c[ii] += newc[ii];
                         }
                     }
-                    /**/
+
+                    //
 
                     for (uint8_t ii = 0; ii < 3; ii++) {
                         c[ii] /= this->aa_depth;

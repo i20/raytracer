@@ -84,7 +84,10 @@ class Camera {
         void watch(const Scene & scene);
 
         void rotate (const Vector & axis, const float pas);
+        void rotateScene (const Vector & axis, const float pas);
         void translate (const Vector & translation);
+
+        void reset ();
 
         // RENDER
 

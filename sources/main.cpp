@@ -171,7 +171,7 @@ int main (const int argc, const char ** argv) {
 
                 uintmax_t w = 0;
 
-                // TODO openmp it
+                //@ Can it be parallelized with openmp ?
                 for (uintmax_t j = 1; j < loader.camera->px_height + 1; j++)
                     for (uintmax_t i = 1; i < loader.camera->px_width + 1; i++)
                         pixels[w++] = loader.camera->image.get_texel(i, j).get_rgba();
@@ -190,49 +190,60 @@ int main (const int argc, const char ** argv) {
 
             SDL_WaitEvent(&event);
 
+            // Get modifier keys states
+            SDL_Keymod modState = SDL_GetModState();
+
             // #REF https://wiki.libsdl.org/SDL_Keycode
             if (event.type == SDL_KEYDOWN) {
 
-                // Rotation controls
+                // Camera rotation controls
+
                 if (event.key.keysym.sym == SDLK_LEFT) {
                     cout << "Left arrow key was pressed" << endl;
-                    loader.camera->rotate(Vector::Y, rotation_pas);
+
+                    if (modState & KMOD_LSHIFT)
+                        loader.camera->rotateScene(Vector::Y, -rotation_pas);
+                    else
+                        loader.camera->rotate(Vector::Y, rotation_pas);
+
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_RIGHT) {
                     cout << "Right arrow key was pressed" << endl;
-                    loader.camera->rotate(Vector::Y, -rotation_pas);
+
+                    if (modState & KMOD_LSHIFT)
+                        loader.camera->rotateScene(Vector::Y, rotation_pas);
+                    else
+                        loader.camera->rotate(Vector::Y, -rotation_pas);
+
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_UP) {
                     cout << "Up arrow key was pressed" << endl;
-                    loader.camera->rotate(Vector::X, -rotation_pas);
+
+                    if (modState & KMOD_LSHIFT)
+                        loader.camera->rotateScene(Vector::X, -rotation_pas);
+                    else
+                        loader.camera->rotate(Vector::X, -rotation_pas);
+
                     render = true;
                 }
 
                 else if (event.key.keysym.sym == SDLK_DOWN) {
                     cout << "Down arrow key was pressed" << endl;
-                    loader.camera->rotate(Vector::X, rotation_pas);
+
+                    if (modState & KMOD_LSHIFT)
+                        loader.camera->rotateScene(Vector::X, rotation_pas);
+                    else
+                        loader.camera->rotate(Vector::X, rotation_pas);
+
                     render = true;
                 }
 
-                // Display or not rendering info
-                else if (event.key.keysym.sym == SDLK_i) {
+                // Camera translation controls
 
-                    stats = !stats;
-
-                    // Need to recopy current image since SDL_RenderPresent invalid previous buffer
-                    SDL_RenderCopy(renderer, texture, nullptr, nullptr);
-
-                    if (stats)
-                        display_stats(renderer, font, data);
-
-                    SDL_RenderPresent(renderer);
-                }
-
-                // Translation controls
                 else if (event.key.keysym.sym == SDLK_q) {
                     cout << "Q key was pressed" << endl;
                     loader.camera->translate(Vector::X * translation_pas);
@@ -257,17 +268,24 @@ int main (const int argc, const char ** argv) {
                     render = true;
                 }
 
-                // Pas controls
+                // Camera reset control
 
-                else if (event.key.keysym.sym == SDLK_u) {
+                else if (event.key.keysym.sym == SDLK_o) {
+                    cout << "O key was pressed" << endl;
+                    loader.camera->reset();
+                    render = true;
+                }
 
-                    cout << "U key was pressed" << endl;
+                // Steps controls
+
+                else if (event.key.keysym.sym == SDLK_t) {
+                    cout << "T key was pressed" << endl;
                     translation_pas += .1;
                 }
 
-                else if (event.key.keysym.sym == SDLK_j) {
+                else if (event.key.keysym.sym == SDLK_g) {
 
-                    cout << "J key was pressed" << endl;
+                    cout << "G key was pressed" << endl;
 
                     if (.2 < translation_pas)
                         translation_pas -= .1;
@@ -275,15 +293,14 @@ int main (const int argc, const char ** argv) {
                         translation_pas /= 2; // Avoid negative values
                 }
 
-                else if (event.key.keysym.sym == SDLK_i) {
-
-                    cout << "I key was pressed" << endl;
+                else if (event.key.keysym.sym == SDLK_y) {
+                    cout << "Y key was pressed" << endl;
                     rotation_pas += 1;
                 }
 
-                else if (event.key.keysym.sym == SDLK_k) {
+                else if (event.key.keysym.sym == SDLK_h) {
 
-                    cout << "K key was pressed" << endl;
+                    cout << "H key was pressed" << endl;
 
                     if (2 < rotation_pas)
                         rotation_pas -= 1;
@@ -291,20 +308,37 @@ int main (const int argc, const char ** argv) {
                         rotation_pas /= 2; // Avoid negative values
                 }
 
-                // Eye controls
+                // Focale controls
 
-                else if (event.key.keysym.sym == SDLK_f) {
+                //@ Does not seem to work, to fix
 
-                    cout << "F key was pressed" << endl;
+                else if (event.key.keysym.sym == SDLK_u) {
+                    cout << "U key was pressed" << endl;
                     loader.camera->set_focale( loader.camera->focale + 1 );
                     render = true;
                 }
 
-                else if (event.key.keysym.sym == SDLK_v) {
-
-                    cout << "V key was pressed" << endl;
+                else if (event.key.keysym.sym == SDLK_j) {
+                    cout << "J key was pressed" << endl;
+                    //@ avoid negative values
                     loader.camera->set_focale( loader.camera->focale - 1 );
                     render = true;
+                }
+
+                // General controls
+
+                // Display or not rendering info
+                else if (event.key.keysym.sym == SDLK_i) {
+
+                    stats = !stats;
+
+                    // Need to recopy current image since SDL_RenderPresent invalid previous buffer
+                    SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+
+                    if (stats)
+                        display_stats(renderer, font, data);
+
+                    SDL_RenderPresent(renderer);
                 }
 
                 // Prints the scene currently displayed to a file
@@ -322,7 +356,7 @@ int main (const int argc, const char ** argv) {
                     cout << Term::RC << Term::CLR << "Scene printing took " << Term::FGC_GREEN << timer(t) << Term::R << " seconds" << endl;
                 }
 
-                // // TODO
+                //@todo Implement scene reload
                 // // Reload scene from file
                 // else if (event.key.keysym.sym == SDLK_r) {
 
@@ -331,9 +365,6 @@ int main (const int argc, const char ** argv) {
                 //     SDL_SetWindowTitle
                 //     SDL_SetWindowSize
                 //     SDL_SetWindowData
-
-                //     stringstream ss;
-                //     ss << "./screenshots/" << time(nullptr) << ".ppm";
 
                 //     cout << Term::SC << "Reloading scene file..." << endl;
 
