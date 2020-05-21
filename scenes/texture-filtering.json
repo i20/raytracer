@@ -6,10 +6,7 @@
 
         "red": { "r": 255, "g": 0, "b": 0 },
         "green": { "r": 0, "g": 255, "b": 0 },
-        "blue": { "r": 0, "g": 0, "b": 255 },
-
-        "orange": { "r": 255, "g": 128, "b": 0 },
-        "pink": { "r": 255, "g": 105, "b": 180 }
+        "blue": { "r": 0, "g": 0, "b": 255 }
     },
 
     "positions": {
@@ -60,7 +57,7 @@
 
                 "reflection": 1,
                 "n": 0,
-                "glossyness": 0,
+                "glossyness": 1,
 
                 "z-dir": "z",
                 "y-dir": "y",

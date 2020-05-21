@@ -53,7 +53,7 @@
 
             //     "reflection": 1,
             //     "n": 0,
-            //     "glossyness": 0,
+            //     "glossyness": 1,
 
             //     "radius": 0.025,
 
@@ -78,7 +78,7 @@
 
             //     "reflection": 1,
             //     "n": 0,
-            //     "glossyness": 0,
+            //     "glossyness": 1,
 
             //     "radius": 0.025,
 
@@ -103,7 +103,7 @@
 
             //     "reflection": 1,
             //     "n": 0,
-            //     "glossyness": 0,
+            //     "glossyness": 1,
 
             //     "radius": 0.025,
 
@@ -128,7 +128,7 @@
 
             //     "reflection": 1,
             //     "n": 0,
-            //     "glossyness": 0,
+            //     "glossyness": 1,
 
             //     "z-dir": "x",
             //     "y-dir": "y",
@@ -152,7 +152,7 @@
 
             //     "reflection": 1,
             //     "n": 0,
-            //     "glossyness": 0,
+            //     "glossyness": 1,
 
             //     "z-dir": "y",
             //     "y-dir": "z",
@@ -176,7 +176,7 @@
 
             //     "reflection": 1,
             //     "n": 0,
-            //     "glossyness": 0,
+            //     "glossyness": 1,
 
             //     "z-dir": "z",
             //     "y-dir": "x",
@@ -207,7 +207,7 @@
 
             //     "reflection": 1,
             //     "n": 0,
-            //     "glossyness": 0,
+            //     "glossyness": 1,
 
             //     "z-dir": "z",
             //     "y-dir": "y",

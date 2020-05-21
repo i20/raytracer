@@ -35,7 +35,7 @@
 {
     "ref": "<texture name>",
     "filtering": "bilinear" | "trilinear" | "anisotropic" | null
-    [[ "mapping": "<mapping file path>" ]] # Required for meshes
+    [[ "mapping": "<mapping file path>" ]] # Explicit .tex mapping file required for meshes
 }
 
 *object_entry* :
