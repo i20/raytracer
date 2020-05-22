@@ -684,10 +684,12 @@ Mesh::shading_type Loader::get_object_mesh_shading_type (const JSONNode & node, 
 
             string shading = shading_node->as_string();
 
-            if (shading == "gouraud")
+            if (shading == "gouraud" || shading == "color")
                 return Mesh::SHADING_GOURAUD;
-            else if (shading == "phong")
+            else if (shading == "phong" || shading == "normal")
                 return Mesh::SHADING_PHONG;
+            else if (shading == "flat")
+                return Mesh::SHADING_NONE;
 
             throw string("Invalid shading type");
         }

@@ -34,7 +34,7 @@
 *texture_binding* :
 {
     "ref": "<texture name>",
-    "filtering": "bilinear" | "trilinear" | "anisotropic" | null
+    "filtering": "bilinear" | "trilinear" | "anisotropic" | null|"point"
     [[ "mapping": "<mapping file path>" ]] # Explicit .tex mapping file required for meshes
 }
 
@@ -46,7 +46,7 @@
     "position": *position*,
     "glassy": <boolean>,
 
-    [[ "shading": "phong" | "flat" ]] # Required for meshes
+    [[ "shading": "phong"|"normal" | "gouraud"|"color" | null|"flat" ]] # Required for meshes
     [[ "file": "<off file path>" ]] # Required for meshes
     [[ "use-octree": <boolean> ]] # Required for meshes
 

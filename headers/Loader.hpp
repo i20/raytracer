@@ -186,6 +186,9 @@ typename Texture<T>::filtering_type Loader::get_texture_filtering_type (const JS
             else if (filtering == "anisotropic")
                 return Texture<T>::FILTERING_ANISOTROPIC;
 
+            else if (filtering == "point")
+                return Texture<T>::FILTERING_NONE;
+
             throw string("Unknown filtering type");
         }
             break;
