@@ -6,9 +6,7 @@
 
         "red": { "r": 255, "g": 0, "b": 0 },
         "green": { "r": 0, "g": 255, "b": 0 },
-        "blue": { "r": 0, "g": 0, "b": 255 },
-
-        "orange": { "r": 255, "g": 128, "b": 0 }
+        "blue": { "r": 0, "g": 0, "b": 255 }
     },
 
     "positions": {
@@ -24,6 +22,7 @@
     },
 
     "textures": {
+
         "images": {
             "mosaic": "./textures/mosaic.ppm"
         }
@@ -31,17 +30,29 @@
 
     "scene": {
 
-        "title": "Mesh sphere",
+        "title": "Tetrahedron",
         "background-color": "black",
 
         "objects": {
 
-            "sphere-mesh": {
+            "tetrahedron": {
 
                 "type": "mesh",
+                "color": "black",
                 "position": "origin",
-                "color": "black", // "orange"
                 "glassy": false,
+
+                "textures": {
+                    "image": {
+                        "ref": "mosaic",
+                        "filtering": "bilinear",
+                        "mapping": "./textures/tetrahedron-mosaic.tex"
+                    }
+                },
+
+                "shading": null,
+                "file": "./meshes/tetrahedron.off",
+                "use-octree": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -50,20 +61,8 @@
                 },
 
                 "reflection": 1,
-                "n": 1.33,
+                "n": 0,
                 "glossyness": 1,
-
-                "textures": {
-                    "image": {
-                        "ref": "mosaic",
-                        "filtering": "bilinear",
-                        "mapping": "./textures/sphere-mosaic.tex"
-                    }
-                },
-
-                "file": "./meshes/sphere.off",
-                "shading": "phong",
-                "use-octree": true,
 
                 "z-dir": "z",
                 "y-dir": "y"
@@ -81,8 +80,8 @@
             "light-1": {
 
                 "type": "punctual",
-                "intensity": { "r": 1, "g": 1, "b": 1 },
-                "position": { "x": 5, "y": 0, "z": 0 },
+                "intensity": { "r": 0.8, "g": 0.8, "b": 0.8 },
+                "position": { "x": 0, "y": 0, "z": 5 },
                 "attenuation": {
                     "constant": 0,
                     "linear": 0,
@@ -94,13 +93,13 @@
 
     "camera": {
 
-        "eye": { "x": 5, "y": 5, "z": 5 },
+        "eye": { "x": 0, "y": 0, "z": 5 },
         "look-at": "origin",
         "up-dir": "y",
         "focale": 3,
         "fov": 45,
         "projection-type": "perspective",
-        "trace-depth": 2,
+        "trace-depth": 1,
         "aa-depth": 0,
         "aa-threshold": 50,
         "viewport": {

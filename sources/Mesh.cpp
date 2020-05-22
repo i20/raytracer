@@ -315,6 +315,7 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
             if (this->shading == Mesh::SHADING_PHONG) {
 
                 // @todo Use ponderate average to take into consideration triangle's area when interpolating
+                // @todo Phong shading seems to generate enlightened artifacts on hidden face edge @img(artifacts/shading)
 
                 float v[4];
                 // Bilinear interpolation

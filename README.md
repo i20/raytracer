@@ -28,6 +28,7 @@ The voxel tree has a root voxel, each tree node has exactly eight or no child
 
 TODO
 
+- move Vector/Point to macros, see if Matrix can be moved too
 - handle refracted ray when coming out from refracting object, what is outside n?
 - implement scenario programming (ex: load scene + wait 2 sec + move ...)
 - implement "include" syntax in json to include scene parts
