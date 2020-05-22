@@ -55,7 +55,7 @@ Cylinder::Cylinder(
         r, n, g,
         z_dir, y_dir
 
-    ), radius(radius), infinite(true) {}
+    ), radius(radius), height(-1) {}
 
 Cylinder::Cylinder(
     const Color & color,
@@ -92,15 +92,14 @@ Cylinder::Cylinder(
     sr, sg, sb,
     r, n, g,
     z_dir, y_dir
-), radius(radius), infinite(false), height(height) {}
+), radius(radius), height(height) {}
 
-Cylinder::Cylinder(const Cylinder & cylinder) : Object(cylinder), radius(cylinder.radius), infinite(cylinder.infinite), height(cylinder.height) {}
+Cylinder::Cylinder(const Cylinder & cylinder) : Object(cylinder), radius(cylinder.radius), height(cylinder.height) {}
 
 Cylinder & Cylinder::operator=(const Cylinder & cylinder) {
 
     this->copy(cylinder);
     this->radius = cylinder.radius;
-    this->infinite = cylinder.infinite;
     this->height = cylinder.height;
     return *this;
 }
@@ -142,8 +141,9 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
         }
     }
 
+    // @todo Implement cylinder is_closed
     // // Check intersections at both edges of the cylinder
-    // if (this->is_closed) {
+    // if (this->height != -1 && this->is_closed) {
 
     //     float det = ray_object.direction.v[2];
 
@@ -159,32 +159,25 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
 
 bool Cylinder::compute_intersection_final (Vector & normal_object, const Point & point_object, const Triangle * t) const {
 
-    // TODO support is_closed, we will need the 2 intersection points to test if the line between them passes through the edge
+    // @todo support is_closed, we will need the 2 intersection points to test if the line between them passes through the edge
     // if p1 >= height && p2 < height -> ok and so on
 
-    if (this->infinite || (0 <= point_object.p[2] && point_object.p[2] <= this->height)) {
+    if (this->height == -1 || (0 <= point_object.p[2] && point_object.p[2] <= this->height)) {
 
         normal_object = Vector(point_object.p[0], point_object.p[1], 0);
 
-        if (this->normals_texture != nullptr && !this->infinite)
+        if (this->normals_texture != nullptr && this->height != -1)
             normal_object = normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr);
 
         return true;
     }
-
-    // No need to recheck infinite
-    // if (0 <= points_object[1].p[2] && points_object[1].p[2] <= this->height) {
-
-    //     normal_object = Vector(points_object[1].p[0], points_object[1].p[1], 0);
-    //     return true;
-    // }
 
     return false;
 }
 
 Color Cylinder::compute_color_shape(const Point & point_object, const Triangle * triangle) const {
 
-    if (this->infinite)
+    if (this->height == -1)
         return this->color;
 
     return this->color + this->compute_texture_texel<Color>(point_object, *this->image_texture, nullptr);

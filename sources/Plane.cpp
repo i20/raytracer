@@ -146,7 +146,7 @@ bool Plane::compute_intersection_final(Vector & normal_object, const Point & poi
 
 Color Plane::compute_color_shape(const Point & point_object, const Triangle * triangle) const {
 
-    // #TODO add support for infinite plane by repeating texture
+    // @todo Add support for infinite plane by repeating texture
     if (this->infinite)
         return this->color;
 

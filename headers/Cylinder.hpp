@@ -22,7 +22,6 @@ class Cylinder : public Object {
     public:
 
         float radius;
-        bool infinite;
         float height;
 
         // Constructs an infinite cylinder
@@ -105,7 +104,7 @@ T Cylinder::compute_texture_texel (const Point & point_object, const Texture<T> 
     u = theta / (2 * M_PI);
     v = (this->height - point_object.p[2]) / this->height;
 
-    // TODO handle filtering conf for normals (property normals_texture_filtering)
+    // @todo Handle filtering conf for normals (property normals_texture_filtering)
     return texture.get_texel_by_uv(u, v, this->image_texture_filtering == Texture<Color>::FILTERING_BILINEAR);
 }
 

@@ -224,6 +224,7 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 
     Ray ray_object = this->inv * ray;
 
+    // @wonder Why a part of the octree logic does reside in Object::compute_intersection? Isn't it a mesh thing?
     vector<const Octree *> octrees;
 
     if (this->octree != nullptr) {
@@ -250,7 +251,6 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
         point_object = Point(p);
 
         if (this->compute_intersection_final(normal_object, point_object, tpair.second)) {
-
             // @todo Move bump mapping here, find a way to deal with virtual template (@see Object.hpp comment)
             match = &tpair;
             break;
@@ -289,7 +289,6 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 Color Object::compute_color(const Point & point, const Triangle * triangle) const {
 
     // @todo Move texture mapping here, find a way to deal with virtual template (cf Object.hpp comment)
-
     return this->image_texture == nullptr ? this->color : this->compute_color_shape(this->inv * point, triangle);
 }
 
