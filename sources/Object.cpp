@@ -19,6 +19,9 @@
 #include "../headers/Intersection.hpp"
 #include "../headers/TTPair.hpp"
 
+// cfloat.h FLT_EPSILON = 1E-5 is too small and does not prevent self intersection
+#define EPSILON .001
+
 using namespace std;
 
 void Object::copy(const Object & object) {
@@ -48,13 +51,15 @@ void Object::copy(const Object & object) {
     this->g = object.g;
 }
 
-//#REF http://realtimecollisiondetection.net/blog/?p=89
-void Object::insert_t(const float t, const Triangle * triangle, TTPairList & list) {
+// @url(http://realtimecollisiondetection.net/blog/?p=89)
+void Object::insert_t(const float t, const Triangle * triangle, TTPairList & list, const Ray & ray_object) {
 
-    // t must be at least greater than 0 to be sure the intersection is not behind ray's origin
-    // By testing against a value just above 0, we exclude the ray's origin point from the detection
-    // Indeed the intersection at the origin point is almost always irrelevant
-    if (.001 < t)
+    // Filter only relevant intersections (after ray origin and before ray end if ray is a finite one)
+    // Epsilon testing is still the better of evils even if yields @img(artifacts/espilon/1589747692|1589747751|1589747930.ppm)
+    // @see Comments at the end of Object::compute_intersection()
+    // if (0 < t && (ray_object.norm == -1 || t <= ray_object.norm))
+    // @wonder Should end edge be tested against epsilon too ?
+    if (EPSILON < t && (ray_object.norm == -1 || t <= ray_object.norm))
         list.insert(TTPair(t, triangle));
 }
 
@@ -215,7 +220,6 @@ bool Object::compute_t_ray(Ray & rayt, const Intersection & inter) const {
     return true;
 }
 
-// Intersection point at ray's origin is ignored
 bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 
     Ray ray_object = this->inv * ray;
@@ -223,14 +227,11 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
     vector<const Octree *> octrees;
 
     if (this->octree != nullptr) {
-
         this->octree->find_path(octrees, ray_object);
-
         if (octrees.size() == 0)
             return false;
     }
 
-    // Compute intersections between pure ray line and mathematical object (no edges)
     TTPairList ts = this->compute_intersection_ts(octrees, ray_object);
 
     if (ts.size() == 0)
@@ -266,6 +267,11 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 
     normal_object = normal_object.normalize();
 
+    // Shifting the intersection point along the normal or ray direction from an epsilon distance yields displacement artifacts
+    // Not shifting and rather testing EPSILON < t in Object::insert_t() yields @img(artifacts/epsilon)
+    // @doc(Wächter-Binder2019_Chapter_AFastAndRobustMethodForAvoidin)
+    // Point point = this->base * (point_object + ray_object.direction * -EPSILON); @img(artifacts/epsilon/1590141040.ppm)
+    // Point point = this->base * (point_object + normal_object * EPSILON); @img(artifacts/epsilon/1590141145.ppm)
     Point point = this->base * point_object;
     Vector normal = this->base * normal_object;
 

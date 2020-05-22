@@ -122,7 +122,7 @@ TTPairList Plane::compute_intersection_ts(const vector<const Octree *> & octrees
 
     // No intersection if ray lies in the plane
     if (det != 0)
-        Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts);
+        Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts, ray_object);
 
     return ts;
 }

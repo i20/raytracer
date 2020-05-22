@@ -91,14 +91,14 @@ TTPairList Sphere::compute_intersection_ts(const vector<const Octree *> & octree
         float da = a+a;
 
         if (det == 0)
-            Object::insert_t(-b / da, nullptr, ts);
+            Object::insert_t(-b / da, nullptr, ts, ray_object);
 
         else {
 
             float sq = sqrt(det);
 
-            Object::insert_t((-b-sq) / da, nullptr, ts);
-            Object::insert_t((-b+sq) / da, nullptr, ts);
+            Object::insert_t((-b-sq) / da, nullptr, ts, ray_object);
+            Object::insert_t((-b+sq) / da, nullptr, ts, ray_object);
         }
     }
 

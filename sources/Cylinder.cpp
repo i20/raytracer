@@ -131,14 +131,14 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
         float da = a+a;
 
         if (det == 0)
-            Object::insert_t(-b / da, nullptr, ts);
+            Object::insert_t(-b / da, nullptr, ts, ray_object);
 
         else {
 
             float sq = sqrt(det);
 
-            Object::insert_t((-b-sq) / da, nullptr, ts);
-            Object::insert_t((-b+sq) / da, nullptr, ts);
+            Object::insert_t((-b-sq) / da, nullptr, ts, ray_object);
+            Object::insert_t((-b+sq) / da, nullptr, ts, ray_object);
         }
     }
 
@@ -149,8 +149,8 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
 
     //     // No intersection if ray lies in the plane
     //     if (det != 0) {
-    //         // Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts);
-    //         Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts);
+    //         // Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts, ray_object);
+    //         Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts, ray_object);
     //     }
     // }
 

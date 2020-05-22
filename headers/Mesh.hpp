@@ -106,7 +106,7 @@ inline void Mesh::compute_intersection_ts_subroutine (TTPairList & ts, const Tri
     // - singular edge : adjacent to 3 and more faces
     // - closed mesh : mesh with no boundary edge
     if (this->is_closed ? (ray_object.in ? b > 0 : b < 0) : b != 0)
-        Object::insert_t(a / b, &triangle, ts);
+        Object::insert_t(a / b, &triangle, ts, ray_object);
 }
 
 template <class T>

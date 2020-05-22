@@ -42,63 +42,60 @@ PunctualLight & PunctualLight::operator=(const PunctualLight & light) {
 
 Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene & scene) const {
 
-    Vector dir(inter.point, this->position);
-    // #TODO how do we know if shadow ray is inside or outside the object (ray can pass through the object)?
-    Ray shadow_ray(inter.point, dir, inter.ray->in, inter.ray->level);
+    Vector pl(inter.point, this->position);
+    float d = pl.get_norm();
 
-    bool does_light = true;
+    //@ how do we know if shadow ray is inside or outside the object (ray can pass through the object)?
+    //@ maybe shadow rays must be a subclass of rays as they are finite + their dir vector should not be normalized
+    Ray shadow_ray(inter.point, pl, inter.ray->in, inter.ray->level, d);
 
-    for (const auto & object_entry : scene.objects) {
+    bool does_light;
 
-        Intersection tmp;
+    // Shadow must pass through intersection surface to reach light (true self-intersection)
+    if (shadow_ray.direction * inter.normal <= 0)
+        does_light = false;
 
-        // Since shadow_ray's origin is on the intersection point compute_intersection(shadow_ray) will always be true on origin object
-        // rd * n <= 0 => ray passes through its own object to reach the light
+    else {
 
-        // NOTE: I once thought about replacing the same object condition (ray.direction * from.normal) with (ray.in) to speed up
-        // cause obviously if the shadow ray comes from inside the object it will necessarily intersect with it to reach the light
-        // which is most of the time outside BUT what if the light is inside the object?
+        does_light = true;
+        for (const auto & object_entry : scene.objects) {
 
-        // Specific test, handles concave objects (#ALGO 1)
-        // tmp.t <= dir.get_norm() : handle case where light is between objects
-        if ((object_entry.second == inter.object && shadow_ray.direction * inter.normal <= 0) || (object_entry.second->compute_intersection(tmp, shadow_ray) && tmp.t <= dir.get_norm())) {
-            does_light = false;
-            break;
+            Intersection tmp;
+
+            // NOTE: I once thought about replacing the same object condition (ray.direction * from.normal) with (ray.in) to speed up
+            // cause obviously if the shadow ray comes from inside the object it will necessarily intersect with it to reach the light
+            // which is most of the time outside BUT what if the light is inside the object?
+
+            // Subject to false self-intersection
+            if (object_entry.second->compute_intersection(tmp, shadow_ray)) {
+                does_light = false;
+                break;
+            }
         }
     }
 
     if (!does_light) return Color::BLACK;
 
+    // See lighting.pdf for details
+
     // Diffuse component
 
-    // N = inter.normal
-    // L = (inter.point, light.position).normalized
-    float d = 0; /* norm pl */
-    float scalar_d = 0; /* N * L */
-    float pl[3];
-    for (uint8_t i = 0; i < 3; i++) {
-
-        float pli = pl[i] = this->position.p[i] - inter.point.p[i];
-
-        d += pli * pli;
-        scalar_d += inter.normal.v[i] * pli;
-    }
-    d = sqrt(d);
-    scalar_d /= d; // Normalize L after (pl wasn't normalized)
+    // N * L
+    // N = normal to surface (normalized) = inter.normal
+    // L = points toward the light source (normalized) = pl.normalized
+    float scalar_d = (inter.normal * pl) / d; // Normalize L afterward (pl wasn't normalized)
 
     // Specular component
 
-    // V = (inter.point, ray.origin).normalized = -ray.direction
-    // R = rayr.direction = inter.normal * 2 * scalar_d - L
-    float scalarx2 = scalar_d + scalar_d;
-    float scalar_s = 0; /* V * R */
+    // V * R
+    // V = points toward the viewer (normalized) = (inter.point, ray.origin).normalized = -ray.direction
+    // R = pure reflection vector (normalized) = 2(N*L)N - L = 2*scalar_d*N - L
+    float scalar_dx2 = 2 * scalar_d;
+    float scalar_s = 0;
     for (uint8_t i = 0; i < 3; i++)
-        scalar_s += inter.ray->direction.v[i] * (pl[i] / d - inter.normal.v[i] * scalarx2); // pl ain't normalized
+        scalar_s += inter.ray->direction.v[i] * (pl.v[i] / d - inter.normal.v[i] * scalar_dx2);
 
-    // float scalar_final = inter.object->d * scalar_d;
-    // if (0 < scalar_s)
-    //     scalar_final += powf(scalar_s, inter.object->g) * inter.object->s;
-
+    // scalar_s <= 1
     scalar_s = 0 < scalar_s ? powf(scalar_s, inter.object->g) : 0;
 
     // att c : 1 - c

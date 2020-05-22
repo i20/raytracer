@@ -82,7 +82,7 @@ class Object {
 
         void copy(const Object & object);
         // void load_base(const Vector & z_dir, const Vector & y_dir);
-        static void insert_t(const float t, const Triangle * triangle, TTPairList & list);
+        static void insert_t(const float t, const Triangle * triangle, TTPairList & list, const Ray & ray_object);
 
     private:
 
