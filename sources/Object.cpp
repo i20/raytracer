@@ -251,8 +251,7 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 
         if (this->compute_intersection_final(normal_object, point_object, tpair.second)) {
 
-            // TODO move bump mapping here, find a way to deal with virtual template (cf Object.hpp comment)
-
+            // @todo Move bump mapping here, find a way to deal with virtual template (@see Object.hpp comment)
             match = &tpair;
             break;
         }
@@ -289,7 +288,7 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 
 Color Object::compute_color(const Point & point, const Triangle * triangle) const {
 
-    // TODO move texture mapping here, find a way to deal with virtual template (cf Object.hpp comment)
+    // @todo Move texture mapping here, find a way to deal with virtual template (cf Object.hpp comment)
 
     return this->image_texture == nullptr ? this->color : this->compute_color_shape(this->inv * point, triangle);
 }

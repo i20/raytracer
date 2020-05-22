@@ -29,7 +29,7 @@ class Object {
         Point position;
         Matrix base, inv;
         bool is_closed;
-        bool is_glassy; // activate/deactivate reflection/refraction computation, otherwise reflection=0 would imply refraction=1
+        bool is_glassy;
         Octree * octree;
 
         const Texture<Color> * image_texture;

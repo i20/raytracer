@@ -16,9 +16,6 @@ using namespace std;
 
 void Vector::copy(const float v[4]) {
 
-    // for (uint8_t i = 0; i < 4; i++)
-    //     this->v[i] = v[i];
-
     memcpy(this->v, v, 4 * sizeof(float));
 }
 

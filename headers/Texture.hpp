@@ -52,6 +52,7 @@ void Texture<T>::ignore_comments (ifstream & inf) const {
 }
 
 // Does not support comments at the end of a non-comment line
+// @todo Add support for common image formats other than ppm-p6 (jpg, png ...)
 template <class T>
 Texture<T>::Texture (const char * file_name) {
 
@@ -149,7 +150,7 @@ T Texture<T>::get_texel(const uintmax_t i, const uintmax_t j) const {
 template <class T>
 T Texture<T>::get_texel_by_uv (const float u, const float v, const bool smooth) const {
 
-    // TODO Enable setting smooth from the scene's json
+    // @todo Add support for trilinear + anisotropic filtering (only bilinear supported for now)
 
     // -------------------------------------
     // |           |           |           |
@@ -258,7 +259,7 @@ T Texture<T>::get_texel_by_uv (const float u, const float v, const bool smooth) 
     }
 
     // Interpolation recipient
-    // TODO Handle interpolation with Texture<Vector> (cannot store in uint8_t)
+    // @todo Handle interpolation with Texture<Vector> (cannot store in uint8_t)
     uint8_t c[3];
     for (uint8_t k = 0; k < 3; k++) {
 
@@ -334,7 +335,7 @@ bool Texture<T>::print(const char * file_name, const uintmax_t istart, const uin
 
             T t = this->map[i + j * this->width];
 
-            // TODO handle .c if T is Vector
+            // @todo Handle .c if T is Vector
             for (uint8_t k = 0; k < 3; k++)
                 outf.put(t[k]);
         }

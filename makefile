@@ -124,9 +124,10 @@ $(LJSONDIR)/libjson.a:
 
 # Removes intermediate compilation files
 clean:
-	rm -f $(ODIR)/*.o # $(SDIR)/$(NVCC_EXEC).cu
+# $(SDIR)/$(NVCC_EXEC).cu
+	rm -f $(ODIR)/*.o
 
 # Removes all compilation traces
 reset: clean
-# gpu-info
-	rm -f $(EXEC) # $(LJSONDIR)/libjson.a # $(NVCC_EXEC)
+# gpu-info $(LJSONDIR)/libjson.a # $(NVCC_EXEC)
+	rm -f $(EXEC)

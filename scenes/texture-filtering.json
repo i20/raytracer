@@ -52,7 +52,7 @@
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
                     "diffuse": { "r": 1, "g": 1, "b": 1 },
-                    "specular": { "r": 1, "g": 1, "b": 1 }
+                    "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
                 "reflection": 1,
@@ -78,12 +78,12 @@
             "light-1": {
 
                 "type": "punctual",
-                "intensity": { "r": 0.5, "g": 0.5, "b": 0.5 },
+                "intensity": { "r": 0.8, "g": 0.8, "b": 0.8 },
                 "position": { "x": 0, "y": 0, "z": 5 },
                 "attenuation": {
-                    "constant": 1,
+                    "constant": 0,
                     "linear": 0,
-                    "quadratic": 0.01
+                    "quadratic": 0
                 }
             }
         }

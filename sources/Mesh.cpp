@@ -314,7 +314,7 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
             if (this->shading == Mesh::SHADING_PHONG) {
 
-                //#TODO 5
+                // @todo Use ponderate average to take into consideration triangle's area when interpolating
 
                 float v[4];
                 // Bilinear interpolation
@@ -323,6 +323,8 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
                 normal_object = Vector(v);
             }
+
+            // @todo Implement Gouraud shading
 
             // Flat shading
             else
@@ -343,7 +345,7 @@ Color Mesh::compute_color_shape (const Point & point_object, const Triangle * tr
     return this->color + this->compute_texture_texel<Color>(point_object, *this->image_texture, triangle);
 }
 
-//#TODO
+// @todo Clean up
 string Mesh::to_string() const {
 
     stringstream ss;
