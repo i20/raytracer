@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include <vector>
-#include <string>
 
 #include "../headers/Object.hpp"
 #include "../headers/Ray.hpp"
@@ -15,8 +14,6 @@
 #include "../headers/Texture.hpp"
 #include "../headers/Octree.hpp"
 
-using namespace std;
-
 class Plane : public Object {
 
     public:
@@ -24,7 +21,7 @@ class Plane : public Object {
         bool infinite;
         float height, width;
 
-        // TODO semi finite plane width and/or height
+        // @todo semi finite plane width and/or height
 
         Plane(
             const Color & color,
@@ -63,16 +60,10 @@ class Plane : public Object {
             const float height, const float width
         );
 
-        Plane(const Plane & plane);
-
-        Plane & operator=(const Plane & plane);
-
-        virtual string to_string() const override;
-
     private:
 
-        virtual TTPairList compute_intersection_ts(const vector<const Octree *> & octrees, const Ray & ray_object) const override;
-        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t) const override;
+        virtual TTPairList compute_intersection_ts(const std::vector<const Octree *> & octrees, const Ray & ray_object) const override;
+        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const override;
         virtual Color compute_color_shape(const Point & point_object, const Triangle * triangle) const override;
 
         template <class T>
@@ -83,9 +74,10 @@ template <class T>
 T Plane::compute_texture_texel (const Point & point_object, const Texture<T> & texture, const Triangle * triangle) const {
 
     float u, v;
-    u = (this->width / 2 + point_object.p[0]) / this->width;
-    v = (this->height / 2 - point_object.p[1]) / this->height;
+    u = (this->width / 2 + point_object[0]) / this->width;
+    v = (this->height / 2 - point_object[1]) / this->height;
 
+    // @todo Differentiate image_texture_filtering from normal_texture_filtering
     return texture.get_texel_by_uv(u, v, this->image_texture_filtering == Texture<Color>::FILTERING_BILINEAR);
 }
 

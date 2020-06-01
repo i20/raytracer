@@ -16,8 +16,6 @@
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
 
-using namespace std;
-
 class Triangle;
 
 class Mesh : public Object {
@@ -25,13 +23,13 @@ class Mesh : public Object {
     public:
 
         enum shading_type { SHADING_NONE, SHADING_GOURAUD, SHADING_PHONG };
-        typedef vector< array< array<float, 2> , 3> > TextureMapping;
+        typedef std::vector< std::array< std::array<float, 2> , 3> > TextureMapping;
 
-        vector<Triangle> triangles;
-        vector<Point> vertexes;
+        std::vector<Triangle> triangles;
+        std::vector<Point> vertexes;
         // Separate average normals from vertexes due to loading order
         // We cannot afford having dummy (0, 0, 0) vectors at initialization
-        vector<Vector> normals;
+        std::vector<Vector> normals;
         Mesh::TextureMapping image_texture_mapping;
         Mesh::TextureMapping normals_texture_mapping;
         uint8_t shading;
@@ -58,21 +56,15 @@ class Mesh : public Object {
             const bool use_octree, const uint8_t shading
         );
 
-        Mesh(const Mesh & mesh);
-
-        Mesh & operator=(const Mesh & mesh);
-
         ~Mesh();
-
-        virtual string to_string() const override;
 
     private:
 
-        virtual TTPairList compute_intersection_ts(const vector<const Octree *> & octrees, const Ray & ray_object) const override;
-        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t) const override;
+        virtual TTPairList compute_intersection_ts(const std::vector<const Octree *> & octrees, const Ray & ray_object) const override;
+        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const override;
         virtual Color compute_color_shape(const Point & point_object, const Triangle * triangle) const override;
 
-        static void count_edge_valence_subroutine(unordered_map<string, uint8_t> & edge_valence, const uintmax_t pa, const uintmax_t pb);
+        static void count_edge_valence_subroutine(std::unordered_map<std::string, uint8_t> & edge_valence, const uintmax_t pa, const uintmax_t pb);
 
         // Inline function
         void compute_intersection_ts_subroutine(TTPairList & ts, const Triangle & triangle, const Ray & ray_object) const;
@@ -92,8 +84,8 @@ inline void Mesh::compute_intersection_ts_subroutine (TTPairList & ts, const Tri
     float a = 0, b = 0;
     for (uint8_t i = 0; i < 3; i++) {
 
-        a += triangle.normal.v[i] * (this->vertexes[triangle.p1].p[i] - ray_object.origin.p[i]);
-        b += triangle.normal.v[i] * ray_object.direction.v[i];
+        a += triangle.normal[i] * (this->vertexes[triangle.p1][i] - ray_object.origin[i]);
+        b += triangle.normal[i] * ray_object.direction[i];
     }
 
     // b != 0 -> ray does not lie in triangle's plane so there is exactly one intersection point
@@ -112,7 +104,7 @@ inline void Mesh::compute_intersection_ts_subroutine (TTPairList & ts, const Tri
 template <class T>
 T Mesh::compute_texture_texel (const Point & point_object, const Texture<T> & texture, const Triangle * triangle) const {
 
-    // TODO handle texture mapping for normals texture (property this->normals_texture_mapping)
+    // @todo handle texture mapping for normals texture (property this->normals_texture_mapping)
     auto & coords = this->image_texture_mapping[triangle->index];
 
     float uu = 0,
@@ -123,12 +115,12 @@ T Mesh::compute_texture_texel (const Point & point_object, const Texture<T> & te
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        float w_v = point_object.p[i] - this->vertexes[triangle->p1].p[i];
-        uu += triangle->u.v[i] * triangle->u.v[i];
-        uv += triangle->u.v[i] * triangle->v.v[i];
-        vv += triangle->v.v[i] * triangle->v.v[i];
-        wu += w_v * triangle->u.v[i];
-        wv += w_v * triangle->v.v[i];
+        float w_v = point_object[i] - this->vertexes[triangle->p1][i];
+        uu += triangle->u[i] * triangle->u[i];
+        uv += triangle->u[i] * triangle->v[i];
+        vv += triangle->v[i] * triangle->v[i];
+        wu += w_v * triangle->u[i];
+        wv += w_v * triangle->v[i];
     }
 
     float det = uv * uv - uu * vv;

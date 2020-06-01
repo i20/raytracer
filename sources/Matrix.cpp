@@ -1,10 +1,7 @@
 #include <cmath>
+#include <cassert>
 #include <cstdint>
-#include <cstring>
-
-#include <sstream>
-#include <string>
-#include <iostream>
+#include <cstring> // memset
 
 #include "../headers/Vector.hpp"
 #include "../headers/Point.hpp"
@@ -16,7 +13,9 @@ using namespace std;
 
 static const float degrad = M_PI / 180;
 
-Matrix Matrix::IDENTITY() {
+/*static*/ const Matrix Matrix::I = Matrix::IDENTITY();
+
+/*static*/ Matrix Matrix::IDENTITY() {
 
     Matrix matrix;
 
@@ -32,16 +31,15 @@ Matrix Matrix::IDENTITY() {
     return matrix;
 }
 
-//#TODO Reread
-Matrix Matrix::TRANSLATION(const Vector & v) {
+/*static*/ Matrix Matrix::TRANSLATION(const Vector & v) {
 
-    Matrix matrix = Matrix::IDENTITY();
+    Matrix matrix = Matrix::I;
 
     uint8_t idx = 3;
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        matrix.inv[idx] = -(matrix.m[idx] = v.v[i]);
+        matrix.inv[idx] = -(matrix.m[idx] = v[i]);
         idx += 4;
     }
 
@@ -50,7 +48,7 @@ Matrix Matrix::TRANSLATION(const Vector & v) {
     return matrix;
 }
 
-Matrix Matrix::ROTATION(const Vector & v, const float d) {
+/*static*/ Matrix Matrix::ROTATION(const Vector & v, const float d) {
 
     Matrix matrix;
 
@@ -59,9 +57,9 @@ Matrix Matrix::ROTATION(const Vector & v, const float d) {
     float r = d * degrad;
     float c = cos(r);
     float s = sin(r);
-    float x = axis.v[0];
-    float y = axis.v[1];
-    float z = axis.v[2];
+    float x = axis[0];
+    float y = axis[1];
+    float z = axis[2];
     float q = 1 - c;
 
     // cos(-x) = cos(x) and sin(-x) = -sin(x)
@@ -118,15 +116,15 @@ Matrix Matrix::ROTATION(const Vector & v, const float d) {
     return matrix;
 }
 
-Matrix Matrix::HOMOTHETY(const Vector & v) {
+/*static*/ Matrix Matrix::HOMOTHETY(const Vector & v) {
 
-    Matrix matrix = Matrix::IDENTITY();
+    Matrix matrix = Matrix::I;
 
     uint8_t idx = 0;
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        matrix.inv[idx] = 1 / (matrix.m[idx] = v.v[i]);
+        matrix.inv[idx] = 1 / (matrix.m[idx] = v[i]);
         idx += 5;
     }
 
@@ -136,7 +134,7 @@ Matrix Matrix::HOMOTHETY(const Vector & v) {
 }
 
 // TODO if det = 0 not invertible
-Matrix Matrix::TRANSFER(const Point & op, const Vector & xp, const Vector & yp, const Vector & zp) {
+/*static*/ Matrix Matrix::TRANSFER(const Point & op, const Vector & xp, const Vector & yp, const Vector & zp) {
 
     /*
                           x'  y'  z'  o'
@@ -149,9 +147,9 @@ Matrix Matrix::TRANSFER(const Point & op, const Vector & xp, const Vector & yp, 
 
     Matrix matrix;
 
-    float a1 = xp.v[0], a2 = yp.v[0], a3 = zp.v[0], a4 = op.p[0];
-    float b1 = xp.v[1], b2 = yp.v[1], b3 = zp.v[1], b4 = op.p[1];
-    float g1 = xp.v[2], g2 = yp.v[2], g3 = zp.v[2], g4 = op.p[2];
+    float a1 = xp[0], a2 = yp[0], a3 = zp[0], a4 = op[0];
+    float b1 = xp[1], b2 = yp[1], b3 = zp[1], b4 = op[1];
+    float g1 = xp[2], g2 = yp[2], g3 = zp[2], g4 = op[2];
 
     float det = a1*b2*g3 + a2*b3*g1 + a3*b1*g2 - a1*b3*g2 - a2*b1*g3 - a3*b2*g1;
 
@@ -173,16 +171,16 @@ Matrix Matrix::TRANSFER(const Point & op, const Vector & xp, const Vector & yp, 
 
         uint8_t idx1 = idx0;
 
-        matrix.inv[idx1] = x.v[i]; matrix.m[idx1] = xp.v[i];
+        matrix.inv[idx1] = x[i]; matrix.m[idx1] = xp[i];
         idx1++;
 
-        matrix.inv[idx1] = y.v[i]; matrix.m[idx1] = yp.v[i];
+        matrix.inv[idx1] = y[i]; matrix.m[idx1] = yp[i];
         idx1++;
 
-        matrix.inv[idx1] = z.v[i]; matrix.m[idx1] = zp.v[i];
+        matrix.inv[idx1] = z[i]; matrix.m[idx1] = zp[i];
         idx1++;
 
-        matrix.inv[idx1] = o.p[i]; matrix.m[idx1] = op.p[i];
+        matrix.inv[idx1] = o[i]; matrix.m[idx1] = op[i];
 
         idx0 += 4;
     }
@@ -192,7 +190,7 @@ Matrix Matrix::TRANSFER(const Point & op, const Vector & xp, const Vector & yp, 
     return matrix;
 }
 
-Matrix Matrix::PROJECTION(const Matrix::projection_type type, const float left, const float right, const float bottom, const float top, const float near, const float far) {
+/*static*/ Matrix Matrix::PROJECTION(const Matrix::projection_type type, const float left, const float right, const float bottom, const float top, const float near, const float far) {
 
     Matrix matrix;
 
@@ -247,57 +245,6 @@ Matrix Matrix::PROJECTION(const Matrix::projection_type type, const float left, 
     return matrix;
 }
 
-void Matrix::copy(const Matrix & matrix) {
-
-    memcpy(this->m, matrix.m, 16 * sizeof(float));
-    memcpy(this->inv, matrix.inv, 16 * sizeof(float));
-
-    this->invertible = matrix.invertible;
-}
-
-void Matrix::mul(float r[4], const float t[4]) const {
-
-    uint8_t idx = 12;
-    bool must_div = false;
-    float w;
-
-    // Must be done reversed to compute r[3] first
-    for (uint8_t i = 3; i >= 0; i--) {
-
-        float v = 0;
-
-        for (uint8_t j = 0; j < 4; j++)
-            v += this->m[idx + j] * t[j];
-
-        if (i == 3 && v != 0 && v != 1) {
-
-            must_div = true;
-            w = v;
-        }
-
-        r[i] = must_div ? v / w : v;
-
-        // If not for will decrease i when i = 0
-        if(i == 0) break;
-
-        // Putting this after the above condition avoids idx - 4 when idx = 0 on last loop
-        idx -= 4;
-    }
-}
-
-Matrix::Matrix() {}
-
-Matrix::Matrix(const Matrix & matrix) {
-
-    this->copy(matrix);
-}
-
-Matrix & Matrix::operator=(const Matrix & matrix) {
-
-    this->copy(matrix);
-    return *this;
-}
-
 Matrix Matrix::operator*(const Matrix & matrix) const {
 
     Matrix r;
@@ -337,24 +284,6 @@ Matrix Matrix::operator*(const Matrix & matrix) const {
     return r;
 }
 
-Vector Matrix::operator*(const Vector & vector) const {
-
-    float v[4];
-
-    this->mul(v, vector.v);
-
-    return Vector(v);
-}
-
-Point Matrix::operator*(const Point & point) const {
-
-    float p[4];
-
-    this->mul(p, point.p);
-
-    return Point(p);
-}
-
 Ray Matrix::operator*(const Ray & ray) const {
 
     return Ray(*this * ray.origin, *this * ray.direction, ray.in, ray.level);
@@ -362,8 +291,7 @@ Ray Matrix::operator*(const Ray & ray) const {
 
 Matrix Matrix::invert() const {
 
-    if (!this->invertible)
-        throw string("Matrix is not invertible");
+    assert(this->invertible);
 
     Matrix matrix;
 
@@ -373,29 +301,4 @@ Matrix Matrix::invert() const {
     matrix.invertible = true;
 
     return matrix;
-}
-
-string Matrix::to_string() const {
-
-    stringstream ss;
-
-    ss << "Matrix[";
-
-    uint8_t idx = 0;
-
-    for (uint8_t i = 0; i < 4; i++) {
-
-        ss << "{";
-
-        for(uint8_t j = 0; j < 4; j++)
-            ss << this->m[idx + j] << " ";
-
-        ss << "} ";
-
-        idx += 4;
-    }
-
-    ss << "]";
-
-    return ss.str();
 }

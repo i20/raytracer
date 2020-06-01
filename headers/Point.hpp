@@ -1,34 +1,28 @@
 #ifndef _POINT_HPP
 #define _POINT_HPP
 
-#include <string>
+#include <cstdint>
 
 class Vector;
 
-using namespace std;
-
 class Point {
+
+    private:
+
+        float p[4];
 
     public:
 
         static const Point O;
 
-        float p[4];
-
-        Point();
-        Point(const float p[4]);
+        Point() = default;
         Point(const float x, const float y, const float z);
-        Point(const Point & point);
 
-        Point & operator=(const Point & point);
-
-        string to_string() const;
+        float & operator[] (const uint8_t i);
+        const float & operator[] (const uint8_t i) const;
 
         Vector operator-(const Point & point) const;
         Point operator+(const Vector & vector) const;
-
-    private:
-        void copy(const float p[4]);
 };
 
 #endif

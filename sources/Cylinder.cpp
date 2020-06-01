@@ -1,10 +1,7 @@
 #include <cstdint>
 #include <cmath>
 
-#include <string>
 #include <vector>
-#include <sstream>
-#include <iostream>
 
 #include "../headers/Cylinder.hpp"
 #include "../headers/Object.hpp"
@@ -94,16 +91,6 @@ Cylinder::Cylinder(
     z_dir, y_dir
 ), radius(radius), height(height) {}
 
-Cylinder::Cylinder(const Cylinder & cylinder) : Object(cylinder), radius(cylinder.radius), height(cylinder.height) {}
-
-Cylinder & Cylinder::operator=(const Cylinder & cylinder) {
-
-    this->copy(cylinder);
-    this->radius = cylinder.radius;
-    this->height = cylinder.height;
-    return *this;
-}
-
 TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & octrees, const Ray & ray_object) const {
 
     float a = 0;
@@ -113,8 +100,8 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
     // Similar to the sphere but don't take care of the cylinder axis direction (ie z)
     for (uint8_t i = 0; i < 2; i++) {
 
-        float rdi = ray_object.direction.v[i];
-        float roi = ray_object.origin.p[i];
+        float rdi = ray_object.direction[i];
+        float roi = ray_object.origin[i];
 
         a += rdi * rdi;
         b += rdi * roi;
@@ -145,29 +132,39 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
     // // Check intersections at both edges of the cylinder
     // if (this->height != -1 && this->is_closed) {
 
-    //     float det = ray_object.direction.v[2];
+    //     float det = ray_object.direction[2];
 
     //     // No intersection if ray lies in the plane
     //     if (det != 0) {
-    //         // Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts, ray_object);
-    //         Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts, ray_object);
+    //         // Object::insert_t(-ray_object.origin[2] / det, nullptr, ts, ray_object);
+    //         Object::insert_t(-ray_object.origin[2] / det, nullptr, ts, ray_object);
     //     }
     // }
 
     return ts;
 }
 
-bool Cylinder::compute_intersection_final (Vector & normal_object, const Point & point_object, const Triangle * t) const {
+bool Cylinder::compute_intersection_final (Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
 
     // @todo support is_closed, we will need the 2 intersection points to test if the line between them passes through the edge
     // if p1 >= height && p2 < height -> ok and so on
 
-    if (this->height == -1 || (0 <= point_object.p[2] && point_object.p[2] <= this->height)) {
+    if (this->height == -1 || (0 <= point_object[2] && point_object[2] <= this->height)) {
 
-        normal_object = Vector(point_object.p[0], point_object.p[1], 0);
+        // @wonder Maybe normalize() is unnecessary here, remove if redundant
+        normal_object = Vector(point_object[0], point_object[1], 0).normalize();
 
+        // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
+        // kinda blurs tracks and normal is less indicative afterward and can generate false positives
+        // Effective correction must be done AFTER though as bump map carry non corrected delta data
+        bool must_correct = 0 < normal_object * ray_object.direction;
+
+        // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
         if (this->normals_texture != nullptr && this->height != -1)
-            normal_object = normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr);
+            normal_object = (normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr)).normalize();
+
+        if (must_correct)
+            normal_object = normal_object * -1;
 
         return true;
     }
@@ -181,12 +178,4 @@ Color Cylinder::compute_color_shape(const Point & point_object, const Triangle *
         return this->color;
 
     return this->color + this->compute_texture_texel<Color>(point_object, *this->image_texture, nullptr);
-}
-
-string Cylinder::to_string() const {
-
-    stringstream ss;
-    ss << "Cylinder[color=" << this->color.to_string() << " position=" << this->position.to_string() << " radius=" << this->radius << "]";
-
-    return ss.str();
 }

@@ -1,13 +1,9 @@
 #ifndef _MATRIX_HPP
 #define _MATRIX_HPP
 
-#include <string>
-
 #include "../headers/Vector.hpp"
 #include "../headers/Point.hpp"
 #include "../headers/Ray.hpp"
-
-using namespace std;
 
 //#define PI 3.14159265359
 
@@ -16,6 +12,8 @@ class Matrix {
     public:
 
         enum projection_type { PROJECTION_PERSPECTIVE, PROJECTION_ORTHOGRAPHIC };
+
+        static const Matrix I;
 
         static Matrix IDENTITY();
         static Matrix TRANSLATION(const Vector & v);
@@ -27,23 +25,48 @@ class Matrix {
         float m[16], inv[16];
         bool invertible;
 
-        Matrix();
-        Matrix(const Matrix & matrix);
-
-        Matrix & operator=(const Matrix & matrix);
-
         Matrix operator*(const Matrix & matrix) const;
-        Vector operator*(const Vector & vector) const;
-        Point operator*(const Point & point) const;
         Ray operator*(const Ray & ray) const;
 
+        template <class T>
+        T operator*(const T & t) const;
+
         Matrix invert() const;
-
-        string to_string() const;
-
-    private:
-        void copy(const Matrix & matrix);
-        void mul(float r[4], const float t[4]) const;
 };
+
+template <class T>
+T Matrix::operator*(const T & t) const {
+
+    T r;
+
+    uint8_t idx = 12;
+    bool must_div = false;
+    float w;
+
+    // Must be done reversed to compute r[3] first
+    for (uint8_t i = 3; i >= 0; i--) {
+
+        float v = 0;
+
+        for (uint8_t j = 0; j < 4; j++)
+            v += this->m[idx + j] * t[j];
+
+        if (i == 3 && v != 0 && v != 1) {
+
+            must_div = true;
+            w = v;
+        }
+
+        r[i] = must_div ? v / w : v;
+
+        // If not for will decrease i when i = 0
+        if(i == 0) break;
+
+        // Putting this after the above condition avoids idx - 4 when idx = 0 on last loop
+        idx -= 4;
+    }
+
+    return r;
+}
 
 #endif

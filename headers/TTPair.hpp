@@ -5,9 +5,7 @@
 
 #include "../headers/Triangle.hpp"
 
-using namespace std;
-
-typedef pair<float, const Triangle *> TTPair;
+typedef std::pair<float, const Triangle *> TTPair;
 
 class TTPairComparator {
 
@@ -15,6 +13,6 @@ class TTPairComparator {
         bool operator() (const TTPair & a, const TTPair & b) const;
 };
 
-typedef multiset<TTPair, TTPairComparator> TTPairList;
+typedef std::multiset<TTPair, TTPairComparator> TTPairList;
 
 #endif

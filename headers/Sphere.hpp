@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include <vector>
-#include <string>
 
 #include "../headers/Object.hpp"
 #include "../headers/Ray.hpp"
@@ -14,8 +13,6 @@
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
 #include "../headers/Octree.hpp"
-
-using namespace std;
 
 class Sphere : public Object {
 
@@ -42,16 +39,10 @@ class Sphere : public Object {
             const Vector & z_dir, const Vector & y_dir
         );
 
-        Sphere (const Sphere & sphere);
-
-        Sphere & operator= (const Sphere & sphere);
-
-        virtual string to_string () const override;
-
     private:
 
-        virtual TTPairList compute_intersection_ts(const vector<const Octree *> & octrees, const Ray & ray_object) const override;
-        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t) const override;
+        virtual TTPairList compute_intersection_ts(const std::vector<const Octree *> & octrees, const Ray & ray_object) const override;
+        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const override;
         virtual Color compute_color_shape(const Point & point_object, const Triangle * triangle) const override;
 
         template <class T>
@@ -64,21 +55,21 @@ T Sphere::compute_texture_texel (const Point & point_object, const Texture<T> & 
     float u, v, theta, phi;
 
     // https://en.wikipedia.org/wiki/List_of_common_coordinate_transformations#From_Cartesian_coordinates
-    theta = atan(abs(point_object.p[1] / point_object.p[0]));
+    theta = std::atan(std::abs(point_object[1] / point_object[0]));
 
-    if (0 <= point_object.p[0])
+    if (0 <= point_object[0])
         // Quadrans 1 (x positive, y positive)
-        if (0 <= point_object.p[1]); // nothing to do
+        if (0 <= point_object[1]); // nothing to do
         // Quadrans 4 (x positive, y negative)
         else theta = 2 * M_PI - theta;
     else
         // Quadrans 2 (x negative, y positive)
-        if (0 <= point_object.p[1])
+        if (0 <= point_object[1])
             theta = M_PI - theta;
         // Quadrans 3 (x negative, y negative)
         else theta = M_PI + theta;
 
-    phi = acos(point_object.p[2] / this->radius);
+    phi = std::acos(point_object[2] / this->radius);
 
     u = theta / (2 * M_PI);
     v = phi / M_PI;

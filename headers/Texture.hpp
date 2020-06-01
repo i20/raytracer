@@ -3,11 +3,10 @@
 
 #include <cstdint>
 #include <cmath>
+#include <string>
 
 #include <vector>
 #include <fstream>
-
-using namespace std;
 
 // Texture must be read left to right, top to bottom
 // i >
@@ -22,13 +21,10 @@ class Texture {
 
         bool ok;
         uintmax_t width, height;
-        vector<T> map;
+        std::vector<T> map;
 
         Texture(const char * file_name);
         Texture(const uintmax_t width, const uintmax_t height);
-        Texture(const Texture<T> & texture);
-
-        Texture<T> & operator=(const Texture<T> & texture);
 
         void set_texel(const uintmax_t i, const uintmax_t j, const T & texel);
         T get_texel(const uintmax_t i, const uintmax_t j) const;
@@ -38,17 +34,17 @@ class Texture {
         bool print(const char * file_name, const uintmax_t istart, const uintmax_t jstart, const uintmax_t iend, const uintmax_t jend) const;
 
     private:
-        uintmax_t get_uint(ifstream & inf) const;
-        void ignore_comments(ifstream & inf) const;
+        uintmax_t get_uint(std::ifstream & inf) const;
+        void ignore_comments(std::ifstream & inf) const;
 };
 
 template <class T>
-void Texture<T>::ignore_comments (ifstream & inf) const {
+void Texture<T>::ignore_comments (std::ifstream & inf) const {
 
-    string line;
+    std::string line;
 
     while (inf.peek() == '#')
-        getline(inf, line);
+        std::getline(inf, line);
 }
 
 // Does not support comments at the end of a non-comment line
@@ -56,7 +52,7 @@ void Texture<T>::ignore_comments (ifstream & inf) const {
 template <class T>
 Texture<T>::Texture (const char * file_name) {
 
-    ifstream inf(file_name);
+    std::ifstream inf(file_name);
 
     if ( !inf.is_open() ) {
 
@@ -64,8 +60,8 @@ Texture<T>::Texture (const char * file_name) {
         return;
     }
 
-    string line;
-    getline(inf, line);
+    std::string line;
+    std::getline(inf, line);
 
     // PNM : Portable Anymap, global name for all formats below
     //   PBM : Portable Bitmap, binary = P4, ASCII = P1, white/black
@@ -104,13 +100,13 @@ Texture<T>::Texture (const char * file_name) {
     uintmax_t nb_texels = this->width * this->height;
     this->map.reserve(nb_texels);
 
-    uint8_t t[3];
     for (uintmax_t i = 0; i < nb_texels; i++) {
 
+        T t;
         for (uint8_t k = 0; k < 3; k++)
             t[k] = inf.get();
 
-        this->map.push_back( T(t[0], t[1], t[2]) );
+        this->map.push_back(t);
     }
 
     inf.close();
@@ -120,20 +116,6 @@ Texture<T>::Texture (const char * file_name) {
 
 template <class T>
 Texture<T>::Texture(const uintmax_t width, const uintmax_t height) : ok(true), width(width), height(height), map(width * height) {}
-
-template <class T>
-Texture<T>::Texture(const Texture<T> & texture) : ok(texture.ok), width(texture.width), height(texture.height), map(texture.map) {}
-
-template <class T>
-Texture<T> & Texture<T>::operator=(const Texture<T> & texture) {
-
-    this->ok = texture.ok;
-    this->width = texture.width;
-    this->height = texture.height;
-    this->map = texture.map;
-
-    return *this;
-}
 
 template <class T>
 void Texture<T>::set_texel(const uintmax_t i, const uintmax_t j, const T & texel) {
@@ -199,8 +181,8 @@ T Texture<T>::get_texel_by_uv (const float u, const float v, const bool smooth) 
 
     // Decimal part of the real coords
     float di, dj;
-    di = modf(fi, &fi);
-    dj = modf(fj, &fj);
+    di = std::modf(fi, &fi);
+    dj = std::modf(fj, &fj);
 
     // Corrected interpolation coords depending on considered ghost square
     // 0 <= r, s < .5
@@ -259,21 +241,16 @@ T Texture<T>::get_texel_by_uv (const float u, const float v, const bool smooth) 
     }
 
     // Interpolation recipient
-    // @todo Handle interpolation with Texture<Vector> (cannot store in uint8_t)
-    uint8_t c[3];
-    for (uint8_t k = 0; k < 3; k++) {
 
-        uint8_t ak, bk;
-        ak = (1 - r) * a1[k] + r * a2[k];
-        bk = (1 - r) * b1[k] + r * b2[k];
-        c[k] = (1 - s) * ak + s * bk;
-    }
+    T t;
+    for (uint8_t k = 0; k < 3; k++)
+        t[k] = (1 - s) * ((1 - r) * a1[k] + r * a2[k]) + s * ((1 - r) * b1[k] + r * b2[k]);
 
-    return T(c[0], c[1], c[2]);
+    return t;
 }
 
 template <class T>
-uintmax_t Texture<T>::get_uint(ifstream & inf) const {
+uintmax_t Texture<T>::get_uint(std::ifstream & inf) const {
 
     uintmax_t i = 0;
     char t;
@@ -295,20 +272,25 @@ uintmax_t Texture<T>::get_uint(ifstream & inf) const {
 // http://netpbm.sourceforge.net/doc/ppm.html
 // http://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
 
+// @todo Should I deactivate this template for non Color textures with SFINAE ?
+// https://h-deb.clg.qc.ca/Sujets/TrucsScouts/Comprendre_enable_if.html
+// enable_if, is_same
 template <class T>
 bool Texture<T>::print (const char * file_name) const {
 
-    ofstream outf(file_name);
+    std::ofstream outf(file_name);
 
     if ( !outf.is_open() )
         return false;
 
     // Meta data in ASCII
-    outf << "P6" << endl;
-    outf << this->width << " " << this->height << endl;
-    outf << 255 << endl;
+    outf << "P6" << std::endl;
+    outf << this->width << " " << this->height << std::endl;
+    outf << 255 << std::endl;
 
-    for (auto texel : this->map)
+    // @todo Handle printing Texture<Vector>, only Color supported for now
+    //       Have to convert Vector coords to 255 base
+    for (const T & texel : this->map)
         for (uint8_t i = 0; i < 3; i++)
             outf.put(texel[i]);
 
@@ -320,20 +302,20 @@ bool Texture<T>::print (const char * file_name) const {
 template <class T>
 bool Texture<T>::print(const char * file_name, const uintmax_t istart, const uintmax_t jstart, const uintmax_t iend, const uintmax_t jend) const {
 
-    ofstream outf(file_name);
+    std::ofstream outf(file_name);
 
     if ( !outf.is_open() )
         return false;
 
     // Meta data in ASCII
-    outf << "P6" << endl;
-    outf << (iend - istart + 1) << " " << (jend - jstart + 1) << endl;
-    outf << 255 << endl;
+    outf << "P6" << std::endl;
+    outf << (iend - istart + 1) << " " << (jend - jstart + 1) << std::endl;
+    outf << 255 << std::endl;
 
     for (uintmax_t j = jstart; j < jend + 1; j++) {
         for (uintmax_t i = istart; i < iend + 1; i++) {
 
-            T t = this->map[i + j * this->width];
+            const T & t = this->map[i + j * this->width];
 
             // @todo Handle .c if T is Vector
             for (uint8_t k = 0; k < 3; k++)

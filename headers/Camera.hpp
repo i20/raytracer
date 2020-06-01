@@ -12,8 +12,6 @@
 #include "../headers/Matrix.hpp"
 #include "../headers/Texture.hpp"
 
-using namespace std;
-
 class Camera {
 
     public:
@@ -67,9 +65,6 @@ class Camera {
             Scene & scene
         );
 
-        Camera(const Camera & camera);
-        Camera & operator=(const Camera & camera);
-
         // SETTERS
 
         void set_focale(const float focale);
@@ -103,8 +98,6 @@ class Camera {
         // // Tests if a ray intersects with something, especially used to check for object's enlightment
         // //   the parameter "from" allows us to get information about the object
         // // TODO change the name of this function since it is very specific
-        // bool does_intersect(const Ray & ray, const Intersection & from) const;
-        static float random();
         void sobel_aa();
 };
 

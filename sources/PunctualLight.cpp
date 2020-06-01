@@ -2,8 +2,6 @@
 #include <cstdint>
 #include <cstdlib>
 
-#include <iostream>
-
 #include "../headers/Light.hpp"
 #include "../headers/Color.hpp"
 #include "../headers/Intersection.hpp"
@@ -22,23 +20,6 @@ PunctualLight::PunctualLight(const float ir, const float ig, const float ib, con
     l(l),
     q(q),
     position(position) {}
-
-PunctualLight::PunctualLight(const PunctualLight & light) :
-    Light(light),
-    c(light.c),
-    l(light.l),
-    q(light.q),
-    position(light.position) {}
-
-PunctualLight & PunctualLight::operator=(const PunctualLight & light) {
-
-    this->copy(light);
-    this->c = light.c;
-    this->l = light.l;
-    this->q = light.q;
-    this->position = light.position;
-    return *this;
-}
 
 Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene & scene) const {
 
@@ -93,7 +74,7 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
     float scalar_dx2 = 2 * scalar_d;
     float scalar_s = 0;
     for (uint8_t i = 0; i < 3; i++)
-        scalar_s += inter.ray->direction.v[i] * (pl.v[i] / d - inter.normal.v[i] * scalar_dx2);
+        scalar_s += inter.ray->direction[i] * (pl[i] / d - inter.normal[i] * scalar_dx2);
 
     // scalar_s <= 1
     scalar_s = 0 < scalar_s ? powf(scalar_s, inter.object->g) : 0;
@@ -105,11 +86,11 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
     // attenuation factor should be 0 <= x <= 1
     float attenuation = (1 - c) * (1 - min((float)1, l*d)) * (1 - min((float)1, q*d*d));
 
-    uint8_t c[3];
+    Color c;
     for (uint8_t i = 0; i < 3; i++)
-        c[i] = min((float)255, this->i[i] * inter.color.c[i] * attenuation * (inter.object->d[i] * scalar_d + inter.object->s[i] * scalar_s));
+        c[i] = min((float)255, (*this)[i] * inter.color[i] * attenuation * (inter.object->d[i] * scalar_d + inter.object->s[i] * scalar_s));
 
-    return Color(c[0], c[1], c[2]);
+    return c;
 }
 
 void PunctualLight::emit_photons () const {
@@ -177,7 +158,7 @@ void PunctualLight::emit_photons () const {
 
 //         // 0 <= sum <= 1020 (255 * 4)
 //         // 0 <= uint16_t <= 65 535
-//         uint16_t sum = /*ca.c[i] +*/ clr.c[i] + cr.c[i] + ct.c[i];
+//         uint16_t sum = /*ca[i] +*/ clr[i] + cr[i] + ct[i];
 //         c[i] = 255 < sum ? 255 : sum;
 //     }
 

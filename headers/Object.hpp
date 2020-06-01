@@ -2,7 +2,6 @@
 #define _OBJECT_HPP
 
 #include <vector>
-#include <string>
 
 #include "../headers/Ray.hpp"
 #include "../headers/Vector.hpp"
@@ -18,8 +17,6 @@
 //#include "../headers/Intersection.hpp"
 // Circular reference
 class Intersection;
-
-using namespace std;
 
 class Object {
 
@@ -66,28 +63,20 @@ class Object {
             const Vector & z_dir, const Vector & y_dir
         );
 
-        Object(const Object & object);
-
-        Object & operator=(const Object & object);
-
         bool compute_r_ray(Ray & rayr, const Intersection & inter) const;
         bool compute_t_ray(Ray & rayt, const Intersection & inter) const;
 
         bool compute_intersection(Intersection & inter, const Ray & ray) const;
         Color compute_color(const Point & point, const Triangle * triangle) const;
 
-        virtual string to_string() const;
-
     protected:
 
-        void copy(const Object & object);
-        // void load_base(const Vector & z_dir, const Vector & y_dir);
         static void insert_t(const float t, const Triangle * triangle, TTPairList & list, const Ray & ray_object);
 
     private:
 
-        virtual TTPairList compute_intersection_ts(const vector<const Octree *> & octrees, const Ray & ray_object) const = 0;
-        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t) const = 0;
+        virtual TTPairList compute_intersection_ts(const std::vector<const Octree *> & octrees, const Ray & ray_object) const = 0;
+        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const = 0;
         virtual Color compute_color_shape(const Point & point_object, const Triangle * triangle) const = 0;
         // I wanted to move compute_texture_texel here as a virtual but templates and virtuals are not mixable
 };

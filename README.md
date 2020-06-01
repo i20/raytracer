@@ -28,6 +28,8 @@ The voxel tree has a root voxel, each tree node has exactly eight or no child
 
 TODO
 
+- check if default copy ctor/operator can copy array member otherwise transform array members into array<type, n>
+    => after verification it seems that simple array members are deep copied by default, ok but strange no ?
 - move Vector/Point to macros, see if Matrix can be moved too
 - handle refracted ray when coming out from refracting object, what is outside n?
 - implement scenario programming (ex: load scene + wait 2 sec + move ...)

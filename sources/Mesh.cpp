@@ -1,3 +1,4 @@
+#include <string>
 #include <sstream>
 #include <fstream>
 #include <unordered_map>
@@ -56,31 +57,6 @@ Mesh::Mesh(
 
     if (this->normals_texture != nullptr)
         this->load_texture_mapping(normals_texture_mapping, this->normals_texture_mapping);
-}
-
-Mesh::Mesh(const Mesh & mesh) :
-    Object(mesh),
-    triangles(mesh.triangles),
-    vertexes(mesh.vertexes),
-    normals(mesh.normals),
-
-    image_texture_mapping(mesh.image_texture_mapping),
-    normals_texture_mapping(mesh.normals_texture_mapping),
-
-    shading(mesh.shading) {}
-
-Mesh & Mesh::operator=(const Mesh & mesh) {
-
-    this->copy(mesh);
-    this->triangles = mesh.triangles;
-    this->vertexes = mesh.vertexes;
-    this->normals = mesh.normals;
-
-    this->image_texture_mapping = mesh.image_texture_mapping;
-    this->normals_texture_mapping = mesh.normals_texture_mapping;
-
-    this->shading = mesh.shading;
-    return *this;
 }
 
 void Mesh::load_file (const char * off_file, const bool use_octree) {
@@ -159,9 +135,9 @@ void Mesh::load_file (const char * off_file, const bool use_octree) {
         // Update average normal at each of the tree vertex
         for (uint8_t j = 0; j < 3; j++) {
 
-            this->normals[p1].v[j] += face.normal.v[j];
-            this->normals[p2].v[j] += face.normal.v[j];
-            this->normals[p3].v[j] += face.normal.v[j];
+            this->normals[p1][j] += face.normal[j];
+            this->normals[p2][j] += face.normal[j];
+            this->normals[p3][j] += face.normal[j];
         }
 
         // Count edges valence
@@ -282,7 +258,7 @@ TTPairList Mesh::compute_intersection_ts(const vector<const Octree *> & octrees,
     return ts;
 }
 
-bool Mesh::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t) const {
+bool Mesh::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
 
     float uu = 0,
           uv = 0,
@@ -292,12 +268,12 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        float w_v = point_object.p[i] - this->vertexes[t->p1].p[i];
-        uu += t->u.v[i] * t->u.v[i];
-        uv += t->u.v[i] * t->v.v[i];
-        vv += t->v.v[i] * t->v.v[i];
-        wu += w_v * t->u.v[i];
-        wv += w_v * t->v.v[i];
+        float w_v = point_object[i] - this->vertexes[t->p1][i];
+        uu += t->u[i] * t->u[i];
+        uv += t->u[i] * t->v[i];
+        vv += t->v[i] * t->v[i];
+        wu += w_v * t->u[i];
+        wv += w_v * t->v[i];
     }
 
     float det = uv * uv - uu * vv;
@@ -317,22 +293,30 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
                 // @todo Use ponderate average to take into consideration triangle's area when interpolating
                 // @todo Phong shading seems to generate enlightened artifacts on hidden face edge @img(artifacts/shading)
 
-                float v[4];
                 // Bilinear interpolation
                 for (uint8_t i = 0; i < 4; i++)
-                    v[i] = (1 - (r+s)) * this->normals[t->p1].v[i] + r * this->normals[t->p2].v[i] + s * this->normals[t->p3].v[i];
+                    normal_object[i] = (1 - (r+s)) * this->normals[t->p1][i] + r * this->normals[t->p2][i] + s * this->normals[t->p3][i];
 
-                normal_object = Vector(v);
+                // @todo Maybe it is unnecessary here, remove if redundant
+                normal_object = normal_object.normalize();
             }
 
             // @todo Implement Gouraud shading
 
             // Flat shading
-            else
-                normal_object = t->normal;
+            else normal_object = t->normal; // ok normalized
 
+            // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
+            // kinda blurs tracks and normal is less indicative afterward and can generate false positives
+            // Effective correction must be done AFTER though as bump map carry non corrected delta data
+            bool must_correct = 0 < normal_object * ray_object.direction;
+
+            // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
             if (this->normals_texture != nullptr)
-                normal_object = normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t);
+                normal_object = (normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t)).normalize();
+
+            if (must_correct)
+                normal_object = normal_object * -1;
 
             return true;
         }
@@ -344,23 +328,4 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 Color Mesh::compute_color_shape (const Point & point_object, const Triangle * triangle) const {
 
     return this->color + this->compute_texture_texel<Color>(point_object, *this->image_texture, triangle);
-}
-
-// @todo Clean up
-string Mesh::to_string() const {
-
-    stringstream ss;
-    ss << "Mesh{triangles=>[";
-
-    /*vector<Triangle>::const_iterator cbegin = this->triangles.begin(), cend = this->triangles.end();
-    for (vector<Triangle>::const_iterator cit = cbegin; cit != cend; cit++) {
-
-        if (cit != cbegin)
-            ss << ",";
-
-        ss << cit->to_string();
-    }*/
-
-    ss << "]}";
-    return ss.str();
 }

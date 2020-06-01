@@ -3,7 +3,6 @@
 
 #include <cstdint>
 
-#include <string>
 #include <vector>
 
 #include "../headers/Point.hpp"
@@ -14,8 +13,6 @@
 // Whether to use packed children or a NULL spanned array
 // If false, absent children will be valued to NULL in this->children
 #define OCTREE_SMART_TREE true
-
-using namespace std;
 
 class Octree {
 
@@ -37,20 +34,17 @@ class Octree {
         // Ordered mapping of children to their index in previous array (-1 if not present)
         int8_t children_idx[8];
 
-        vector<const Triangle *> triangles;
+        std::vector<const Triangle *> triangles;
 
         Octree(const Point & o, const Vector & a);
         ~Octree();
 
-        void find_path(vector<const Octree *> & octrees, const Ray & ray) const;
+        void find_path(std::vector<const Octree *> & octrees, const Ray & ray) const;
 
         bool is_contained(const Triangle & t) const;
         bool is_contained(const Point & p) const;
         bool append(const Triangle & t);
-        // bool has_intersection_face(const Ray & ray, const uint8_t face) const;
         bool has_intersection(const Ray & ray) const;
-
-        string to_string() const;
 
     private:
 

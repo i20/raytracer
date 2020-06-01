@@ -27,18 +27,16 @@
 #include "../headers/Camera.hpp"
 #include "../headers/Scene.hpp"
 
-using namespace std;
-
 class Loader {
 
     public:
 
-        typedef unordered_map<string, Color> ColorMap;
-        typedef unordered_map<string, Point> PointMap;
-        typedef unordered_map<string, Vector> VectorMap;
+        typedef std::unordered_map<std::string, Color> ColorMap;
+        typedef std::unordered_map<std::string, Point> PointMap;
+        typedef std::unordered_map<std::string, Vector> VectorMap;
 
-        typedef unordered_map<string, Texture<Color>*> ImageTextureMap;
-        typedef unordered_map<string, Texture<Vector>*> NormalsTextureMap;
+        typedef std::unordered_map<std::string, Texture<Color>*> ImageTextureMap;
+        typedef std::unordered_map<std::string, Texture<Vector>*> NormalsTextureMap;
 
         Scene * scene;
         Camera * camera;
@@ -66,7 +64,7 @@ class Loader {
         bool get_bool (const JSONNode & node, const char * name) const;
         float get_float (const JSONNode & node, const char * name) const;
         int get_int (const JSONNode & node, const char * name) const;
-        string get_string (const JSONNode & node, const char * name) const;
+        std::string get_string (const JSONNode & node, const char * name) const;
 
         Color get_color (const JSONNode & node, const char * name) const;
         Point get_point (const JSONNode & node, const char * name) const;
@@ -150,7 +148,7 @@ class Loader {
         typename Texture<T>::filtering_type get_texture_filtering_type (const JSONNode & node, const char * name) const;
 
         template <class T>
-        void parse_texture (const JSONNode & node, const char * name, const bool with_mapping, Texture<T> ** texture, typename Texture<T>::filtering_type * filtering, string * mapping) const;
+        void parse_texture (const JSONNode & node, const char * name, const bool with_mapping, Texture<T> ** texture, typename Texture<T>::filtering_type * filtering, std::string * mapping) const;
 };
 
 // http://www.cplusplus.com/forum/general/76656/
@@ -175,7 +173,7 @@ typename Texture<T>::filtering_type Loader::get_texture_filtering_type (const JS
 
         case JSON_STRING: {
 
-            string filtering = filtering_node->as_string();
+            std::string filtering = filtering_node->as_string();
 
             if (filtering == "bilinear")
                 return Texture<T>::FILTERING_BILINEAR;
@@ -189,7 +187,7 @@ typename Texture<T>::filtering_type Loader::get_texture_filtering_type (const JS
             else if (filtering == "point")
                 return Texture<T>::FILTERING_NONE;
 
-            throw string("Unknown filtering type");
+            throw std::string("Unknown filtering type");
         }
             break;
 
@@ -203,7 +201,7 @@ template <class T>
 void Loader::parse_texture (const JSONNode & node, const char * name, const bool with_mapping,
     Texture<T> ** texture,
     typename Texture<T>::filtering_type * filtering,
-    string * mapping
+    std::string * mapping
 ) const {
 
     const JSONNode * texture_node = Loader::get(node, name, JSON_NODE, false);

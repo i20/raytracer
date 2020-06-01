@@ -10,14 +10,12 @@
 // Circular reference
 class Light;
 
-using namespace std;
-
 class Scene {
 
     public:
 
-        typedef unordered_map<string, Object*> ObjectMap;
-        typedef unordered_map<string, Light*> LightMap;
+        typedef std::unordered_map<std::string, Object*> ObjectMap;
+        typedef std::unordered_map<std::string, Light*> LightMap;
 
         // NONE = no boxes used, objects are directly tested
         // SIMPLE = all boxes are level 0 meaning they are all tested for intersection
@@ -25,7 +23,7 @@ class Scene {
         //enum grid_type_enum { NONE, SIMPLE, NESTED };
         //Scene::grid_type_enum grid_type;
 
-        string title;
+        std::string title;
 
         Scene::ObjectMap objects;
         Scene::LightMap lights;
@@ -33,9 +31,6 @@ class Scene {
         Color bg_color;
 
         Scene(const char * title, const Color & bg_color);
-        Scene(const Scene & scene);
-
-        Scene & operator=(const Scene & scene);
 
         void add_object(const char * id, Object & object);
         void rm_object(const char * id);
@@ -44,10 +39,6 @@ class Scene {
         void add_light(const char * id, Light & light);
         void rm_light(const char * id);
         Light & get_light(const char * id);
-
-    protected:
-
-        void copy(const Scene & scene);
 };
 
 #endif

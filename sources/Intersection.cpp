@@ -18,28 +18,8 @@ Intersection::Intersection() :
 
 Intersection::Intersection(const Point & point, const Vector & normal, const Color & color, const float t, const Object * object, const Ray * ray) :
     point(point),
-    normal(normal.normalize()),
+    normal(normal),
     color(color),
     t(t),
     object(object),
     ray(ray) {}
-
-Intersection::Intersection(const Intersection & inter) :
-    point(inter.point),
-    normal(inter.normal),
-    color(inter.color),
-    t(inter.t),
-    object(inter.object),
-    ray(inter.ray) {}
-
-Intersection & Intersection::operator=(const Intersection & inter) {
-
-    this->point = inter.point;
-    this->normal = inter.normal;
-    this->color = inter.color;
-    this->t = inter.t;
-    this->object = inter.object;
-    this->ray = inter.ray;
-
-    return *this;
-}

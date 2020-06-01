@@ -12,22 +12,14 @@ using namespace std;
 
 AmbientLight::AmbientLight(const float ir, const float ig, const float ib) : Light(ir, ig, ib) {}
 
-AmbientLight::AmbientLight(const AmbientLight & light) : Light(light) {}
-
-AmbientLight & AmbientLight::operator=(const AmbientLight & light) {
-
-    this->copy(light);
-    return *this;
-}
-
 Color AmbientLight::compute_luminosity(const Intersection & inter, const Scene & scene) const {
 
-    uint8_t c[3];
+    Color c;
 
     for (uint8_t i = 0; i < 3; i++)
-        c[i] = min((float)255, inter.object->a[i] * this->i[i] * inter.color.c[i]);
+        c[i] = min((float)255, inter.object->a[i] * (*this)[i] * inter.color[i]);
 
-    return Color(c[0], c[1], c[2]);
+    return c;
 }
 
 void AmbientLight::emit_photons () const {

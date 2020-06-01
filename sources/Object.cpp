@@ -1,10 +1,7 @@
 #include <cstdint>
 #include <cmath>
 #include <cfloat> // FLT_EPSILON
-#include <cstring>
-
-#include <string>
-#include <sstream>
+#include <cstring> // memcpy
 
 #include "../headers/Object.hpp"
 
@@ -20,36 +17,10 @@
 #include "../headers/TTPair.hpp"
 
 // cfloat.h FLT_EPSILON = 1E-5 is too small and does not prevent self intersection
-#define EPSILON .001
+// @todo Decrease EPSILON to minimum .0001 being to low
+#define EPSILON .00025
 
 using namespace std;
-
-void Object::copy(const Object & object) {
-
-    this->color = object.color;
-    this->position = object.position;
-    this->base = object.base;
-    this->inv = object.inv;
-    this->is_closed = object.is_closed;
-    this->is_glassy = object.is_glassy;
-    this->octree = object.octree;
-
-    this->image_texture = object.image_texture;
-    this->image_texture_filtering = object.image_texture_filtering;
-
-    this->normals_texture = object.normals_texture;
-    this->normals_texture_filtering = object.normals_texture_filtering;
-
-    size_t size = 3 * sizeof(float);
-
-    memcpy(this->a, object.a, size);
-    memcpy(this->d, object.d, size);
-    memcpy(this->s, object.s, size);
-
-    this->r = object.r;
-    this->n = object.n;
-    this->g = object.g;
-}
 
 // @url(http://realtimecollisiondetection.net/blog/?p=89)
 void Object::insert_t(const float t, const Triangle * triangle, TTPairList & list, const Ray & ray_object) {
@@ -119,39 +90,6 @@ Object::Object(
     this->inv = this->base.invert();
 }
 
-Object::Object(const Object & object) :
-
-    color(object.color),
-    position(object.position),
-    base(object.base),
-    inv(object.inv),
-    is_closed(object.is_closed),
-    is_glassy(object.is_glassy),
-    octree(object.octree),
-
-    image_texture(object.image_texture),
-    image_texture_filtering(object.image_texture_filtering),
-
-    normals_texture(object.normals_texture),
-    normals_texture_filtering(object.normals_texture_filtering),
-
-    r(object.r),
-    n(object.n),
-    g(object.g) {
-
-    size_t size = 3 * sizeof(float);
-
-    memcpy(this->a, object.a, size);
-    memcpy(this->d, object.d, size);
-    memcpy(this->s, object.s, size);
-}
-
-Object & Object::operator=(const Object & object) {
-
-    this->copy(object);
-    return *this;
-}
-
 bool Object::compute_r_ray(Ray & rayr, const Intersection & inter) const {
 
     if (!this->is_glassy || this->r == 0)
@@ -164,11 +102,8 @@ bool Object::compute_r_ray(Ray & rayr, const Intersection & inter) const {
     float scalar = inter.ray->direction * inter.normal;
     scalar += scalar;
 
-    float v[4];
     for (uint8_t i = 0; i < 4; i++)
-        v[i] = inter.ray->direction.v[i] - inter.normal.v[i] * scalar;
-
-    rayr_dir = Vector(v);
+        rayr_dir[i] = inter.ray->direction[i] - inter.normal[i] * scalar;
 
     rayr = Ray(
         inter.point,
@@ -202,13 +137,12 @@ bool Object::compute_t_ray(Ray & rayt, const Intersection & inter) const {
     //    return false;
     //double f = (norm / tan(asin(dev * norm))) * (scalar < 0 ? -1 : 1) - scalar;
 
-    float v[3];
-    for (uint8_t i = 0; i < 3; i++)
-        /* #1 */v[i] = inter.ray->direction.v[i] * dev - inter.normal.v[i] * f;
-        ///* #2 */v[i] = inter.ray->direction.v[i] + inter.normal.v[i] * f;
+    Vector rayt_dir;
+    for (uint8_t i = 0; i < 4; i++)
+        /* #1 */rayt_dir[i] = inter.ray->direction[i] * dev - inter.normal[i] * f;
+        ///* #2 */rayt_dir[i] = inter.ray->direction[i] + inter.normal[i] * f;
 
     // inter.ray->direction * dev - inter.normal * (cos(asin(dev * sin(acos(scalar)))) + dev * scalar),
-    Vector rayt_dir(v[0], v[1], v[2]);
 
     rayt = Ray(
         inter.point,
@@ -238,20 +172,19 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
     if (ts.size() == 0)
         return false;
 
-    Vector normal_object;
+    Vector normal_object; // ok normalized
     Point point_object;
     const TTPair * match = nullptr;
 
     for (const auto & tpair : ts) {
 
-        float p[4];
         for (uint8_t i = 0; i < 4; i++)
-            p[i] = ray_object.origin.p[i] + tpair.first * ray_object.direction.v[i];
+            point_object[i] = ray_object.origin[i] + tpair.first * ray_object.direction[i];
 
-        point_object = Point(p);
-
-        if (this->compute_intersection_final(normal_object, point_object, tpair.second)) {
+        if (this->compute_intersection_final(normal_object, point_object, tpair.second, ray_object)) {
             // @todo Move bump mapping here, find a way to deal with virtual template (@see Object.hpp comment)
+            //       Have to handle texture mapping on infinite objects in a generic way
+            // @wonder Bump mapping seems to move light impact on surface @img(artifacts/bump-mapping)
             match = &tpair;
             break;
         }
@@ -259,12 +192,6 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 
     if (match == nullptr)
         return false;
-
-    // We have to correct the normal
-    if (normal_object * ray_object.direction > 0)
-        normal_object = normal_object * -1;
-
-    normal_object = normal_object.normalize();
 
     // Shifting the intersection point along the normal or ray direction from an epsilon distance yields displacement artifacts
     // Not shifting and rather testing EPSILON < t in Object::insert_t() yields @img(artifacts/epsilon)
@@ -290,12 +217,4 @@ Color Object::compute_color(const Point & point, const Triangle * triangle) cons
 
     // @todo Move texture mapping here, find a way to deal with virtual template (cf Object.hpp comment)
     return this->image_texture == nullptr ? this->color : this->compute_color_shape(this->inv * point, triangle);
-}
-
-string Object::to_string() const {
-
-    stringstream ss;
-    ss << "Object[color=" << this->color.to_string() << " position=" << this->position.to_string() << "]";
-
-    return ss.str();
 }

@@ -3,11 +3,12 @@
 
 #include <cstdint>
 
-#include <string>
-
-using namespace std;
-
 class Color {
+
+    private:
+
+        // @todo Handle alpha transparency
+        uint8_t c[3];
 
     public:
 
@@ -21,15 +22,11 @@ class Color {
         static const Color YELLOW;
         static const Color PINK;
 
-        uint8_t c[4];
-
-        Color(); // Needed since Texture contains a vector<Color> TODO see if cannot be removed
+        Color();
         Color(const uint8_t red, const uint8_t green, const uint8_t blue);
-        Color(const Color & color);
 
-        uint8_t & operator[] (const uint8_t i);
-
-        Color & operator=(const Color & color);
+        uint8_t & operator[](const uint8_t i);
+        const uint8_t & operator[](const uint8_t i) const;
 
         Color operator+(const Color & color) const;
         Color operator-(const Color & color) const;
@@ -38,11 +35,6 @@ class Color {
         Color operator*(const float v) const;
 
         uint32_t get_rgba() const;
-
-        string to_string() const;
-
-    private:
-        void copy (const Color & color);
 };
 
 #endif

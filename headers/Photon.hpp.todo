@@ -3,12 +3,8 @@
 
 #include <cstdint>
 
-#include <string>
-
 #include "../headers/Point.hpp"
 #include "../headers/Vector.hpp"
-
-using namespace std;
 
 class Ray {
 
@@ -21,8 +17,6 @@ class Ray {
         // Ray(const Ray & ray);
 
         // Ray & operator=(const Ray & ray);
-
-        // string to_string() const;
 };
 
 #endif

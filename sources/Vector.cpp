@@ -1,9 +1,5 @@
 #include <cmath>
 #include <cstdint>
-#include <cstring>
-
-#include <sstream>
-#include <string>
 
 #include "../headers/Point.hpp"
 #include "../headers/Vector.hpp"
@@ -14,133 +10,91 @@ using namespace std;
 /*static*/ const Vector Vector::Y(0, 1, 0);
 /*static*/ const Vector Vector::Z(0, 0, 1);
 
-void Vector::copy(const float v[4]) {
-
-    memcpy(this->v, v, 4 * sizeof(float));
-}
-
-Vector::Vector() {}
-
-Vector::Vector(const float v[4]) {
-
-    this->copy(v);
-}
-
 Vector::Vector(const float x, const float y, const float z) {
 
-    this->v[0] = x;
-    this->v[1] = y;
-    this->v[2] = z;
-    this->v[3] = 0;
+    (*this)[0] = x;
+    (*this)[1] = y;
+    (*this)[2] = z;
+    (*this)[3] = 0;
 }
 
-Vector::Vector(const Point & a, const Point & b) {
-
-    this->copy((b - a).v);
-}
-
-Vector::Vector(const Vector & vector) {
-
-    this->copy(vector.v);
-}
+Vector::Vector(const Point & a, const Point & b) : Vector(b - a) {}
 
 float & Vector::operator[] (const uint8_t i) {
-
     return this->v[i];
 }
 
-Vector & Vector::operator=(const Vector & vector) {
-
-    this->copy(vector.v);
-    return *this;
+const float & Vector::operator[] (const uint8_t i) const {
+    return this->v[i];
 }
 
-Vector Vector::normalize() const {
+Vector Vector::normalize () const {
 
     float norm = this->get_norm();
 
     return norm == 1 ? *this : *this / norm;
 }
 
-float Vector::get_norm() const {
+float Vector::get_norm () const {
 
     return sqrt(*this * *this);
 }
 
-Vector Vector::operator^(const Vector & vector) const {
+Vector Vector::operator^ (const Vector & vector) const {
 
     return Vector(
-
-        this->v[1] * vector.v[2] - this->v[2] * vector.v[1],
-        this->v[2] * vector.v[0] - this->v[0] * vector.v[2],
-        this->v[0] * vector.v[1] - this->v[1] * vector.v[0]
+        (*this)[1] * vector[2] - (*this)[2] * vector[1],
+        (*this)[2] * vector[0] - (*this)[0] * vector[2],
+        (*this)[0] * vector[1] - (*this)[1] * vector[0]
     );
 }
 
-float Vector::operator*(const Vector & vector) const {
+float Vector::operator* (const Vector & vector) const {
 
     float sum = 0;
 
     for (uint8_t i = 0; i < 4; i++)
-        sum += this->v[i] * vector.v[i];
+        sum += (*this)[i] * vector[i];
 
     return sum;
 }
 
-Vector Vector::operator+(const Vector & vector) const {
+Vector Vector::operator+ (const Vector & vector) const {
 
-    float v[4];
-
-    for (uint8_t i = 0; i < 4; i++)
-        v[i] = this->v[i] + vector.v[i];
-
-    return Vector(v);
-}
-
-Vector Vector::operator-(const Vector & vector) const {
-
-    float v[4];
+    Vector v;
 
     for (uint8_t i = 0; i < 4; i++)
-        v[i] = this->v[i] - vector.v[i];
+        v[i] = (*this)[i] + vector[i];
 
-    return Vector(v);
+    return v;
 }
 
-Vector Vector::operator*(const float e) const {
+Vector Vector::operator- (const Vector & vector) const {
 
-    float v[4];
+    Vector v;
 
     for (uint8_t i = 0; i < 4; i++)
-        v[i] = this->v[i] * e;
+        v[i] = (*this)[i] - vector[i];
 
-    return Vector(v);
+    return v;
 }
 
-Vector Vector::operator/(const float e) const {
+Vector Vector::operator* (const float e) const {
 
-    float v[4];
+    Vector v;
 
     for (uint8_t i = 0; i < 4; i++)
-        v[i] = this->v[i] / e;
+        v[i] = (*this)[i] * e;
 
-    return Vector(v);
+    return v;
 }
 
-Vector Vector::average(const Vector & vector) const {
+Vector Vector::operator/ (const float e) const {
 
-    float v[4];
+    Vector v;
 
     for (uint8_t i = 0; i < 4; i++)
-        v[i] = (this->v[i] + vector.v[i]) / 2;
+        v[i] = (*this)[i] / e;
 
-    return Vector(v);
-}
-
-string Vector::to_string() const {
-
-    stringstream ss;
-    ss << "Vector[x=" << this->v[0] << " y=" << this->v[1] << " z=" << this->v[2] << "]";
-
-    return ss.str();
+    return v;
 }

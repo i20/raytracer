@@ -8,33 +8,9 @@
 
 using namespace std;
 
-void Scene::copy(const Scene & scene) {
-
-    this->title = scene.title;
-
-    this->objects = scene.objects;
-    this->lights = scene.lights;
-
-    this->bg_color = scene.bg_color;
-}
-
-Scene & Scene::operator=(const Scene & scene) {
-
-    this->copy(scene);
-    return *this;
-}
-
 Scene::Scene(const char * title, const Color & bg_color) :
     title(title),
     bg_color(bg_color) {}
-
-Scene::Scene(const Scene & scene) :
-    title(scene.title),
-
-    objects(scene.objects),
-    lights(scene.lights),
-
-    bg_color(scene.bg_color) {}
 
 // --------------------------------------------------------------------------------------
 

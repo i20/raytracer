@@ -19,6 +19,11 @@ using namespace std;
 
 static const float degrad = M_PI / 180;
 
+// static float _random() {
+
+//     return rand() / (float)RAND_MAX;
+// }
+
 void Camera::compute_bases () {
 
     Vector zc = Vector(this->eye, this->look_at).normalize();
@@ -111,24 +116,16 @@ Color Camera::radiate (const Ray & ray) const {
     Color cr, ct;
     Ray rt, rr;
 
-    // #TODO optimize r and t color calculation in one loop
+    // @todo Optimize r and t color calculation in one loop
     if ( ninter.object->compute_r_ray(rr, ninter) )
         cr = this->radiate(rr) * ninter.object->r;
 
     if ( ninter.object->compute_t_ray(rt, ninter) )
         ct = this->radiate(rt) * (1 - ninter.object->r);
 
-    // TODO use operator+ from Color with variadic parameters to optimize
-    uint8_t c[3];
-    for (uint8_t i = 0; i < 3; i++) {
-
-        // 0 <= sum <= 1020 (255 * 4)
-        // 0 <= uint16_t <= 65 535
-        uint16_t sum = /*ca.c[i] +*/ clr.c[i] + cr.c[i] + ct.c[i];
-        c[i] = 255 < sum ? 255 : sum;
-    }
-
-    return Color(c[0], c[1], c[2]);
+    // Sum direct enlightment + reflected + refracted
+    // @todo Use operator+ from Color with variadic parameters to optimize
+    return clr + cr + ct;
 }
 
 // Used to detect intersection for full rays, those with radiate() (sight/reflected/refracted)
@@ -148,33 +145,6 @@ bool Camera::compute_nearest_intersection(Intersection & ninter, const Ray & ray
     }
 
     return has_nearest;
-}
-
-// // Used to detect direct enlightment only
-// bool Camera::does_intersect(const Ray & ray, const Intersection & from) const {
-
-//     for (const auto & object_entry : this->scene.objects) {
-
-//         Intersection inter;
-
-//         // Since shadow_ray's origin is on the intersection point compute_intersection(shadow_ray) will always be true on origin object
-//         // rd * n <= 0 => ray passes through its own object to reach the light
-
-//         // NOTE: I once thought about replacing the same object condition (ray.direction * from.normal) with (ray.in) to speed up
-//         // cause obviously if the shadow ray comes from inside the object it will necessarily intersect with it to reach the light
-//         // which is most of the time outside BUT what if the light is inside the object?
-
-//         // Specific test, handles concave objects (#ALGO 1)
-//         if ((object_entry.second == from.object && ray.direction * from.normal <= 0) || object_entry.second->compute_intersection(inter, ray))
-//             return true;
-//     }
-
-//     return false;
-// }
-
-float Camera::random() {
-
-    return rand() / (float)RAND_MAX;
 }
 
 // With CUDA use threads of blocks to share pixels for stencil application
@@ -236,8 +206,8 @@ void Camera::sobel_aa () {
                     // for (uintmax_t k = 0; k < this->aa_depth; k++) {
 
                     //     // Random coords in pixel ij
-                    //     float xr = x_start - this->pasx * (i + Camera::random());
-                    //     float yr = y_start - this->pasy * (j + Camera::random());
+                    //     float xr = x_start - this->pasx * (i + _random());
+                    //     float yr = y_start - this->pasy * (j + _random());
 
                     //     Vector dir = this->base * Vector(xr, yr, this->focale);
                     //     Ray ray(this->eye, dir, false, 0);
@@ -256,8 +226,8 @@ void Camera::sobel_aa () {
                             float yr = y_start - this->pasy * (j + (kj + .5) / (float)aa_base);
 
                             // // Jittered grid
-                            // float xr = x_start - this->pasx * (i + (ki + Camera::random()) / (float)aa_base);
-                            // float yr = y_start - this->pasy * (j + (kj + Camera::random()) / (float)aa_base);
+                            // float xr = x_start - this->pasx * (i + (ki + _random()) / (float)aa_base);
+                            // float yr = y_start - this->pasy * (j + (kj + _random()) / (float)aa_base);
 
                             Vector dir = this->base * Vector(xr, yr, this->focale);
                             Ray ray(this->eye, dir, false, 0);
@@ -286,9 +256,6 @@ void Camera::sobel_aa () {
 
     edge_img.print("./screenshots/edge.ppm");
 }
-
-// #TODO a general solution which makes us free of multiple tricky cases is to consider only the second
-// intersection with the same object in does_intersect and compute_nearest_intersection
 
 // CONSTRUCTORS
 
@@ -335,71 +302,6 @@ Camera::Camera(
 
     this->compute_bases();
     this->compute_projection_size();
-}
-
-Camera::Camera(const Camera & camera) :
-
-    eye(camera.eye),
-    look_at(camera.look_at),
-    up(camera.up),
-
-    focale(camera.focale),
-    fov(camera.fov),
-
-    px_width(camera.px_width),
-    px_height(camera.px_height),
-
-    projection(camera.projection),
-
-    tracing_depth(camera.tracing_depth),
-    aa_depth(camera.aa_depth),
-    aa_threshold(camera.aa_threshold),
-
-    scene(camera.scene),
-
-    base(camera.base),
-    inv(camera.inv),
-
-    proj_width(camera.proj_width),
-    proj_height(camera.proj_height),
-
-    pasx(camera.pasx),
-    pasy(camera.pasy),
-
-    image(camera.image.width, camera.image.height) {}
-
-Camera & Camera::operator=(const Camera & camera) {
-
-    this->eye = camera.eye;
-    this->look_at = camera.look_at;
-    this->up = camera.up;
-
-    this->focale = camera.focale;
-    this->fov = camera.fov;
-
-    this->px_width = camera.px_width;
-    this->px_height = camera.px_height;
-
-    this->projection = camera.projection;
-
-    this->tracing_depth = camera.tracing_depth;
-    this->aa_depth = camera.aa_depth;
-    this->aa_threshold = camera.aa_threshold;
-
-    this->scene = camera.scene;
-
-    this->base = camera.base;
-    this->inv = camera.inv;
-
-    this->proj_width = camera.proj_width;
-    this->proj_height = camera.proj_height;
-
-    this->pasx = camera.pasx;
-    this->pasy = camera.pasy;
-
-    this->image = Texture<Color>(camera.image.width, camera.image.height);
-
-    return *this;
 }
 
 // SETTERS
@@ -471,7 +373,7 @@ void Camera::render () {
                 );
                 // Hit center of each pixel
                 // Ray must be expressed in the scene's base to compute correct intersections
-                // TODO is initial ray always outside?
+                // @wonder Is initial ray always outside?
                 Ray ray(this->eye, rayd, false, 0);
 
                 this->image.set_texel(i, j, this->radiate(ray));

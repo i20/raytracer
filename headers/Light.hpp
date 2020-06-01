@@ -4,29 +4,24 @@
 #include "../headers/Color.hpp"
 #include "../headers/Intersection.hpp"
 
-// Circular reference
 class Scene;
-
-using namespace std;
 
 class Light {
 
-    public:
+    private:
 
         // 0 <= i < +inf
         float i[3];
 
-        Light (const float ir, const float ig, const float ib);
-        Light (const Light & light);
+    public:
 
-        Light & operator= (const Light & light);
+        Light (const float ir, const float ig, const float ib);
+
+        float & operator[] (const uint8_t i);
+        const float & operator[] (const uint8_t i) const;
 
         virtual Color compute_luminosity (const Intersection & inter, const Scene & scene) const = 0;
         virtual void emit_photons () const = 0;
-
-    protected:
-
-        void copy (const Light & light);
 };
 
 #endif

@@ -1,8 +1,6 @@
 #include <cstdint>
 
 #include <vector>
-#include <string>
-#include <sstream>
 
 #include "../headers/Plane.hpp"
 
@@ -99,44 +97,38 @@ Plane::Plane(
     height(height),
     width(width) {}
 
-Plane::Plane(const Plane & plane) :
-    Object(plane),
-    infinite(plane.infinite),
-    height(plane.height),
-    width(plane.width) {}
-
-Plane & Plane::operator=(const Plane & plane) {
-
-    this->copy(plane);
-    this->infinite = plane.infinite;
-    this->height = plane.height;
-    this->width = plane.width;
-    return *this;
-}
-
 TTPairList Plane::compute_intersection_ts(const vector<const Octree *> & octrees, const Ray & ray_object) const {
 
     TTPairList ts;
 
-    float det = ray_object.direction.v[2];
+    float det = ray_object.direction[2];
 
     // No intersection if ray lies in the plane
     if (det != 0)
-        Object::insert_t(-ray_object.origin.p[2] / det, nullptr, ts, ray_object);
+        Object::insert_t(-ray_object.origin[2] / det, nullptr, ts, ray_object);
 
     return ts;
 }
 
-bool Plane::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t) const {
+bool Plane::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
 
-    // #TODO temp height,width/2
+    // @todo temp height,width/2
 
-    if (this->infinite || (-this->width/2 <= point_object.p[0] && point_object.p[0] <= this->width/2 && -this->height/2 <= point_object.p[1] && point_object.p[1] <= this->height/2)) {
+    if (this->infinite || (-this->width/2 <= point_object[0] && point_object[0] <= this->width/2 && -this->height/2 <= point_object[1] && point_object[1] <= this->height/2)) {
 
-        normal_object = Vector(0, 0, 1);
+        normal_object = Vector::Z; // ok normalized
 
+        // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
+        // kinda blurs tracks and normal is less indicative afterward and can generate false positives
+        // Effective correction must be done AFTER though as bump map carry non corrected delta data
+        bool must_correct = 0 < normal_object * ray_object.direction;
+
+        // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
         if (this->normals_texture != nullptr && !this->infinite)
-            normal_object = normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr);
+            normal_object = (normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr)).normalize();
+
+        if (must_correct)
+            normal_object = normal_object * -1;
 
         return true;
     }
@@ -151,17 +143,4 @@ Color Plane::compute_color_shape(const Point & point_object, const Triangle * tr
         return this->color;
 
     return this->color + this->compute_texture_texel<Color>(point_object, *this->image_texture, nullptr);
-}
-
-string Plane::to_string() const {
-
-    stringstream ss;
-    ss << "Plane[color=" << this->color.to_string() << " position=" << this->position.to_string() << " normal=" << (this->base * Vector(0, 0, 1)).to_string();
-
-    if(!this->infinite)
-        ss << " height=" << this->height << " height_along=" << (this->base * Vector(0, 1, 0)).to_string() << " width=" << this->width << " width_along=" << (this->base * Vector(1, 0, 0)).to_string();
-
-    ss << "]";
-
-    return ss.str();
 }

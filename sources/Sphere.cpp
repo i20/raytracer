@@ -2,8 +2,6 @@
 #include <cmath>
 
 #include <vector>
-#include <string>
-#include <sstream>
 
 #include "../headers/Sphere.hpp"
 
@@ -55,17 +53,6 @@ Sphere::Sphere(
         z_dir, y_dir
     ), radius(radius) {}
 
-Sphere::Sphere(const Sphere & sphere) :
-    Object(sphere),
-    radius(sphere.radius) {}
-
-Sphere & Sphere::operator=(const Sphere & sphere) {
-
-    this->copy(sphere);
-    this->radius = sphere.radius;
-    return *this;
-}
-
 TTPairList Sphere::compute_intersection_ts(const vector<const Octree *> & octrees, const Ray & ray_object) const {
 
     float a = 0; // a = rd.rd
@@ -74,8 +61,8 @@ TTPairList Sphere::compute_intersection_ts(const vector<const Octree *> & octree
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        float rdi = ray_object.direction.v[i];
-        float roi = ray_object.origin.p[i];
+        float rdi = ray_object.direction[i];
+        float roi = ray_object.origin[i];
 
         a += rdi * rdi;
         b += rdi * roi;
@@ -105,12 +92,22 @@ TTPairList Sphere::compute_intersection_ts(const vector<const Octree *> & octree
     return ts;
 }
 
-bool Sphere::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t) const {
+bool Sphere::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
 
-    normal_object = Vector(point_object.p[0], point_object.p[1], point_object.p[2]);
+    // @wonder Maybe normalize() is unnecessary here, remove if redundant
+    normal_object = Vector(point_object[0], point_object[1], point_object[2]).normalize();
 
+    // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
+    // kinda blurs tracks and normal is less indicative afterward and can generate false positives
+    // Effective correction must be done AFTER though as bump map carry non corrected delta data
+    bool must_correct = 0 < normal_object * ray_object.direction;
+
+    // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
     if (this->normals_texture != nullptr)
-        normal_object = normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr);
+        normal_object = (normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr)).normalize();
+
+    if (must_correct)
+        normal_object = normal_object * -1;
 
     return true;
 }
@@ -118,12 +115,4 @@ bool Sphere::compute_intersection_final(Vector & normal_object, const Point & po
 Color Sphere::compute_color_shape(const Point & point_object, const Triangle * triangle) const {
 
     return this->color + this->compute_texture_texel<Color>(point_object, *this->image_texture, nullptr);
-}
-
-string Sphere::to_string() const {
-
-    stringstream ss;
-    ss << "Sphere[color=" << this->color.to_string() << " position=" << this->position.to_string() << " radius=" << this->radius << "]";
-
-    return ss.str();
 }
