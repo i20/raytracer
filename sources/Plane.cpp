@@ -125,7 +125,7 @@ bool Plane::compute_intersection_final(Vector & normal_object, const Point & poi
 
         // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
         if (this->normals_texture != nullptr && !this->infinite)
-            normal_object = (normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr)).normalize();
+            normal_object = this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
 
         if (must_correct)
             normal_object = normal_object * -1;

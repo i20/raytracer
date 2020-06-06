@@ -313,7 +313,7 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
             // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
             if (this->normals_texture != nullptr)
-                normal_object = (normal_object + this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t)).normalize();
+                normal_object = this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t).normalize();
 
             if (must_correct)
                 normal_object = normal_object * -1;
