@@ -151,21 +151,20 @@ bool Cylinder::compute_intersection_final (Vector & normal_object, const Point &
 
     if (this->height == -1 || (0 <= point_object[2] && point_object[2] <= this->height)) {
 
-        normal_object = Vector(point_object[0], point_object[1], 0).normalize();
+        const Vector true_normal_object = Vector(point_object[0], point_object[1], 0).normalize();
 
-        // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
-        // kinda blurs tracks and normal is less indicative on object true geometry afterward what can
-        // generate false positives. Therefore effective correction must be done AFTER though as
-        // bump map carry non corrected delta data
-        bool must_correct = 0 < normal_object * ray_object.direction;
-
+        // Bump mapping
         if (this->normals_texture != nullptr && this->height != -1) {
             // Bump texel is expressed in normal base which is different from object base
-            Matrix bump_base = Matrix::TRANSFER(point_object, Vector::Z ^ normal_object, Vector::Z, normal_object);
+            const Matrix bump_base = Matrix::TRANSFER(point_object, Vector::Z ^ true_normal_object, Vector::Z, true_normal_object);
             normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
         }
 
-        if (must_correct)
+        else normal_object = true_normal_object;
+
+        // Detection of wether final normal should be corrected must be done on true normal as
+        // bump mapping looses the information of object true geometry and leads to false positives
+        if (0 < true_normal_object * ray_object.direction)
             normal_object = normal_object * -1;
 
         return true;

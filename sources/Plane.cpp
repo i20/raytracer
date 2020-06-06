@@ -116,21 +116,20 @@ bool Plane::compute_intersection_final(Vector & normal_object, const Point & poi
 
     if (this->infinite || (-this->width/2 <= point_object[0] && point_object[0] <= this->width/2 && -this->height/2 <= point_object[1] && point_object[1] <= this->height/2)) {
 
-        normal_object = Vector::Z; // ok normalized
+        const Vector true_normal_object = Vector::Z; // ok normalized
 
-        // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
-        // kinda blurs tracks and normal is less indicative on object true geometry afterward what can
-        // generate false positives. Therefore effective correction must be done AFTER though as
-        // bump map carry non corrected delta data
-        bool must_correct = 0 < normal_object * ray_object.direction;
-
+        // Bump mapping
         if (this->normals_texture != nullptr && !this->infinite) {
             // In the particular case of plane, bump base and object base are the same (except origin)
             // Therefore, we do not need to apply matrix transfer like for the other shapes
             normal_object = this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
         }
 
-        if (must_correct)
+        else normal_object = true_normal_object;
+
+        // Detection of wether final normal should be corrected must be done on true normal as
+        // bump mapping looses the information of object true geometry and leads to false positives
+        if (0 < true_normal_object * ray_object.direction)
             normal_object = normal_object * -1;
 
         return true;

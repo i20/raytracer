@@ -288,10 +288,11 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
             // Intersection point is on the triangle
 
+            const Vector true_normal_object = t->normal;
+
             if (this->shading == Mesh::SHADING_PHONG) {
 
                 // @todo Use ponderate average to take into consideration triangle's area when interpolating
-                // @todo Phong shading seems to generate enlightened artifacts on hidden face edge @img(artifacts/shading)
 
                 // Bilinear interpolation
                 for (uint8_t i = 0; i < 4; i++)
@@ -304,25 +305,25 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
             // @todo Implement Gouraud shading
 
             // Flat shading
-            else normal_object = t->normal; // ok normalized
+            else normal_object = true_normal_object; // ok normalized
 
-            // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
-            // kinda blurs tracks and normal is less indicative on object true geometry afterward what can
-            // generate false positives. Therefore effective correction must be done AFTER though as
-            // bump map carry non corrected delta data
-            bool must_correct = 0 < normal_object * ray_object.direction;
-
+            // Bump mapping
             if (this->normals_texture != nullptr) {
                 // Bump texel is expressed in normal base which is different from object base
-                // Notice that as normal being a shaded one (if shading allowed), bump base is coherent with shading
+                // Notice that we use normal_object and not true_normal_object here to compute
+                // the normal base, that way bump base is coherent with shading
 
                 // @todo Compute bump_base, notice that when flat shaded then base x, y can be simply deduced from triangle plane
                 //       But when Phong shaded, base x, y must be deduced with cross product from triangle (as in sphere bump_base)
-                Matrix bump_base = Matrix::TRANSFER(point_object, Vector::X /* @todo */, Vector::Y /* @todo */, normal_object);
+                const Matrix bump_base = Matrix::TRANSFER(point_object, Vector::X /* @todo */, Vector::Y /* @todo */, normal_object);
                 normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t).normalize();
             }
 
-            if (must_correct)
+            // Detection of wether final normal should be corrected must be done on true normal as
+            // bump mapping looses the information of object true geometry and leads to false positives
+            // Phong shading also looses true geometry and therefore should not be taken into account
+            // otherwise generates enlightened artifacts on hidden face edge @img(artifacts/shading)
+            if (0 < true_normal_object * ray_object.direction)
                 normal_object = normal_object * -1;
 
             return true;
