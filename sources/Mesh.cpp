@@ -307,13 +307,20 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
             else normal_object = t->normal; // ok normalized
 
             // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
-            // kinda blurs tracks and normal is less indicative afterward and can generate false positives
-            // Effective correction must be done AFTER though as bump map carry non corrected delta data
+            // kinda blurs tracks and normal is less indicative on object true geometry afterward what can
+            // generate false positives. Therefore effective correction must be done AFTER though as
+            // bump map carry non corrected delta data
             bool must_correct = 0 < normal_object * ray_object.direction;
 
-            // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
-            if (this->normals_texture != nullptr)
-                normal_object = this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t).normalize();
+            if (this->normals_texture != nullptr) {
+                // Bump texel is expressed in normal base which is different from object base
+                // Notice that as normal being a shaded one (if shading allowed), bump base is coherent with shading
+
+                // @todo Compute bump_base, notice that when flat shaded then base x, y can be simply deduced from triangle plane
+                //       But when Phong shaded, base x, y must be deduced with cross product from triangle (as in sphere bump_base)
+                Matrix bump_base = Matrix::TRANSFER(point_object, Vector::X /* @todo */, Vector::Y /* @todo */, normal_object);
+                normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t).normalize();
+            }
 
             if (must_correct)
                 normal_object = normal_object * -1;

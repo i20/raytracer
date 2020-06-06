@@ -151,17 +151,19 @@ bool Cylinder::compute_intersection_final (Vector & normal_object, const Point &
 
     if (this->height == -1 || (0 <= point_object[2] && point_object[2] <= this->height)) {
 
-        // @wonder Maybe normalize() is unnecessary here, remove if redundant
         normal_object = Vector(point_object[0], point_object[1], 0).normalize();
 
         // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
-        // kinda blurs tracks and normal is less indicative afterward and can generate false positives
-        // Effective correction must be done AFTER though as bump map carry non corrected delta data
+        // kinda blurs tracks and normal is less indicative on object true geometry afterward what can
+        // generate false positives. Therefore effective correction must be done AFTER though as
+        // bump map carry non corrected delta data
         bool must_correct = 0 < normal_object * ray_object.direction;
 
-        // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
-        if (this->normals_texture != nullptr && this->height != -1)
-            normal_object = this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
+        if (this->normals_texture != nullptr && this->height != -1) {
+            // Bump texel is expressed in normal base which is different from object base
+            Matrix bump_base = Matrix::TRANSFER(point_object, Vector::Z ^ normal_object, Vector::Z, normal_object);
+            normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
+        }
 
         if (must_correct)
             normal_object = normal_object * -1;

@@ -13,6 +13,7 @@
 #include "../headers/Color.hpp"
 #include "../headers/Texture.hpp"
 #include "../headers/Octree.hpp"
+#include "../headers/Matrix.hpp"
 
 using namespace std;
 
@@ -94,17 +95,21 @@ TTPairList Sphere::compute_intersection_ts(const vector<const Octree *> & octree
 
 bool Sphere::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
 
-    // @wonder Maybe normalize() is unnecessary here, remove if redundant
     normal_object = Vector(point_object[0], point_object[1], point_object[2]).normalize();
 
     // Detection of wether normal should be corrected must take place BEFORE bump mapping as it
-    // kinda blurs tracks and normal is less indicative afterward and can generate false positives
-    // Effective correction must be done AFTER though as bump map carry non corrected delta data
+            // kinda blurs tracks and normal is less indicative on object true geometry afterward what can
+            // generate false positives. Therefore effective correction must be done AFTER though as
+            // bump map carry non corrected delta data
     bool must_correct = 0 < normal_object * ray_object.direction;
 
-    // @todo Bump mapping fails as soon as object base is not scene base anymore, investigate why
-    if (this->normals_texture != nullptr)
-        normal_object = this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
+    if (this->normals_texture != nullptr) {
+        // Bump texel is expressed in normal base which is different from object base
+        // @wonder Is there an issue when normal is aligned on Z ?
+        Vector bump_x = (Vector::Z ^ normal_object).normalize();
+        Matrix bump_base = Matrix::TRANSFER(point_object, bump_x, normal_object ^ bump_x, normal_object);
+        normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
+    }
 
     if (must_correct)
         normal_object = normal_object * -1;
