@@ -41,7 +41,8 @@ using namespace std;
 
 struct rendering_data_s {
 
-    double fps;
+    double spf;
+    float eye_x, eye_y, eye_z;
 };
 
 static double timer (const double t) {
@@ -51,18 +52,10 @@ static double timer (const double t) {
 
 static void display_stats (SDL_Renderer * renderer, TTF_Font * font, const struct rendering_data_s & data) {
 
-    static SDL_Rect stats_bg_r = {
-
-        /* x */ VIEWPORT_WIDTH - STAT_WIDTH,
-        /* y */ 0,
-        /* w */ STAT_WIDTH,
-        /* h */ STAT_HEIGHT
-    };
-
     static SDL_Rect stats_r = {
 
-        /* x */ stats_bg_r.x + 10,
-        /* y */ stats_bg_r.y + 10
+        /* x */ 10,
+        /* y */ 10
     };
 
     static SDL_Color stats_c = {
@@ -73,11 +66,9 @@ static void display_stats (SDL_Renderer * renderer, TTF_Font * font, const struc
         /* a */ 255
     };
 
-    // Set stats background (green rectangle)
-    SDL_RenderFillRect(renderer, &stats_bg_r);
-
     stringstream ss;
-    ss << data.fps << " FPS";
+    ss << data.spf << " sec/frame" << " - ";
+    ss << "eye at (" << data.eye_x << ", " << data.eye_y << ", " << data.eye_z << ")";
 
     SDL_Surface * stats_s = TTF_RenderText_Solid(font, ss.str().c_str(), stats_c);
     SDL_Texture * stats_t = SDL_CreateTextureFromSurface(renderer, stats_s);
@@ -132,11 +123,6 @@ int main (const int argc, const char ** argv) {
         SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
         SDL_Texture * texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, loader.camera->px_width, loader.camera->px_height);
 
-        // General settings for display_stats
-        // Draw with transparent green for stats background color
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 100);
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-
         SDL_Event event;
 
         TTF_Init();
@@ -166,8 +152,11 @@ int main (const int argc, const char ** argv) {
 
                 t = omp_get_wtime();
                 loader.camera->render();
-                data.fps = timer(t);
-                cout << Term::RC << Term::CLR << "Scene rendering took " << Term::FGC_GREEN << data.fps << Term::R << " seconds" << endl;
+                data.spf = timer(t);
+                data.eye_x = loader.camera->eye[0];
+                data.eye_y = loader.camera->eye[1];
+                data.eye_z = loader.camera->eye[2];
+                cout << Term::RC << Term::CLR << "Scene rendering took " << Term::FGC_GREEN << data.spf << Term::R << " seconds" << endl;
 
                 uintmax_t w = 0;
 
