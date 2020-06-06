@@ -179,7 +179,7 @@ void Mesh::load_texture_mapping (const char * texture_mapping_file, Mesh::Textur
     // First line must contain TEX
     if ( line != "TEX" ) throw string("Texture mapping file is malformated");
 
-    uintmax_t nb_faces = this->triangles.size();
+    const uintmax_t nb_faces = this->triangles.size();
     texture_mapping.reserve(nb_faces);
 
     for (uintmax_t i = 0; i < nb_faces; i++) {
@@ -268,7 +268,7 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        float w_v = point_object[i] - this->vertexes[t->p1][i];
+        const float w_v = point_object[i] - this->vertexes[t->p1][i];
         uu += t->u[i] * t->u[i];
         uv += t->u[i] * t->v[i];
         vv += t->v[i] * t->v[i];
@@ -276,14 +276,14 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
         wv += w_v * t->v[i];
     }
 
-    float det = uv * uv - uu * vv;
+    const float det = uv * uv - uu * vv;
 
     // Coordinate on p1->p2 axis
-    float r = (uv * wv - vv * wu) / det;
+    const float r = (uv * wv - vv * wu) / det;
     if (0 <= r && r <= 1) {
 
         // Coordinate on p1->p3 axis
-        float s = (uv * wu - uu * wv) / det;
+        const float s = (uv * wu - uu * wv) / det;
         if (0 <= s && s <= 1 - r) {
 
             // Intersection point is on the triangle

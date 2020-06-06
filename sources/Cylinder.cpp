@@ -100,8 +100,8 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
     // Similar to the sphere but don't take care of the cylinder axis direction (ie z)
     for (uint8_t i = 0; i < 2; i++) {
 
-        float rdi = ray_object.direction[i];
-        float roi = ray_object.origin[i];
+        const float rdi = ray_object.direction[i];
+        const float roi = ray_object.origin[i];
 
         a += rdi * rdi;
         b += rdi * roi;
@@ -109,19 +109,19 @@ TTPairList Cylinder::compute_intersection_ts (const vector<const Octree *> & oct
     }
     b += b;
 
-    float det = b*b - 4*a*c;
+    const float det = b*b - 4*a*c;
     TTPairList ts;
 
     if (det >= 0) {
 
-        float da = a+a;
+        const float da = a+a;
 
         if (det == 0)
             Object::insert_t(-b / da, nullptr, ts, ray_object);
 
         else {
 
-            float sq = sqrt(det);
+            const float sq = sqrt(det);
 
             Object::insert_t((-b-sq) / da, nullptr, ts, ray_object);
             Object::insert_t((-b+sq) / da, nullptr, ts, ray_object);

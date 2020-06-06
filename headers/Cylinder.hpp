@@ -77,10 +77,8 @@ class Cylinder : public Object {
 template <class T>
 T Cylinder::compute_texture_texel (const Point & point_object, const Texture<T> & texture, const Triangle * triangle) const {
 
-    float u, v, theta;
-
     // https://en.wikipedia.org/wiki/List_of_common_coordinate_transformations#From_Cartesian_coordinates
-    theta = std::atan(std::abs(point_object[1] / point_object[0]));
+    float theta = std::atan(std::abs(point_object[1] / point_object[0]));
 
     if (0 <= point_object[0])
         // Quadrans 1 (x positive, y positive)
@@ -94,8 +92,8 @@ T Cylinder::compute_texture_texel (const Point & point_object, const Texture<T> 
         // Quadrans 3 (x negative, y negative)
         else theta = M_PI + theta;
 
-    u = theta / (2 * M_PI);
-    v = (this->height - point_object[2]) / this->height;
+    const float u = theta / (2 * M_PI);
+    const float v = (this->height - point_object[2]) / this->height;
 
     // @todo Handle filtering conf for normals (property normals_texture_filtering)
     return texture.get_texel_by_uv(u, v, this->image_texture_filtering == Texture<Color>::FILTERING_BILINEAR);

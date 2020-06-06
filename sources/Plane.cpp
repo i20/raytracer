@@ -101,7 +101,7 @@ TTPairList Plane::compute_intersection_ts(const vector<const Octree *> & octrees
 
     TTPairList ts;
 
-    float det = ray_object.direction[2];
+    const float det = ray_object.direction[2];
 
     // No intersection if ray lies in the plane
     if (det != 0)

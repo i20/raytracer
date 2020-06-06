@@ -30,7 +30,7 @@ const float & Vector::operator[] (const uint8_t i) const {
 
 Vector Vector::normalize () const {
 
-    float norm = this->get_norm();
+    const float norm = this->get_norm();
 
     return norm == 1 ? *this : *this / norm;
 }

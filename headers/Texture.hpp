@@ -85,7 +85,7 @@ Texture<T>::Texture (const char * file_name) {
 
     inf.ignore();
 
-    uintmax_t intensity = this->get_uint(inf);
+    const uintmax_t intensity = this->get_uint(inf);
 
     if (intensity != 255) {
 
@@ -97,7 +97,7 @@ Texture<T>::Texture (const char * file_name) {
 
     this->ignore_comments(inf);
 
-    uintmax_t nb_texels = this->width * this->height;
+    const uintmax_t nb_texels = this->width * this->height;
     this->map.reserve(nb_texels);
 
     for (uintmax_t i = 0; i < nb_texels; i++) {
@@ -166,29 +166,26 @@ T Texture<T>::get_texel_by_uv (const float u, const float v, const bool smooth) 
     // u = 0.75   fi = 2     i = 2   di = 0  start edge of last texel
 
     // Real coords of the texel
-    float fi, fj;
-    fi = u * (this->width - 1) + .5;
-    fj = v * (this->height - 1) + .5;
+    float fi = u * (this->width - 1) + .5;
+    float fj = v * (this->height - 1) + .5;
 
     // Raw texel coords, the basic approach would be to return this texel without interpolation
-    uintmax_t i, j;
-    i = (uintmax_t)fi;
-    j = (uintmax_t)fj;
+    const uintmax_t i = (uintmax_t)fi;
+    const uintmax_t j = (uintmax_t)fj;
 
-    T p5 = this->get_texel(i, j);
+    const T p5 = this->get_texel(i, j);
 
     if (!smooth) return p5;
 
     // Decimal part of the real coords
-    float di, dj;
-    di = std::modf(fi, &fi);
-    dj = std::modf(fj, &fj);
+    const float di = std::modf(fi, &fi);
+    const float dj = std::modf(fj, &fj);
 
     // Corrected interpolation coords depending on considered ghost square
     // 0 <= r, s < .5
     float r, s;
 
-    T & a1 = p5; // Alias for interpolation calculus semantic
+    const T & a1 = p5; // Alias for interpolation calculus semantic
     T a2, b1, b2;
 
     // A or C

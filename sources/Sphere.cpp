@@ -62,8 +62,8 @@ TTPairList Sphere::compute_intersection_ts(const vector<const Octree *> & octree
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        float rdi = ray_object.direction[i];
-        float roi = ray_object.origin[i];
+        const float rdi = ray_object.direction[i];
+        const float roi = ray_object.origin[i];
 
         a += rdi * rdi;
         b += rdi * roi;
@@ -71,19 +71,19 @@ TTPairList Sphere::compute_intersection_ts(const vector<const Octree *> & octree
     }
     b += b;
 
-    float det = b*b - 4*a*c;
+    const float det = b*b - 4*a*c;
     TTPairList ts;
 
     if (det >= 0) {
 
-        float da = a+a;
+        const float da = a * 2;
 
         if (det == 0)
             Object::insert_t(-b / da, nullptr, ts, ray_object);
 
         else {
 
-            float sq = sqrt(det);
+            const float sq = sqrt(det);
 
             Object::insert_t((-b-sq) / da, nullptr, ts, ray_object);
             Object::insert_t((-b+sq) / da, nullptr, ts, ray_object);

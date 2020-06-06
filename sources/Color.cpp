@@ -39,7 +39,7 @@ Color Color::operator+(const Color & color) const {
 
         // 0 <= sum <= 510 (255 * 2)
         // 0 <= uint16_t <= 65 535
-        uint16_t sum = (*this)[i] + color[i];
+        const uint16_t sum = (*this)[i] + color[i];
         c[i] = 255 < sum ? 255 : sum;
     }
 
@@ -53,7 +53,7 @@ Color Color::operator-(const Color & color) const {
     for (uint8_t i = 0; i < 3; i++) {
         // -255 <= sub <= 255
         // -32 768 <= int16_t <= 32 767
-        int16_t sub = (*this)[i] - color[i];
+        const int16_t sub = (*this)[i] - color[i];
         c[i] = sub < 0 ? 0 : sub;
     }
 
@@ -68,7 +68,7 @@ Color Color::operator*(const Color & color) const {
 
         // 0 <= mul <= 65 025 (255 * 255)
         // 0 <= uint16_t <= 65 535
-        uint16_t mul = (*this)[i] * color[i];
+        const uint16_t mul = (*this)[i] * color[i];
         c[i] = mul > 255 ? 255 : mul;
     }
 
@@ -76,6 +76,7 @@ Color Color::operator*(const Color & color) const {
 }
 
 // 0 <= v <= 1
+// @todo Make this method robust against all kind of v (check 0 <= x <= 255)
 Color Color::operator*(const float v) const {
 
     Color c;

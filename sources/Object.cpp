@@ -83,8 +83,8 @@ Object::Object(
     this->s[1] = sg;
     this->s[2] = sb;
 
-    Vector z = z_dir.normalize();
-    Vector x = (y_dir ^ z).normalize();
+    const Vector z = z_dir.normalize();
+    const Vector x = (y_dir ^ z).normalize();
 
     this->base = Matrix::TRANSFER(this->position, x, z ^ x, z);
     this->inv = this->base.invert();
@@ -120,11 +120,11 @@ bool Object::compute_t_ray(Ray & rayt, const Intersection & inter) const {
     if (!this->is_glassy || this->r == 1)
         return false;
 
-    float dev = inter.ray->in ? this->n : 1 / this->n; /* n1/n2 */
-    float scalar = inter.ray->direction * inter.normal; /* V*N */
+    const float dev = inter.ray->in ? this->n : 1 / this->n; /* n1/n2 */
+    const float scalar = inter.ray->direction * inter.normal; /* V*N */
 
     // methode #1
-    float f = cos(asin(dev * sin(acos(scalar)))) + dev * scalar;
+    const float f = cos(asin(dev * sin(acos(scalar)))) + dev * scalar;
 
     // methode #2
     // T = V + f * N
@@ -156,7 +156,7 @@ bool Object::compute_t_ray(Ray & rayt, const Intersection & inter) const {
 
 bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
 
-    Ray ray_object = this->inv * ray;
+    const Ray ray_object = this->inv * ray;
 
     // @wonder Why a part of the octree logic does reside in Object::compute_intersection? Isn't it a mesh thing?
     vector<const Octree *> octrees;
@@ -167,7 +167,7 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
             return false;
     }
 
-    TTPairList ts = this->compute_intersection_ts(octrees, ray_object);
+    const TTPairList ts = this->compute_intersection_ts(octrees, ray_object);
 
     if (ts.size() == 0)
         return false;
@@ -198,8 +198,8 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
     // @doc(Wächter-Binder2019_Chapter_AFastAndRobustMethodForAvoidin)
     // Point point = this->base * (point_object + ray_object.direction * -EPSILON); @img(artifacts/epsilon/1590141040.ppm)
     // Point point = this->base * (point_object + normal_object * EPSILON); @img(artifacts/epsilon/1590141145.ppm)
-    Point point = this->base * point_object;
-    Vector normal = this->base * normal_object;
+    const Point point = this->base * point_object;
+    const Vector normal = this->base * normal_object;
 
     inter = Intersection(
         point,

@@ -26,9 +26,9 @@ static const float degrad = M_PI / 180;
 
 void Camera::compute_bases () {
 
-    Vector zc = Vector(this->eye, this->look_at).normalize();
-    Vector xc = (this->up ^ zc).normalize();
-    Vector yc = zc ^ xc;
+    const Vector zc = Vector(this->eye, this->look_at).normalize();
+    const Vector xc = (this->up ^ zc).normalize();
+    const Vector yc = zc ^ xc;
 
     this->base = Matrix::TRANSFER(this->eye, xc, yc, zc);
     this->inv = this->base.invert();
@@ -42,7 +42,7 @@ void Camera::rotate (const Vector & axis, const float pas) {
     //@ this->look_at = Matrix::ROTATION(this->base * axis, pas) * this->look_at;
     //@ or maybe something is wrong with my Matrix * Matrix
 
-    Matrix rotation = Matrix::ROTATION(axis, pas);
+    const Matrix rotation = Matrix::ROTATION(axis, pas);
     this->look_at = this->base * (rotation * (this->inv * this->look_at));
     // Do not forget to update up otherwise rotation around x (with y up) will end in a sign switch (visual reversing)
     this->up = this->base * (rotation * (this->inv * this->up));
@@ -51,7 +51,7 @@ void Camera::rotate (const Vector & axis, const float pas) {
 
 void Camera::rotateScene (const Vector & axis, const float pas) {
 
-    Matrix rotation = Matrix::ROTATION(axis, pas);
+    const Matrix rotation = Matrix::ROTATION(axis, pas);
     this->eye = rotation * this->eye;
     this->look_at = rotation * this->look_at;
     // Do not forget to update up otherwise rotation around x (with y up) will end in a sign switch (visual reversing)
@@ -151,15 +151,15 @@ bool Camera::compute_nearest_intersection(Intersection & ninter, const Ray & ray
 void Camera::sobel_aa () {
 
     // Sobel gradient must be computed on original image
-    Texture<Color> base_img(this->image);
+    const Texture<Color> base_img(this->image);
     // Save the edge detection image for debugging
     Texture<Color> edge_img(this->image.width - 2, this->image.height - 2);
 
     // Same as for rendering phase, x and y must be expressed in camera base
-    float x_start = this->proj_width / 2;
-    float y_start = this->proj_height / 2;
+    const float x_start = this->proj_width / 2;
+    const float y_start = this->proj_height / 2;
 
-    uint8_t aa_base = sqrt(this->aa_depth);
+    const uint8_t aa_base = sqrt(this->aa_depth);
 
     // NOTE: sobel filter works only on images wider than 3x3
 
@@ -167,15 +167,15 @@ void Camera::sobel_aa () {
     for (uintmax_t j = 1; j < this->image.height - 1; j++) {
         for (uintmax_t i = 1; i < this->image.width - 1; i++) {
 
-            Color p1 = base_img.get_texel(i-1, j-1);
-            Color p2 = base_img.get_texel(i-1, j);
-            Color p3 = base_img.get_texel(i-1, j+1);
-            Color p4 = base_img.get_texel(i, j-1);
-            // Color p5 = base_img.get_texel(i, j); /* aa'ed pixel */
-            Color p6 = base_img.get_texel(i, j+1);
-            Color p7 = base_img.get_texel(i+1, j-1);
-            Color p8 = base_img.get_texel(i+1, j);
-            Color p9 = base_img.get_texel(i+1, j+1);
+            const Color p1 = base_img.get_texel(i-1, j-1);
+            const Color p2 = base_img.get_texel(i-1, j);
+            const Color p3 = base_img.get_texel(i-1, j+1);
+            const Color p4 = base_img.get_texel(i, j-1);
+            // const Color p5 = base_img.get_texel(i, j); /* aa'ed pixel */
+            const Color p6 = base_img.get_texel(i, j+1);
+            const Color p7 = base_img.get_texel(i+1, j-1);
+            const Color p8 = base_img.get_texel(i+1, j);
+            const Color p9 = base_img.get_texel(i+1, j+1);
 
             // We compute one gradient per channel r,g,b
             // http://www.hackification.com/2008/08/31/experiments-in-ray-tracing-part-8-anti-aliasing/
@@ -184,8 +184,8 @@ void Camera::sobel_aa () {
             // RGB Sobel gradient norm
             for (uint8_t ii = 0; ii < 3; ii++) {
 
-                float gxi = p1[ii] - p3[ii] + 2 * (p4[ii] - p6[ii]) + p7[ii] - p9[ii];
-                float gyi = p1[ii] - p7[ii] + 2 * (p2[ii] - p8[ii]) + p3[ii] - p9[ii];
+                const float gxi = p1[ii] - p3[ii] + 2 * (p4[ii] - p6[ii]) + p7[ii] - p9[ii];
+                const float gyi = p1[ii] - p7[ii] + 2 * (p2[ii] - p8[ii]) + p3[ii] - p9[ii];
 
                 // One channel gradient norm is greater than the threshold, edge detected => aa required for the pixel
                 if ( sqrt(gxi * gxi + gyi * gyi) > this->aa_threshold ) {
@@ -222,16 +222,16 @@ void Camera::sobel_aa () {
                         for (uintmax_t ki = 0; ki < aa_base; ki++) {
 
                             // Fixed grid
-                            float xr = x_start - this->pasx * (i + (ki + .5) / (float)aa_base);
-                            float yr = y_start - this->pasy * (j + (kj + .5) / (float)aa_base);
+                            const float xr = x_start - this->pasx * (i + (ki + .5) / (float)aa_base);
+                            const float yr = y_start - this->pasy * (j + (kj + .5) / (float)aa_base);
 
                             // // Jittered grid
                             // float xr = x_start - this->pasx * (i + (ki + _random()) / (float)aa_base);
                             // float yr = y_start - this->pasy * (j + (kj + _random()) / (float)aa_base);
 
-                            Vector dir = this->base * Vector(xr, yr, this->focale);
-                            Ray ray(this->eye, dir, false, 0);
-                            Color newc = this->radiate(ray);
+                            const Vector dir = this->base * Vector(xr, yr, this->focale);
+                            const Ray ray(this->eye, dir, false, 0);
+                            const Color newc = this->radiate(ray);
 
                             for (uint8_t ii = 0; ii < 3; ii++)
                                 c[ii] += newc[ii];
@@ -351,8 +351,8 @@ void Camera::render () {
     // x, y are expressed in the camera base since the projection screen is attached to it z go into screen
 
     // Notice that pasx (and y) is also divided by 2 since the ray is sent through the middle of the pixel
-    float x_start = (this->proj_width + this->pasx) / 2;
-    float y_start = (this->proj_height + this->pasy) / 2;
+    const float x_start = (this->proj_width + this->pasx) / 2;
+    const float y_start = (this->proj_height + this->pasy) / 2;
 
     if (this->projection == Camera::PROJECTION_PERSPECTIVE) {
 
@@ -366,7 +366,7 @@ void Camera::render () {
         for (uintmax_t j = 0; j < this->image.height; j++) {
             for (uintmax_t i = 0; i < this->image.width; i++) {
 
-                Vector rayd = this->base * Vector(
+                const Vector rayd = this->base * Vector(
                     x_start - this->pasx * i,
                     y_start - this->pasy * j,
                     this->focale
@@ -374,7 +374,7 @@ void Camera::render () {
                 // Hit center of each pixel
                 // Ray must be expressed in the scene's base to compute correct intersections
                 // @wonder Is initial ray always outside?
-                Ray ray(this->eye, rayd, false, 0);
+                const Ray ray(this->eye, rayd, false, 0);
 
                 this->image.set_texel(i, j, this->radiate(ray));
             }
@@ -387,13 +387,13 @@ void Camera::render () {
         for (uintmax_t j = 0; j < this->image.height; j++) {
             for (uintmax_t i = 0; i < this->image.width; i++) {
 
-                Point rayo = this->base * Point(
+                const Point rayo = this->base * Point(
                     x_start - this->pasx * i,
                     y_start - this->pasy * j,
                     0
                 );
-                Vector rayd = this->base * Vector(0, 0, 1);
-                Ray ray(rayo, rayd, false, 0);
+                const Vector rayd = this->base * Vector(0, 0, 1);
+                const Ray ray(rayo, rayd, false, 0);
 
                 this->image.set_texel(i, j, this->radiate(ray));
             }

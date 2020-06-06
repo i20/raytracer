@@ -22,13 +22,13 @@ Octree::Octree(const Point & o, const Vector & a) : o(o), a(a), nb_children(0) {
 
     #endif
 
-    float x = o[0];
-    float y = o[1];
-    float z = o[2];
+    const float x = o[0];
+    const float y = o[1];
+    const float z = o[2];
 
-    float xa = x + a[0] / 2;
-    float ya = y + a[1] / 2;
-    float za = z + a[2] / 2;
+    const float xa = x + a[0] / 2;
+    const float ya = y + a[1] / 2;
+    const float za = z + a[2] / 2;
 
     // Octree's origin should always be the back-left-bottom point
     this->children_os[0] = o;
@@ -142,13 +142,13 @@ bool Octree::append(const Triangle & t) {
     if (!this->is_contained(t))
         return false;
 
-    Vector a_2 = this->a / 2;
+    const Vector a_2 = this->a / 2;
 
     for (uint8_t i = 0; i < 8; i++) {
 
         #if OCTREE_SMART_TREE
 
-            bool is_new = this->children_idx[i] < 0;
+            const bool is_new = this->children_idx[i] < 0;
             Octree * child = is_new ? new Octree(this->children_os[i], a_2) : this->children[this->children_idx[i]];
 
             if (child->append(t)) {
@@ -164,7 +164,7 @@ bool Octree::append(const Triangle & t) {
 
         #else
 
-            bool is_new = this->children[i] == nullptr;
+            const bool is_new = this->children[i] == nullptr;
             Octree * child = is_new ? new Octree(this->children_os[i], a_2) : this->children[i];
 
             if (child->append(t)) {

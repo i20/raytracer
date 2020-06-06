@@ -115,7 +115,7 @@ T Mesh::compute_texture_texel (const Point & point_object, const Texture<T> & te
 
     for (uint8_t i = 0; i < 3; i++) {
 
-        float w_v = point_object[i] - this->vertexes[triangle->p1][i];
+        const float w_v = point_object[i] - this->vertexes[triangle->p1][i];
         uu += triangle->u[i] * triangle->u[i];
         uv += triangle->u[i] * triangle->v[i];
         vv += triangle->v[i] * triangle->v[i];
@@ -123,13 +123,12 @@ T Mesh::compute_texture_texel (const Point & point_object, const Texture<T> & te
         wv += w_v * triangle->v[i];
     }
 
-    float det = uv * uv - uu * vv;
+    const float det = uv * uv - uu * vv;
 
     // r = coordinate on p1->p2 axis
     // s = coordinate on p1->p3 axis
-    float r, s;
-    r = (uv * wv - vv * wu) / det;
-    s = (uv * wu - uu * wv) / det;
+    const float r = (uv * wv - vv * wu) / det;
+    const float s = (uv * wu - uu * wv) / det;
 
     float uv_tex[2];
     // Bilinear interpolation

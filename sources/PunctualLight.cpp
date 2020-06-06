@@ -23,12 +23,12 @@ PunctualLight::PunctualLight(const float ir, const float ig, const float ib, con
 
 Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene & scene) const {
 
-    Vector pl(inter.point, this->position);
-    float d = pl.get_norm();
+    const Vector pl(inter.point, this->position);
+    const float d = pl.get_norm();
 
     //@ how do we know if shadow ray is inside or outside the object (ray can pass through the object)?
     //@ maybe shadow rays must be a subclass of rays as they are finite + their dir vector should not be normalized
-    Ray shadow_ray(inter.point, pl, inter.ray->in, inter.ray->level, d);
+    const Ray shadow_ray(inter.point, pl, inter.ray->in, inter.ray->level, d);
 
     bool does_light;
 
@@ -64,14 +64,14 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
     // N * L
     // N = normal to surface (normalized) = inter.normal
     // L = points toward the light source (normalized) = pl.normalized
-    float scalar_d = (inter.normal * pl) / d; // Normalize L afterward (pl wasn't normalized)
+    const float scalar_d = (inter.normal * pl) / d; // Normalize L afterward (pl wasn't normalized)
 
     // Specular component
 
     // V * R
     // V = points toward the viewer (normalized) = (inter.point, ray.origin).normalized = -ray.direction
     // R = pure reflection vector (normalized) = 2(N*L)N - L = 2*scalar_d*N - L
-    float scalar_dx2 = 2 * scalar_d;
+    const float scalar_dx2 = 2 * scalar_d;
     float scalar_s = 0;
     for (uint8_t i = 0; i < 3; i++)
         scalar_s += inter.ray->direction[i] * (pl[i] / d - inter.normal[i] * scalar_dx2);
@@ -84,7 +84,7 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
     // att q : 1 - qdd
 
     // attenuation factor should be 0 <= x <= 1
-    float attenuation = (1 - c) * (1 - min((float)1, l*d)) * (1 - min((float)1, q*d*d));
+    const float attenuation = (1 - c) * (1 - min((float)1, l*d)) * (1 - min((float)1, q*d*d));
 
     Color c;
     for (uint8_t i = 0; i < 3; i++)

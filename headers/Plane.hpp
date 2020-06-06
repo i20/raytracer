@@ -73,9 +73,8 @@ class Plane : public Object {
 template <class T>
 T Plane::compute_texture_texel (const Point & point_object, const Texture<T> & texture, const Triangle * triangle) const {
 
-    float u, v;
-    u = (this->width / 2 + point_object[0]) / this->width;
-    v = (this->height / 2 - point_object[1]) / this->height;
+    const float u = (this->width / 2 + point_object[0]) / this->width;
+    const float v = (this->height / 2 - point_object[1]) / this->height;
 
     // @todo Differentiate image_texture_filtering from normal_texture_filtering
     return texture.get_texel_by_uv(u, v, this->image_texture_filtering == Texture<Color>::FILTERING_BILINEAR);

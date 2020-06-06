@@ -52,10 +52,8 @@ class Sphere : public Object {
 template <class T>
 T Sphere::compute_texture_texel (const Point & point_object, const Texture<T> & texture, const Triangle * triangle) const {
 
-    float u, v, theta, phi;
-
     // https://en.wikipedia.org/wiki/List_of_common_coordinate_transformations#From_Cartesian_coordinates
-    theta = std::atan(std::abs(point_object[1] / point_object[0]));
+    float theta = std::atan(std::abs(point_object[1] / point_object[0]));
 
     if (0 <= point_object[0])
         // Quadrans 1 (x positive, y positive)
@@ -69,10 +67,10 @@ T Sphere::compute_texture_texel (const Point & point_object, const Texture<T> & 
         // Quadrans 3 (x negative, y negative)
         else theta = M_PI + theta;
 
-    phi = std::acos(point_object[2] / this->radius);
+    const float phi = std::acos(point_object[2] / this->radius);
 
-    u = theta / (2 * M_PI);
-    v = phi / M_PI;
+    const float u = theta / (2 * M_PI);
+    const float v = phi / M_PI;
 
     return texture.get_texel_by_uv(u, v, this->image_texture_filtering == Texture<Color>::FILTERING_BILINEAR);
 }
