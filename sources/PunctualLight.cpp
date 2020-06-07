@@ -33,7 +33,8 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
     bool does_light;
 
     // Shadow must pass through intersection surface to reach light (true self-intersection)
-    if (shadow_ray.direction * inter.normal <= 0)
+    // Must be computed on true (but shaded) object geometry not bumped one
+    if (shadow_ray.direction * inter.true_normal <= 0)
         does_light = false;
 
     else {

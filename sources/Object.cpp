@@ -99,9 +99,11 @@ bool Object::compute_r_ray(Ray & rayr, const Intersection & inter) const {
 
     Vector rayr_dir;
 
+    // @wonder Compute on true normal or not ?
     float scalar = inter.ray->direction * inter.normal;
     scalar += scalar;
 
+    // @wonder Compute on true normal or not ?
     for (uint8_t i = 0; i < 4; i++)
         rayr_dir[i] = inter.ray->direction[i] - inter.normal[i] * scalar;
 
@@ -121,6 +123,7 @@ bool Object::compute_t_ray(Ray & rayt, const Intersection & inter) const {
         return false;
 
     const float dev = inter.ray->in ? this->n : 1 / this->n; /* n1/n2 */
+    // @wonder Compute on true normal or not ?
     const float scalar = inter.ray->direction * inter.normal; /* V*N */
 
     // methode #1
@@ -137,6 +140,7 @@ bool Object::compute_t_ray(Ray & rayt, const Intersection & inter) const {
     //    return false;
     //double f = (norm / tan(asin(dev * norm))) * (scalar < 0 ? -1 : 1) - scalar;
 
+    // @wonder Compute on true normal or not ?
     Vector rayt_dir;
     for (uint8_t i = 0; i < 4; i++)
         /* #1 */rayt_dir[i] = inter.ray->direction[i] * dev - inter.normal[i] * f;
@@ -172,6 +176,7 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
     if (ts.size() == 0)
         return false;
 
+    Vector true_normal_object; // ok normalized
     Vector normal_object; // ok normalized
     Point point_object;
     const TTPair * match = nullptr;
@@ -181,7 +186,7 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
         for (uint8_t i = 0; i < 4; i++)
             point_object[i] = ray_object.origin[i] + tpair.first * ray_object.direction[i];
 
-        if (this->compute_intersection_final(normal_object, point_object, tpair.second, ray_object)) {
+        if (this->compute_intersection_final(true_normal_object, normal_object, point_object, tpair.second, ray_object)) {
             // @todo Move bump mapping here, find a way to deal with virtual template (@see Object.hpp comment)
             //       Have to handle texture mapping on infinite objects in a generic way
             // @wonder Bump mapping seems to move light impact on surface @img(artifacts/bump-mapping)
@@ -199,16 +204,16 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
     // Point point = this->base * (point_object + ray_object.direction * -EPSILON); @img(artifacts/epsilon/1590141040.ppm)
     // Point point = this->base * (point_object + normal_object * EPSILON); @img(artifacts/epsilon/1590141145.ppm)
     const Point point = this->base * point_object;
+    const Vector true_normal = this->base * true_normal_object;
     const Vector normal = this->base * normal_object;
 
-    inter = Intersection(
-        point,
-        normal,
-        this->compute_color(point, match->second),
-        match->first,
-        this,
-        &ray
-    );
+    inter.point = point;
+    inter.true_normal = true_normal;
+    inter.normal = normal;
+    inter.color = this->compute_color(point, match->second);
+    inter.t = match->first;
+    inter.object = this;
+    inter.ray = &ray;
 
     return true;
 }

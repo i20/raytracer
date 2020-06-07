@@ -14,6 +14,7 @@ using namespace std;
 /*static*/ const Color Color::YELLOW(255, 255, 0);
 /*static*/ const Color Color::PINK(255, 105, 180);
 
+// @todo Get rid of this
 Color::Color() : c() {}
 
 Color::Color(const uint8_t red, const uint8_t green, const uint8_t blue) {

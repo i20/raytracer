@@ -14,6 +14,7 @@ class Intersection {
 
     public:
         Point point;
+        Vector true_normal; // normal to true object geometry (no bump mapping nor shading), normalized
         Vector normal; // normalized
         Color color; // Color at the intersection point may be different from object.color since texture can be applied
         float t;
@@ -21,7 +22,6 @@ class Intersection {
         const Ray * ray;
 
         Intersection();
-        Intersection(const Point & point, const Vector & normal, const Color & color, const float t, const Object * object, const Ray * ray);
 };
 
 #endif

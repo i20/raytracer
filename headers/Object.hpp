@@ -76,7 +76,7 @@ class Object {
     private:
 
         virtual TTPairList compute_intersection_ts(const std::vector<const Octree *> & octrees, const Ray & ray_object) const = 0;
-        virtual bool compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const = 0;
+        virtual bool compute_intersection_final(Vector & true_normal_object, Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const = 0;
         virtual Color compute_color_shape(const Point & point_object, const Triangle * triangle) const = 0;
         // I wanted to move compute_texture_texel here as a virtual but templates and virtuals are not mixable
 };

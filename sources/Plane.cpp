@@ -110,13 +110,13 @@ TTPairList Plane::compute_intersection_ts(const vector<const Octree *> & octrees
     return ts;
 }
 
-bool Plane::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
+bool Plane::compute_intersection_final(Vector & true_normal_object, Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
 
     // @todo temp height,width/2
 
     if (this->infinite || (-this->width/2 <= point_object[0] && point_object[0] <= this->width/2 && -this->height/2 <= point_object[1] && point_object[1] <= this->height/2)) {
 
-        const Vector true_normal_object = Vector::Z; // ok normalized
+        true_normal_object = Vector::Z; // ok normalized
 
         // Bump mapping
         if (this->normals_texture != nullptr && !this->infinite) {
@@ -129,8 +129,10 @@ bool Plane::compute_intersection_final(Vector & normal_object, const Point & poi
 
         // Detection of wether final normal should be corrected must be done on true normal as
         // bump mapping looses the information of object true geometry and leads to false positives
-        if (0 < true_normal_object * ray_object.direction)
+        if (0 < true_normal_object * ray_object.direction) {
+            true_normal_object = true_normal_object * -1;
             normal_object = normal_object * -1;
+        }
 
         return true;
     }

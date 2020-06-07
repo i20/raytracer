@@ -258,7 +258,7 @@ TTPairList Mesh::compute_intersection_ts(const vector<const Octree *> & octrees,
     return ts;
 }
 
-bool Mesh::compute_intersection_final(Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
+bool Mesh::compute_intersection_final(Vector & true_normal_object, Vector & normal_object, const Point & point_object, const Triangle * t, const Ray & ray_object) const {
 
     float uu = 0,
           uv = 0,
@@ -288,7 +288,11 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
             // Intersection point is on the triangle
 
-            const Vector true_normal_object = t->normal;
+            // In the particular case of meshes there is one more layer of normal, the raw triangle one
+            // For other primitive shapes true normal (shaded) = raw normal (flat)
+            // Light computation must always take place on true normal (shaded)
+            // BUT normal correction must use raw normal (flat) as it is the only one to carry full geometry information
+            const Vector raw_normal_object = t->normal;
 
             if (this->shading == Mesh::SHADING_PHONG) {
 
@@ -296,16 +300,16 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
                 // Bilinear interpolation
                 for (uint8_t i = 0; i < 4; i++)
-                    normal_object[i] = (1 - (r+s)) * this->normals[t->p1][i] + r * this->normals[t->p2][i] + s * this->normals[t->p3][i];
+                    true_normal_object[i] = (1 - (r+s)) * this->normals[t->p1][i] + r * this->normals[t->p2][i] + s * this->normals[t->p3][i];
 
                 // @todo Maybe it is unnecessary here, remove if redundant
-                normal_object = normal_object.normalize();
+                true_normal_object = true_normal_object.normalize();
             }
 
             // @todo Implement Gouraud shading
 
             // Flat shading
-            else normal_object = true_normal_object; // ok normalized
+            else true_normal_object = raw_normal_object; // ok normalized
 
             // Bump mapping
             if (this->normals_texture != nullptr) {
@@ -315,16 +319,20 @@ bool Mesh::compute_intersection_final(Vector & normal_object, const Point & poin
 
                 // @todo Compute bump_base, notice that when flat shaded then base x, y can be simply deduced from triangle plane
                 //       But when Phong shaded, base x, y must be deduced with cross product from triangle (as in sphere bump_base)
-                const Matrix bump_base = Matrix::TRANSFER(point_object, Vector::X /* @todo */, Vector::Y /* @todo */, normal_object);
+                const Matrix bump_base = Matrix::TRANSFER(point_object, Vector::X /* @todo */, Vector::Y /* @todo */, true_normal_object);
                 normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t).normalize();
             }
+
+            else normal_object = true_normal_object;
 
             // Detection of wether final normal should be corrected must be done on true normal as
             // bump mapping looses the information of object true geometry and leads to false positives
             // Phong shading also looses true geometry and therefore should not be taken into account
             // otherwise generates enlightened artifacts on hidden face edge @img(artifacts/shading)
-            if (0 < true_normal_object * ray_object.direction)
+            if (0 < raw_normal_object * ray_object.direction) {
+                true_normal_object = true_normal_object * -1;
                 normal_object = normal_object * -1;
+            }
 
             return true;
         }
