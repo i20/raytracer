@@ -33,12 +33,13 @@ Color PunctualLight::compute_luminosity (const Intersection & inter, const Scene
     bool does_light;
 
     // Shadow must pass through intersection surface to reach light (true self-intersection)
-    // Must be computed on true (but shaded) object geometry not bumped one
+    // @wonder I tought that it should be computed on true (but shaded) object geometry not bumped one
+    //         BUT it appears that it yields @artifact(bump-mapping/1591528682)
     // Test against EPSILON to avoid @artifact(epsilon/1591525570)
     // @wonder Somewhere @artifact(epsilon/1591525570) is kind of expected, it is an edge case
     //         Maybe testing against EPSILON is a bit intrusive and then why not use EPSILON in
     //         every against 0 test ?
-    if (shadow_ray.direction * inter.true_normal <= EPSILON)
+    if (shadow_ray.direction * inter.normal <= EPSILON)
         does_light = false;
 
     else {

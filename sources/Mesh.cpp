@@ -290,7 +290,7 @@ bool Mesh::compute_intersection_final(Vector & true_normal_object, Vector & norm
 
             // In the particular case of meshes there is one more layer of normal, the raw triangle one
             // For other primitive shapes true normal (shaded) = raw normal (flat)
-            // Light computation must always take place on true normal (shaded)
+            // Light computation must always take place on true normal (shaded) (@wonder not sure of that statement see PunctualLight)
             // BUT normal correction must use raw normal (flat) as it is the only one to carry full geometry information
             const Vector raw_normal_object = t->normal;
 
@@ -330,7 +330,7 @@ bool Mesh::compute_intersection_final(Vector & true_normal_object, Vector & norm
             // Phong shading also looses true geometry and therefore should not be taken into account
             // otherwise generates enlightened artifacts on hidden face edge @img(artifacts/shading)
             if (0 < raw_normal_object * ray_object.direction) {
-                true_normal_object = true_normal_object * -1;
+                // true_normal_object = true_normal_object * -1;
                 normal_object = normal_object * -1;
             }
 

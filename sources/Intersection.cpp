@@ -10,7 +10,7 @@ using namespace std;
 
 Intersection::Intersection() :
     point(0, 0, 0),
-    true_normal(0, 0, 0),
+    // true_normal(0, 0, 0),
     normal(0, 0, 0),
     color(0, 0, 0),
     t(0),
