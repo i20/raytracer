@@ -16,10 +16,6 @@
 #include "../headers/Intersection.hpp"
 #include "../headers/TTPair.hpp"
 
-// cfloat.h FLT_EPSILON = 1E-5 is too small and does not prevent self intersection
-// @todo Decrease EPSILON to minimum .0001 being to low
-#define EPSILON .00025
-
 using namespace std;
 
 // @url(http://realtimecollisiondetection.net/blog/?p=89)

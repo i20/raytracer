@@ -18,6 +18,9 @@
 // Circular reference
 class Intersection;
 
+// cfloat.h FLT_EPSILON = 1E-5 is too small and does not prevent self intersection
+#define EPSILON .00025
+
 class Object {
 
     public:
