@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <fstream>
+#include <sstream>
 
 // Texture must be read left to right, top to bottom
 // i >
@@ -19,7 +20,6 @@ class Texture {
 
         enum filtering_type { FILTERING_NONE, FILTERING_BILINEAR, FILTERING_TRILINEAR, FILTERING_ANISOTROPIC };
 
-        bool ok;
         uintmax_t width, height;
         std::vector<T> map;
 
@@ -55,9 +55,9 @@ Texture<T>::Texture (const char * file_name) {
     std::ifstream inf(file_name);
 
     if ( !inf.is_open() ) {
-
-        this->ok = false;
-        return;
+        std::stringstream ss;
+        ss << "Could not open texture file : " << file_name;
+        throw ss.str();
     }
 
     std::string line;
@@ -70,9 +70,9 @@ Texture<T>::Texture (const char * file_name) {
 
     // Handle only P6
     if ( line != "P6" ) {
-
-        this->ok = false;
-        return;
+        std::stringstream ss;
+        ss << "Texture file is not P6 : " << file_name;
+        throw ss.str();
     }
 
     this->ignore_comments(inf);
@@ -88,9 +88,9 @@ Texture<T>::Texture (const char * file_name) {
     const uintmax_t intensity = this->get_uint(inf);
 
     if (intensity != 255) {
-
-        this->ok = false;
-        return;
+        std::stringstream ss;
+        ss << "Texture file intensity is not 255 : " << file_name;
+        throw ss.str();
     }
 
     inf.ignore();
@@ -110,12 +110,10 @@ Texture<T>::Texture (const char * file_name) {
     }
 
     inf.close();
-
-    this->ok = true;
 }
 
 template <class T>
-Texture<T>::Texture(const uintmax_t width, const uintmax_t height) : ok(true), width(width), height(height), map(width * height) {}
+Texture<T>::Texture(const uintmax_t width, const uintmax_t height) : width(width), height(height), map(width * height) {}
 
 template <class T>
 void Texture<T>::set_texel(const uintmax_t i, const uintmax_t j, const T & texel) {
