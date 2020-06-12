@@ -200,11 +200,11 @@ bool Object::compute_intersection(Intersection & inter, const Ray & ray) const {
     // Point point = this->base * (point_object + ray_object.direction * -EPSILON); @img(artifacts/epsilon/1590141040.ppm)
     // Point point = this->base * (point_object + normal_object * EPSILON); @img(artifacts/epsilon/1590141145.ppm)
     const Point point = this->base * point_object;
-    // const Vector true_normal = this->base * true_normal_object;
+    const Vector true_normal = this->base * true_normal_object;
     const Vector normal = this->base * normal_object;
 
     inter.point = point;
-    // inter.true_normal = true_normal;
+    inter.true_normal = true_normal;
     inter.normal = normal;
     inter.color = this->compute_color(point, match->second);
     inter.t = match->first;

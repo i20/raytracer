@@ -9,6 +9,9 @@
 #include <fstream>
 #include <sstream>
 
+#include "../headers/Color.hpp"
+#include "../headers/Vector.hpp"
+
 // Texture must be read left to right, top to bottom
 // i >
 // j v
@@ -34,18 +37,10 @@ class Texture {
         bool print(const char * file_name, const uintmax_t istart, const uintmax_t jstart, const uintmax_t iend, const uintmax_t jend) const;
 
     private:
-        uintmax_t get_uint(std::ifstream & inf) const;
-        void ignore_comments(std::ifstream & inf) const;
+        static uintmax_t get_uint(std::ifstream & inf);
+        static void ignore_comments(std::ifstream & inf);
+        static T get (std::ifstream & inf);
 };
-
-template <class T>
-void Texture<T>::ignore_comments (std::ifstream & inf) const {
-
-    std::string line;
-
-    while (inf.peek() == '#')
-        std::getline(inf, line);
-}
 
 // Does not support comments at the end of a non-comment line
 // @todo Add support for common image formats other than ppm-p6 (jpg, png ...)
@@ -75,17 +70,17 @@ Texture<T>::Texture (const char * file_name) {
         throw ss.str();
     }
 
-    this->ignore_comments(inf);
+    Texture<T>::ignore_comments(inf);
 
-    this->width = this->get_uint(inf);
-
-    inf.ignore();
-
-    this->height = this->get_uint(inf);
+    this->width = Texture<T>::get_uint(inf);
 
     inf.ignore();
 
-    const uintmax_t intensity = this->get_uint(inf);
+    this->height = Texture<T>::get_uint(inf);
+
+    inf.ignore();
+
+    const uintmax_t intensity = Texture<T>::get_uint(inf);
 
     if (intensity != 255) {
         std::stringstream ss;
@@ -95,22 +90,26 @@ Texture<T>::Texture (const char * file_name) {
 
     inf.ignore();
 
-    this->ignore_comments(inf);
+    Texture<T>::ignore_comments(inf);
 
     const uintmax_t nb_texels = this->width * this->height;
     this->map.reserve(nb_texels);
 
-    for (uintmax_t i = 0; i < nb_texels; i++) {
-
-        T t;
-        for (uint8_t k = 0; k < 3; k++)
-            t[k] = inf.get();
-
-        this->map.push_back(t);
-    }
+    for (uintmax_t i = 0; i < nb_texels; i++)
+        this->map.push_back( Texture<T>::get(inf) );
 
     inf.close();
 }
+
+// http://www.cplusplus.com/forum/general/76656/
+
+/*static*/
+template <>
+Color Texture<Color>::get (std::ifstream & inf);
+
+/*static*/
+template <>
+Vector Texture<Vector>::get (std::ifstream & inf);
 
 template <class T>
 Texture<T>::Texture(const uintmax_t width, const uintmax_t height) : width(width), height(height), map(width * height) {}
@@ -244,8 +243,19 @@ T Texture<T>::get_texel_by_uv (const float u, const float v, const bool smooth) 
     return t;
 }
 
+/*static*/
 template <class T>
-uintmax_t Texture<T>::get_uint(std::ifstream & inf) const {
+void Texture<T>::ignore_comments (std::ifstream & inf) {
+
+    std::string line;
+
+    while (inf.peek() == '#')
+        std::getline(inf, line);
+}
+
+/*static*/
+template <class T>
+uintmax_t Texture<T>::get_uint(std::ifstream & inf) {
 
     uintmax_t i = 0;
     char t;

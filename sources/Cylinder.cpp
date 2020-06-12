@@ -157,7 +157,7 @@ bool Cylinder::compute_intersection_final (Vector & true_normal_object, Vector &
         if (this->normals_texture != nullptr && this->height != -1) {
             // Bump texel is expressed in normal base which is different from object base
             const Matrix bump_base = Matrix::TRANSFER(point_object, Vector::Z ^ true_normal_object, Vector::Z, true_normal_object);
-            normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
+            normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr);
         }
 
         else normal_object = true_normal_object;
@@ -165,7 +165,7 @@ bool Cylinder::compute_intersection_final (Vector & true_normal_object, Vector &
         // Detection of wether final normal should be corrected must be done on true normal as
         // bump mapping looses the information of object true geometry and leads to false positives
         if (0 < true_normal_object * ray_object.direction) {
-            // true_normal_object = true_normal_object * -1;
+            true_normal_object = true_normal_object * -1;
             normal_object = normal_object * -1;
         }
 

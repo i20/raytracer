@@ -320,7 +320,7 @@ bool Mesh::compute_intersection_final(Vector & true_normal_object, Vector & norm
                 // @todo Compute bump_base, notice that when flat shaded then base x, y can be simply deduced from triangle plane
                 //       But when Phong shaded, base x, y must be deduced with cross product from triangle (as in sphere bump_base)
                 const Matrix bump_base = Matrix::TRANSFER(point_object, Vector::X /* @todo */, Vector::Y /* @todo */, true_normal_object);
-                normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t).normalize();
+                normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, t);
             }
 
             else normal_object = true_normal_object;
@@ -330,7 +330,7 @@ bool Mesh::compute_intersection_final(Vector & true_normal_object, Vector & norm
             // Phong shading also looses true geometry and therefore should not be taken into account
             // otherwise generates enlightened artifacts on hidden face edge @img(artifacts/shading)
             if (0 < raw_normal_object * ray_object.direction) {
-                // true_normal_object = true_normal_object * -1;
+                true_normal_object = true_normal_object * -1;
                 normal_object = normal_object * -1;
             }
 

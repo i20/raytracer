@@ -103,7 +103,7 @@ bool Sphere::compute_intersection_final(Vector & true_normal_object, Vector & no
         // @wonder Is there an issue when normal is aligned on Z ?
         const Vector bump_x = (Vector::Z ^ true_normal_object).normalize();
         const Matrix bump_base = Matrix::TRANSFER(point_object, bump_x, true_normal_object ^ bump_x, true_normal_object);
-        normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr).normalize();
+        normal_object = bump_base * this->compute_texture_texel<Vector>(point_object, *this->normals_texture, nullptr);
     }
 
     else normal_object = true_normal_object;
@@ -111,7 +111,7 @@ bool Sphere::compute_intersection_final(Vector & true_normal_object, Vector & no
     // Detection of wether final normal should be corrected must be done on true normal as
     // bump mapping looses the information of object true geometry and leads to false positives
     if (0 < true_normal_object * ray_object.direction) {
-        // true_normal_object = true_normal_object * -1;
+        true_normal_object = true_normal_object * -1;
         normal_object = normal_object * -1;
     }
 

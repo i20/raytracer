@@ -2,7 +2,6 @@
 #include <ctime>
 #include <cstdint>
 
-#include <vector>
 #include <iostream>
 #include <sstream>
 
@@ -10,24 +9,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2_ttf/SDL_ttf.h>
 
-#include "../headers/Scene.hpp"
-#include "../headers/Camera.hpp"
-#include "../headers/Texture.hpp"
-#include "../headers/Color.hpp"
-#include "../headers/Point.hpp"
 #include "../headers/Vector.hpp"
-#include "../headers/Matrix.hpp"
-
-// Lights we are going to use
-#include "../headers/AmbientLight.hpp"
-#include "../headers/PunctualLight.hpp"
-
-// Shapes we want to be able to draw
-#include "../headers/Sphere.hpp"
-#include "../headers/Plane.hpp"
-#include "../headers/Cylinder.hpp"
-#include "../headers/Mesh.hpp"
-
 #include "../headers/Term.hpp"
 #include "../headers/Loader.hpp"
 
