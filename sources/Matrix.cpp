@@ -286,7 +286,7 @@ Matrix Matrix::operator*(const Matrix & matrix) const {
 
 Ray Matrix::operator*(const Ray & ray) const {
 
-    return Ray(*this * ray.origin, *this * ray.direction, ray.in, ray.level);
+    return Ray(*this * ray.origin, *this * ray.direction, ray.in, ray.level, ray.norm);
 }
 
 Matrix Matrix::invert() const {
