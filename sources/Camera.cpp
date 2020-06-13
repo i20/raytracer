@@ -113,15 +113,16 @@ Color Camera::radiate (const Ray & ray) const {
         return clr;
 
     // From this point all rays are level + 1
-    Color cr, ct;
     Ray rt, rr;
 
     // @todo Optimize r and t color calculation in one loop
-    if ( ninter.object->compute_r_ray(rr, ninter) )
-        cr = this->radiate(rr) * ninter.object->r;
+    Color cr = ninter.object->compute_r_ray(rr, ninter)
+        ? this->radiate(rr) * ninter.object->r
+        : Color::BLACK;
 
-    if ( ninter.object->compute_t_ray(rt, ninter) )
-        ct = this->radiate(rt) * (1 - ninter.object->r);
+    Color ct = ninter.object->compute_t_ray(rt, ninter)
+        ? this->radiate(rt) * (1 - ninter.object->r)
+        : Color::BLACK;
 
     // Sum direct enlightment + reflected + refracted
     // @todo Use operator+ from Color with variadic parameters to optimize

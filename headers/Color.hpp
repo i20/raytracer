@@ -22,7 +22,7 @@ class Color {
         static const Color YELLOW;
         static const Color PINK;
 
-        Color();
+        Color() = default;
         Color(const uint8_t red, const uint8_t green, const uint8_t blue);
 
         uint8_t & operator[](const uint8_t i);
