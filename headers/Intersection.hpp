@@ -20,8 +20,6 @@ class Intersection {
         float t;
         const Object * object;
         const Ray * ray;
-
-        Intersection();
 };
 
 #endif
