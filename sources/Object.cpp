@@ -35,7 +35,6 @@ Object::Object(
     const Color & color,
     const Point & position,
     const bool is_closed,
-    const bool is_glassy,
 
     const Texture<Color> * image_texture,
     const typename Texture<Color>::filtering_type image_texture_filtering,
@@ -46,7 +45,10 @@ Object::Object(
     const float ar, const float ag, const float ab,
     const float dr, const float dg, const float db,
     const float sr, const float sg, const float sb,
-    const float r, const float n, const float g,
+
+    const float r, const float t,
+    const float n, const float g,
+
     const Vector & z_dir,
     const Vector & y_dir
 ) :
@@ -54,7 +56,6 @@ Object::Object(
     color(color),
     position(position),
     is_closed(is_closed),
-    is_glassy(is_glassy),
     octree(nullptr),
 
     image_texture(image_texture),
@@ -64,6 +65,8 @@ Object::Object(
     normals_texture_filtering(normals_texture_filtering),
 
     r(r),
+    t(t),
+
     n(n),
     g(g) {
 
@@ -88,7 +91,7 @@ Object::Object(
 
 bool Object::compute_r_ray(Ray & rayr, const Intersection & inter) const {
 
-    if (!this->is_glassy || this->r == 0)
+    if (this->r == 0)
         return false;
 
     // R = V − 2 * (V * N) * N
@@ -115,7 +118,7 @@ bool Object::compute_r_ray(Ray & rayr, const Intersection & inter) const {
 
 bool Object::compute_t_ray(Ray & rayt, const Intersection & inter) const {
 
-    if (!this->is_glassy || this->r == 1)
+    if (this->t == 0)
         return false;
 
     const float dev = inter.ray->in ? this->n : 1 / this->n; /* n1/n2 */

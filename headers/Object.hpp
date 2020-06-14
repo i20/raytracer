@@ -29,7 +29,6 @@ class Object {
         Point position;
         Matrix base, inv;
         bool is_closed;
-        bool is_glassy;
         Octree * octree;
 
         const Texture<Color> * image_texture;
@@ -41,16 +40,17 @@ class Object {
         float a[3];   /* ambiente [0;1;inf] ambient light response */
         float d[3];   /* diffusion [0;1;inf] diffuse light response */
         float s[3];   /* specularite [0;inf] */
-        float r;   /* reflection [0;1] part of enlightment due to reflection, part due to refraction will be 1-r */
-        float n;   /* refraction */
 
+        float r;
+        float t;
+
+        float n;   /* refraction */
         float g;   /* brillance (smoothness, shininess, glossiness), 0 < g */
 
         Object(
             const Color & color,
             const Point & position,
             const bool is_closed,
-            const bool is_glassy,
 
             const Texture<Color> * image_texture,
             const typename Texture<Color>::filtering_type image_texture_filtering,
@@ -61,7 +61,9 @@ class Object {
             const float ar, const float ag, const float ab,
             const float dr, const float dg, const float db,
             const float sr, const float sg, const float sb,
-            const float r, const float n, const float g,
+
+            const float r, const float t,
+            const float n, const float g,
 
             const Vector & z_dir, const Vector & y_dir
         );

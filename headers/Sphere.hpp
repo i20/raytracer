@@ -23,7 +23,6 @@ class Sphere : public Object {
         Sphere (
             const Color & color,
             const Point & position,
-            const bool is_glassy,
 
             const Texture<Color> * image_texture,
             const typename Texture<Color>::filtering_type image_texture_filtering,
@@ -34,7 +33,10 @@ class Sphere : public Object {
             const float ar, const float ag, const float ab,
             const float dr, const float dg, const float db,
             const float sr, const float sg, const float sb,
-            const float r, const float n, const float g,
+
+            const float r, const float t,
+
+            const float n, const float g,
             const float radius,
             const Vector & z_dir, const Vector & y_dir
         );

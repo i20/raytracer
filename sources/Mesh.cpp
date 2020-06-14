@@ -13,7 +13,6 @@ using namespace std;
 Mesh::Mesh(
     const Color & color,
     const Point & position,
-    const bool is_glassy,
 
     const Texture<Color> * image_texture,
     const char * image_texture_mapping,
@@ -26,7 +25,10 @@ Mesh::Mesh(
     const float ar, const float ag, const float ab,
     const float dr, const float dg, const float db,
     const float sr, const float sg, const float sb,
-    const float r, const float n, const float g,
+
+    const float r, const float t,
+
+    const float n, const float g,
     const char * off_file,
     const Vector & z_dir, const Vector & y_dir,
     const bool use_octree, const uint8_t shading
@@ -35,7 +37,6 @@ Mesh::Mesh(
         color,
         position,
         false,
-        is_glassy,
 
         image_texture,
         image_texture_filtering,
@@ -46,7 +47,7 @@ Mesh::Mesh(
         ar, ag, ab,
         dr, dg, db,
         sr, sg, sb,
-        r, n, g,
+        r, t, n, g,
         z_dir, y_dir
     ), image_texture_mapping(), normals_texture_mapping(), shading(shading) {
 

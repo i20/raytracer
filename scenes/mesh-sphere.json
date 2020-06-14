@@ -23,11 +23,11 @@
         "z": { "x": 0, "y": 0, "z": 1 }
     },
 
-    "textures": {
-        "images": {
-            "mosaic": "./textures/mosaic.ppm"
-        }
-    },
+    // "textures": {
+    //     "images": {
+    //         "mosaic": "./textures/mosaic.ppm"
+    //     }
+    // },
 
     "scene": {
 
@@ -40,8 +40,7 @@
 
                 "type": "mesh",
                 "position": "origin",
-                "color": "black", // "orange"
-                "glassy": false,
+                "color": "orange",
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -49,17 +48,19 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 1.33,
                 "glossyness": 1,
 
-                "textures": {
-                    "image": {
-                        "ref": "mosaic",
-                        "filtering": "bilinear",
-                        "mapping": "./textures/sphere-mosaic.tex"
-                    }
-                },
+                // "textures": {
+                //     "image": {
+                //         "ref": "mosaic",
+                //         "filtering": "bilinear",
+                //         "mapping": "./textures/sphere-mosaic.tex"
+                //     }
+                // },
 
                 "file": "./meshes/sphere.off",
                 "shading": "phong",

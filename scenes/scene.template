@@ -44,7 +44,6 @@
     "type": "mesh" | "sphere" | "plane" | "cylinder",
     "color": *color*,
     "position": *position*,
-    "glassy": <boolean>,
 
     [[ "shading": "phong"|"normal" | "gouraud"|"color" | null|"flat" ]] # Required for meshes
     [[ "file": "<off file path>" ]] # Required for meshes
@@ -62,6 +61,8 @@
     },
 
     "reflection": <float [0,1]>,
+    "transmission": <float [0,1]>,
+
     "n": <ufloat>,
     "glossyness": <ufloat ]0[>, # 0 has no meaning, if no specular reflection wanted then set specular coeff to (0, 0, 0)
 

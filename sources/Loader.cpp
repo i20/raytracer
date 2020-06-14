@@ -322,7 +322,6 @@ Object * Loader::build_object (const JSONNode & node) const {
     string type = this->get_string(node, "type");
     Color color = this->get_color(node, "color");
     Point position = this->get_point(node, "position");
-    bool glassy = this->get_bool(node, "glassy");
 
     // ----------------
 
@@ -364,6 +363,8 @@ Object * Loader::build_object (const JSONNode & node) const {
     float sb = this->get_float(*specular_ref, "b");
 
     float r = this->get_float(node, "reflection");
+    float t = this->get_float(node, "transmission");
+
     float n = this->get_float(node, "n");
     float g = this->get_float(node, "glossyness");
 
@@ -374,13 +375,12 @@ Object * Loader::build_object (const JSONNode & node) const {
         return this->build_object_sphere(node,
             color,
             position,
-            glassy,
             textures_image, textures_image_filtering,
             textures_normals, textures_normals_filtering,
             ar, ag, ab,
             dr, dg, db,
             sr, sg, sb,
-            r, n, g,
+            r, t, n, g,
             z_dir, y_dir
         );
 
@@ -388,13 +388,12 @@ Object * Loader::build_object (const JSONNode & node) const {
         return this->build_object_cylinder(node,
             color,
             position,
-            glassy,
             textures_image, textures_image_filtering,
             textures_normals, textures_normals_filtering,
             ar, ag, ab,
             dr, dg, db,
             sr, sg, sb,
-            r, n, g,
+            r, t, n, g,
             z_dir, y_dir
         );
 
@@ -402,13 +401,12 @@ Object * Loader::build_object (const JSONNode & node) const {
         return this->build_object_plane(node,
             color,
             position,
-            glassy,
             textures_image, textures_image_filtering,
             textures_normals, textures_normals_filtering,
             ar, ag, ab,
             dr, dg, db,
             sr, sg, sb,
-            r, n, g,
+            r, t, n, g,
             z_dir, y_dir
         );
 
@@ -416,13 +414,12 @@ Object * Loader::build_object (const JSONNode & node) const {
         return this->build_object_mesh(node,
             color,
             position,
-            glassy,
             textures_image, textures_image_mapping.c_str(), textures_image_filtering,
             textures_normals, textures_normals_mapping.c_str(), textures_normals_filtering,
             ar, ag, ab,
             dr, dg, db,
             sr, sg, sb,
-            r, n, g,
+            r, t, n, g,
             z_dir, y_dir
         );
 
@@ -432,13 +429,13 @@ Object * Loader::build_object (const JSONNode & node) const {
 Sphere * Loader::build_object_sphere (const JSONNode & node,
     const Color & color,
     const Point & position,
-    const bool is_glassy,
     const Texture<Color> * image_texture, const typename Texture<Color>::filtering_type image_texture_filtering,
     const Texture<Vector> * normals_texture, const typename Texture<Vector>::filtering_type normals_texture_filtering,
     const float ar, const float ag, const float ab,
     const float dr, const float dg, const float db,
     const float sr, const float sg, const float sb,
-    const float r, const float n, const float g,
+    const float r, const float t,
+    const float n, const float g,
     const Vector & z_dir, const Vector & y_dir
 ) const {
 
@@ -446,7 +443,6 @@ Sphere * Loader::build_object_sphere (const JSONNode & node,
 
         color,
         position,
-        is_glassy,
 
         image_texture, image_texture_filtering,
         normals_texture, normals_texture_filtering,
@@ -454,7 +450,7 @@ Sphere * Loader::build_object_sphere (const JSONNode & node,
         ar, ag, ab,
         dr, dg, db,
         sr, sg, sb,
-        r, n, g,
+        r, t, n, g,
 
         this->get_float(node, "radius"),
 
@@ -465,13 +461,13 @@ Sphere * Loader::build_object_sphere (const JSONNode & node,
 Plane * Loader::build_object_plane (const JSONNode & node,
     const Color & color,
     const Point & position,
-    const bool is_glassy,
     const Texture<Color> * image_texture, const typename Texture<Color>::filtering_type image_texture_filtering,
     const Texture<Vector> * normals_texture, const typename Texture<Vector>::filtering_type normals_texture_filtering,
     const float ar, const float ag, const float ab,
     const float dr, const float dg, const float db,
     const float sr, const float sg, const float sb,
-    const float r, const float n, const float g,
+    const float r,  const float t,
+    const float n, const float g,
     const Vector & z_dir, const Vector & y_dir
 ) const {
 
@@ -479,7 +475,6 @@ Plane * Loader::build_object_plane (const JSONNode & node,
 
         color,
         position,
-        is_glassy,
 
         image_texture, image_texture_filtering,
         normals_texture, normals_texture_filtering,
@@ -487,7 +482,7 @@ Plane * Loader::build_object_plane (const JSONNode & node,
         ar, ag, ab,
         dr, dg, db,
         sr, sg, sb,
-        r, n, g,
+        r, t, n, g,
 
         z_dir, y_dir,
 
@@ -499,13 +494,13 @@ Plane * Loader::build_object_plane (const JSONNode & node,
 Cylinder * Loader::build_object_cylinder (const JSONNode & node,
     const Color & color,
     const Point & position,
-    const bool is_glassy,
     const Texture<Color> * image_texture, const typename Texture<Color>::filtering_type image_texture_filtering,
     const Texture<Vector> * normals_texture, const typename Texture<Vector>::filtering_type normals_texture_filtering,
     const float ar, const float ag, const float ab,
     const float dr, const float dg, const float db,
     const float sr, const float sg, const float sb,
-    const float r, const float n, const float g,
+    const float r,  const float t,
+    const float n, const float g,
     const Vector & z_dir, const Vector & y_dir
 ) const {
 
@@ -513,7 +508,6 @@ Cylinder * Loader::build_object_cylinder (const JSONNode & node,
 
         color,
         position,
-        is_glassy,
 
         image_texture, image_texture_filtering,
         normals_texture, normals_texture_filtering,
@@ -521,7 +515,7 @@ Cylinder * Loader::build_object_cylinder (const JSONNode & node,
         ar, ag, ab,
         dr, dg, db,
         sr, sg, sb,
-        r, n, g,
+        r, t, n, g,
 
         this->get_float(node, "radius"),
 
@@ -535,13 +529,13 @@ Cylinder * Loader::build_object_cylinder (const JSONNode & node,
 Mesh * Loader::build_object_mesh (const JSONNode & node,
     const Color & color,
     const Point & position,
-    const bool is_glassy,
     const Texture<Color> * image_texture, const char * image_texture_mapping, const typename Texture<Color>::filtering_type image_texture_filtering,
     const Texture<Vector> * normals_texture, const char * normals_texture_mapping, const typename Texture<Vector>::filtering_type normals_texture_filtering,
     const float ar, const float ag, const float ab,
     const float dr, const float dg, const float db,
     const float sr, const float sg, const float sb,
-    const float r, const float n, const float g,
+    const float r,  const float t,
+    const float n, const float g,
     const Vector & z_dir, const Vector & y_dir
 ) const {
 
@@ -549,7 +543,6 @@ Mesh * Loader::build_object_mesh (const JSONNode & node,
 
         color,
         position,
-        is_glassy,
 
         image_texture, image_texture_mapping, image_texture_filtering,
         normals_texture, normals_texture_mapping, normals_texture_filtering,
@@ -557,7 +550,7 @@ Mesh * Loader::build_object_mesh (const JSONNode & node,
         ar, ag, ab,
         dr, dg, db,
         sr, sg, sb,
-        r, n, g,
+        r, t, n, g,
 
         this->get_string(node, "file").c_str(),
 

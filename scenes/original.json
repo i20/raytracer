@@ -44,7 +44,6 @@
                 "type": "cylinder",
                 "color": "red",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -52,7 +51,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -68,7 +69,6 @@
                 "type": "cylinder",
                 "color": "green",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -76,7 +76,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -92,7 +94,6 @@
                 "type": "cylinder",
                 "color": "blue",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -100,7 +101,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -116,7 +119,6 @@
                 "type": "plane",
                 "color": "black",
                 "position": "origin",
-                "glassy": false,
 
                 "textures": {
                     "image": {
@@ -131,7 +133,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -147,7 +151,6 @@
                 "type": "plane",
                 "color": "green",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -155,7 +158,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -171,7 +176,6 @@
                 "type": "plane",
                 "color": "blue",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -179,7 +183,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -195,7 +201,6 @@
                 "type": "cylinder",
                 "color": "hotpink",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -203,7 +208,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -219,7 +226,6 @@
                 "type": "sphere",
                 "color": "orange",
                 "position": { "x": 0, "y": 0, "z": 0.25 },
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -227,7 +233,9 @@
                     "specular": { "r": 1, "g": 1, "b": 1 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 1.33,
                 "glossyness": 1,
 
@@ -242,7 +250,6 @@
                 "type": "sphere",
                 "color": "darkmagenta",
                 "position": { "x": 1.25, "y": 0, "z": 0 },
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -250,7 +257,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -265,7 +274,6 @@
                 "type": "sphere",
                 "color": "darkmagenta",
                 "position": { "x": 0, "y": 1.25, "z": 0 },
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -273,7 +281,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -288,7 +298,6 @@
                 "type": "sphere",
                 "color": "darkmagenta",
                 "position": { "x": 0, "y": 0, "z": 1.25 },
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -296,7 +305,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 

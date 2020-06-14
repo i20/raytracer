@@ -3,7 +3,6 @@ Objects properties:
     - position
     - base matrix and inverted matrix
     - is_closed
-    - is_glassy
     - octree
 
     Phong global illumination model = ambiant + diffuse + specular

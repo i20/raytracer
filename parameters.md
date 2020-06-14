@@ -18,10 +18,6 @@
         - determined for spheres, planes, meshes ...
         - allow back face culling optimisation for meshes
 
-    is_glassy = does object behaves as a refractive medium (glass, water ...) ?
-
-         - enable/disable reflection/refraction computation, otherwise reflection=0 would imply refraction=1
-
     a = ambient light intensity on each canal, [0;1;inf]
 
         - values above 1 can be used to simulate fluorescence
@@ -34,15 +30,17 @@
 
         s = 0 : no specular response
 
-    r = reflection coefficient (refraction)
+    r = reflection coefficient
 
-        - [0;1]
-        - part of enlightment due to reflection, part due to refraction will be 1-r
-        - only relevant if is_glassy = true
+        - r+t = [0;1]
+        - part of enlightment due to reflection
+
+    t = transmission coefficient
+
+        - r+t = [0;1]
+        - part of enlightment due to transmission
 
     n = refraction coefficient
-
-        - only relevant if is_glassy = true and r < 1
 
     g = specularity, brillance, smoothness, shininess, glossiness
 

@@ -44,7 +44,6 @@
                 "type": "plane",
                 "color": "white",
                 "position": "wall-top-o",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -52,7 +51,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -68,7 +69,6 @@
                 "type": "plane",
                 "color": "white",
                 "position": "wall-back-o",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -76,7 +76,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -92,7 +94,6 @@
                 "type": "plane",
                 "color": "white",
                 "position": "wall-bottom-o",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -100,7 +101,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -116,7 +119,6 @@
                 "type": "plane",
                 "color": "red",
                 "position": "wall-left-o",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -124,7 +126,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -140,7 +144,6 @@
                 "type": "plane",
                 "color": "blue",
                 "position": "wall-right-o",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -148,7 +151,9 @@
                     "specular": { "r": 0, "g": 0, "b": 0 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -166,7 +171,6 @@
                 "type": "sphere",
                 "position": { "x": 3, "y": 2, "z": 3 },
                 "color": null,
-                "glassy": true,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -175,6 +179,8 @@
                 },
 
                 "reflection": 1,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 10,
 
@@ -189,7 +195,6 @@
                 "type": "sphere",
                 "position": { "x": 7, "y": 2, "z": 5 },
                 "color": null,
-                "glassy": true,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -198,6 +203,8 @@
                 },
 
                 "reflection": 0,
+                "transmission": 1,
+
                 "n": 1.5,
                 "glossyness": 10,
 
@@ -222,9 +229,9 @@
                 "intensity": { "r": 0.5, "g": 0.5, "b": 0.5 },
                 "position": { "x": 5, "y": 9, "z": 5 },
                 "attenuation": {
-                    "constant": 1,
+                    "constant": 0,
                     "linear": 0,
-                    "quadratic": 0.01
+                    "quadratic": 0
                 }
             }
         }

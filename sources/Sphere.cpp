@@ -20,7 +20,6 @@ using namespace std;
 Sphere::Sphere(
     const Color & color,
     const Point & position,
-    const bool is_glassy,
 
     const Texture<Color> * image_texture,
     const typename Texture<Color>::filtering_type image_texture_filtering,
@@ -31,7 +30,10 @@ Sphere::Sphere(
     const float ar, const float ag, const float ab,
     const float dr, const float dg, const float db,
     const float sr, const float sg, const float sb,
-    const float r, const float n, const float g,
+
+    const float r, const float t,
+
+    const float n, const float g,
     const float radius,
     const Vector & z_dir, const Vector & y_dir
 ) :
@@ -39,7 +41,6 @@ Sphere::Sphere(
         color,
         position,
         true,
-        is_glassy,
 
         image_texture,
         image_texture_filtering,
@@ -50,7 +51,7 @@ Sphere::Sphere(
         ar, ag, ab,
         dr, dg, db,
         sr, sg, sb,
-        r, n, g,
+        r, t, n, g,
         z_dir, y_dir
     ), radius(radius) {}
 

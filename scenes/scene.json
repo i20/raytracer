@@ -50,7 +50,6 @@
                 "type": "cylinder",
                 "color": "red",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -58,7 +57,9 @@
                     "specular": { "r": 1, "g": 1, "b": 1 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -74,7 +75,6 @@
                 "type": "cylinder",
                 "color": "green",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -82,7 +82,9 @@
                     "specular": { "r": 1, "g": 1, "b": 1 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -98,7 +100,6 @@
                 "type": "cylinder",
                 "color": "blue",
                 "position": "origin",
-                "glassy": false,
 
                 "coeff": {
                     "ambient": { "r": 1, "g": 1, "b": 1 },
@@ -106,7 +107,9 @@
                     "specular": { "r": 1, "g": 1, "b": 1 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -122,7 +125,6 @@
                 "type": "plane",
                 "color": null,
                 "position": "origin",
-                "glassy": false,
 
                 "textures": {
                     "image": {
@@ -141,7 +143,9 @@
                     "specular": { "r": 1, "g": 1, "b": 1 }
                 },
 
-                "reflection": 1,
+                "reflection": 0,
+                "transmission": 0,
+
                 "n": 0,
                 "glossyness": 1,
 
@@ -158,7 +162,6 @@
             //     "position": "origin",
             //     "shading": "phong",
             //     "color": null,
-            //     "glassy": false,
 
             //     "textures": {
             //         "image": {
@@ -179,7 +182,9 @@
             //         "specular": { "r": 1, "g": 1, "b": 1 }
             //     },
 
-            //     "reflection": 1,
+            //    "reflection": 0,
+            //    "transmission": 0,
+
             //     "n": 1.33,
             //     "glossyness": 100,
 

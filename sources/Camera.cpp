@@ -121,7 +121,7 @@ Color Camera::radiate (const Ray & ray) const {
         : Color::BLACK;
 
     Color ct = ninter.object->compute_t_ray(rt, ninter)
-        ? this->radiate(rt) * (1 - ninter.object->r)
+        ? this->radiate(rt) * ninter.object->t
         : Color::BLACK;
 
     // Sum direct enlightment + reflected + refracted
